@@ -16,7 +16,7 @@
         <button id="projects-button" class="nav-button">Projekte <span>↗</span></button>
         <button id="map-button" class="nav-button" aria-expanded="false" aria-controls="campus-map">Campusplan</button><button id="about-button" class="nav-button">Über mich</button>
         <button id="garage-button" class="nav-button">Garage</button>
-        <button id="sound-button" class="nav-button" aria-pressed="true">Sound an</button>
+        <button id="night-button" class="nav-button" aria-pressed="false" disabled>Nachtmodus aus</button><button id="dark-button" class="nav-button" aria-pressed="false" disabled>Dark Mode aus</button><button id="sound-button" class="nav-button" aria-pressed="true">Sound an</button>
       </nav>
     </header>
     <main>
@@ -33,7 +33,7 @@
       <div id="sequence-card" class="sequence-card" hidden><div class="eyebrow" id="sequence-title">WELT-DEMO</div><strong id="sequence-stage" role="status">Projekt entdecken</strong><span class="progress-track"><i id="sequence-progress"></i></span><small class="demo-disclaimer">Illustrative Vorschau · kein laufendes Backend</small><button id="sequence-cancel" class="text-button">Abbrechen · Escape</button></div>
       <div id="interaction-hint" class="interaction-hint" role="status" hidden><kbd>E</kbd><span id="interaction-message"></span></div>
       <div id="toast" class="toast" role="status" hidden></div>
-      <div class="speed-display"><small id="vehicle-name" class="vehicle-name">OFFROADER</small><span id="speed-value">00</span><small>KM/H</small><div id="boost-label">SHIFT / BOOST</div></div>
+      <section id="race-hud" class="race-hud" aria-label="Rundenzeit" hidden><small>CAMPUS CIRCUIT</small><strong id="race-time">START / ZIEL</strong><span id="race-best"></span></section><div class="speed-display"><small id="vehicle-name" class="vehicle-name">OFFROADER</small><span id="speed-value">00</span><small>KM/H</small><div id="boost-label">SHIFT / BOOST</div></div>
       <div class="world-tools" aria-label="Welt steuern">
         <button id="zoom-in" aria-label="Hineinzoomen">+</button>
         <button id="zoom-out" aria-label="Herauszoomen">−</button>
@@ -44,7 +44,7 @@
         <div><button data-drive="KeyW" aria-label="Vorwärts fahren">↑</button><button data-drive="KeyS" aria-label="Rückwärts fahren">↓</button><button data-drive="Space" aria-label="Bremsen">■</button><button data-drive="ShiftLeft" aria-label="Boost">⚡</button><button data-drive="KeyJ" aria-label="Springen">J</button><button data-drive="KeyE" aria-label="Interagieren">E</button></div>
       </div>
     </main>
-    <aside id="campus-map" class="campus-map" aria-label="Campusplan" hidden><div class="eyebrow">ENGINEERING CAMPUS <span>N ↑</span></div><div id="campus-map-canvas" class="map-canvas"><svg viewBox="0 0 70 91" aria-hidden="true"><rect width="70" height="91" rx="4" fill="#e1ece7"/><path d="M35 8V85M10 23H60M10 44H60M10 67H60" stroke="#aabfc8" stroke-width="4"/></svg><i id="map-car" class="map-car" aria-label="Dein Fahrzeug">▲</i></div><p>Nummer anklicken → Projekt öffnen<br><span>▲ Dein Fahrzeug</span></p></aside>
+    <aside id="campus-map" class="campus-map" aria-label="Campusplan" hidden><div class="eyebrow">ENGINEERING CAMPUS <span>N ↑</span></div><div id="campus-map-canvas" class="map-canvas"><svg viewBox="0 0 110 119" aria-hidden="true"><rect width="110" height="119" rx="4" fill="#e1ece7"/><rect x="11" y="13" width="88" height="94" rx="14" fill="none" stroke="#728d9b" stroke-width="6"/><path d="M55 30V107M11 81H99M31 58H79M31 37H79" stroke="#aabfc8" stroke-width="4"/></svg><i id="map-car" class="map-car" aria-label="Dein Fahrzeug">▲</i></div><p>Nummer anklicken → Projekt öffnen<br><span>▲ Dein Fahrzeug</span></p></aside>
     <footer class="site-footer"><span><i class="status-dot"></i> EXPLORE THE CAMPUS</span><span class="keyboard-help"><kbd>W A S D</kbd> Fahren <span class="separator">/</span> <kbd>SPACE</kbd> Drift <span class="separator">/</span> <kbd>SHIFT</kbd> Boost <span class="separator">/</span> <kbd>J</kbd> Springen</span><button id="credits-button">Credits & Inspiration ↗</button></footer>
 
     <dialog id="project-dialog" class="project-dialog">

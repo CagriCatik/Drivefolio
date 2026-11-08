@@ -45,6 +45,14 @@ Die Radarantenne richtet sich innerhalb von 18 Metern auf das Besucherfahrzeug a
 
 **Campusplan** zeigt alle sieben Projekte und die aktuelle Fahrzeugposition. Nummern öffnen direkt die Projektkarte. Beide Fahrzeuge besitzen Scheinwerfer (L bzw. Garage), Brems- und Rückfahrlichter. Reifenspuren entstehen beim Driften; Partikel sind auf Drift und hohe Geschwindigkeit begrenzt.
 
+## Campus Circuit, Nachtmodus und Dark Mode
+
+Ein 7,6 Meter breiter Rundkurs umschließt den Campus. Zufahrten an der ersten Querstraße führen nach Osten/Westen auf die Strecke; die südliche Hauptstraße mündet an Start/Ziel. Physische Leitplanken lassen die Zufahrten offen. Rot-weiße Curbs, Startampeln, Gridmarkierungen, Tribüne, Reifenwände und Streckenposten ergänzen den Kurs. Der Campusplan zeigt den Rundkurs und die erweiterten Fahrgrenzen.
+
+An der Startlinie beginnt bei Bewegung die Rundenzeit. Vier geordnete Kontrollpunkte sind nötig; Abkürzen durch den Campus bricht den Versuch ab. Bestzeit gilt für die Sitzung. Fahrzeug-Reset beendet eine laufende Runde.
+
+**Nachtmodus** verändert Himmel, Umgebungslicht und Strecken-/Campusleuchten. **Dark Mode** verändert unabhängig davon die Bedienoberfläche. Beide Einstellungen werden lokal gespeichert, sofern der Browser das erlaubt. Beide Fahrzeuge besitzen zwei symmetrische Spot-Scheinwerfer mit gemeinsamen Schalter (L/Garage). Beim Kenney-Fahrzeug trennen zentrierte Rad-Drehpunkte die vertikale Lenkachse von der rollenden Achse.
+
 ## Steuerung
 
 | Eingabe | Aktion |

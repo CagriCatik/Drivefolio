@@ -1,4 +1,4 @@
-export function mapPosition(x,z){return {x:Math.max(0,Math.min(100,(x+35)/70*100)),y:Math.max(0,Math.min(100,(z+62)/91*100))};}
+export function mapPosition(x,z){return {x:Math.max(0,Math.min(100,(x+55)/110*100)),y:Math.max(0,Math.min(100,(z+76)/119*100))};}
 export function createCampusMap(projects,openProject){
   const panel=document.getElementById('campus-map'),canvas=document.getElementById('campus-map-canvas'),toggle=document.getElementById('map-button'),marker=document.getElementById('map-car');
   toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));});

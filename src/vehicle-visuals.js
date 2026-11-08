@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createCarVisual } from './car-visual.js';
+import {createWheelRig} from './wheel-rig.js';
 import {createVehicleLights} from './vehicle-lights.js';
 import { vehicles,getVehicle,getPaint } from './vehicle-catalog.js';
 
@@ -8,8 +9,8 @@ function createSportVisual(model,vehicle) {
   const holder=new THREE.Group();holder.add(model);vehicle.group.add(holder);
   const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
   const scale=1.8/size.x;model.scale.setScalar(scale);model.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);
-  const wheels=[];
-  model.traverse(n=>{if(!n.isMesh)return;n.material=n.material.clone();n.castShadow=true;n.receiveShadow=true;if(/^wheel/i.test(n.name))wheels.push({mesh:n,base:n.rotation.y,front:/front/i.test(n.name)});});
+  model.traverse(n=>{if(n.isMesh){n.material=n.material.clone();n.castShadow=true;n.receiveShadow=true;}});
+  const wheelRig=createWheelRig(model);
   const painted=[];model.traverse(n=>{if(n.isMesh&&/^(body|spoiler)$/.test(n.name))painted.push(n);});
   const paintUniform={value:new THREE.Color('#db3b32')};
   for(const part of painted){
@@ -26,8 +27,8 @@ function createSportVisual(model,vehicle) {
   let pitch=0;
   return {group:holder,
     paint(color){paintUniform.value.set(color);},
-    update(dt){const m=vehicle.motion;pitch=THREE.MathUtils.lerp(pitch,-m.acceleration*0.002,1-Math.exp(-8*dt));holder.rotation.x=pitch;holder.rotation.z=-m.steering*Math.min(m.speed/15,1)*0.06;for(const w of wheels){w.mesh.rotation.x+=m.signedSpeed*dt/0.33;w.mesh.rotation.y=w.base+(w.front?m.steering*0.35:0);}},
-    dispose(){holder.removeFromParent();model.traverse(n=>{if(n.isMesh)n.material.dispose();});},
+    update(dt){const m=vehicle.motion;pitch=THREE.MathUtils.lerp(pitch,-m.acceleration*0.002,1-Math.exp(-8*dt));holder.rotation.x=pitch;holder.rotation.z=-m.steering*Math.min(m.speed/15,1)*0.06;wheelRig.update(dt,m.signedSpeed,m.steering);},
+    dispose(){wheelRig.dispose();holder.removeFromParent();model.traverse(n=>{if(n.isMesh)n.material.dispose();});},
   };
 }
 
@@ -44,7 +45,7 @@ export async function createVehicleVisuals(vehicle) {
     vehicle.setProfile(id);active?.dispose();active=next;selected=id;
   }
   select(selected);
-  return {select,toggleLights:lights.toggle,
+  return {select,toggleLights:lights.toggle,setNight:lights.setNight,
     paint(id){const next=getPaint(id);active.paint(next.color);paint=id;},
     update(dt,time){active.update(dt,time,lights.enabled);lights.update();},
     get selected(){return selected;},get selectedPaint(){return paint;},

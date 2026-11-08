@@ -76,6 +76,9 @@ export async function createVehicle(scene) {
   function addObstacle(x, z, halfX, halfZ) {
     world.createCollider(RAPIER.ColliderDesc.cuboid(halfX, 2, halfZ).setTranslation(x, 0, z));
   }
+  function addBarrier(x,z,halfLength,halfWidth,angle){
+    world.createCollider(RAPIER.ColliderDesc.cuboid(halfLength,0.7,halfWidth).setTranslation(x,0.65,z).setRotation({x:0,y:Math.sin(angle/2),z:0,w:Math.cos(angle/2)}));
+  }
   function addProp(mesh, x, y, z, half = 0.5) {
     const propBody = world.createRigidBody(RAPIER.RigidBodyDesc.dynamic().setTranslation(x,y,z).setLinearDamping(0.4).setAngularDamping(0.7).setCcdEnabled(true));
     world.createCollider(RAPIER.ColliderDesc.cuboid(half,half,half).setMass(12).setFriction(0.7).setRestitution(0.25), propBody);
@@ -94,10 +97,10 @@ export async function createVehicle(scene) {
     ramps.push({x,z,width,length,height});
   }
   // World bounds stop visitors from driving into an empty, endless plane.
-  addObstacle(-35, -17, 1, 54); addObstacle(35, -17, 1, 54);
-  addObstacle(0, 29, 35, 1); addObstacle(0, -62, 35, 1);
+  addObstacle(-55, -17, 1, 65); addObstacle(55, -17, 1, 65);
+  addObstacle(0, 43, 55, 1); addObstacle(0, -76, 55, 1);
   reset();
-  return { group, update, reset, stop, addObstacle, addProp, addRamp, setProfile,
+  return { group, update, reset, stop, addObstacle, addBarrier, addProp, addRamp, setProfile,
     get profile(){return profile.id;},
     get speed() { return speed; }, get heading() { return heading; },
     get motion() { return { speed, signedSpeed, steering, acceleration, impact, input: lastInput, grounded: group.position.y-surfaceHeight() < 0.12 }; },

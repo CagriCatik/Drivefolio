@@ -1,5 +1,6 @@
 import './style.css';
 import * as THREE from 'three';
+import {createDisplayModes} from './display-modes.js';
 import {createCampusMap} from './campus-map.js';
 import { projects } from './projects.js';
 import { createInput } from './input.js';
@@ -154,6 +155,7 @@ $('zoom-out').addEventListener('click', () => view?.zoom(0.12));
 $('reset-button').addEventListener('click', () => {
   if (!ready) return;
   cancelSequence();
+  worldController.race.reset();
   input.clear(); vehicle.reset(); view.reset(vehicle.group.position); resetClock = true;
   interactions.reset();
   drivingEffects?.reset();
@@ -171,7 +173,7 @@ async function main() {
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#d4e5eb');
   scene.fog = new THREE.Fog('#d4e5eb', 85, 155);
-  scene.add(new THREE.HemisphereLight('#e6f4ff', '#81998b', 1.9));
+  const sky=new THREE.HemisphereLight('#e6f4ff', '#81998b', 1.9);scene.add(sky);
   const sun = new THREE.DirectionalLight('#fff8ed', 2.5); sun.position.set(-18, 32, 20);
   sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, { left: -65, right: 65, top: 65, bottom: -65, near: 1, far: 160 });
@@ -179,7 +181,7 @@ async function main() {
   view = createPortfolioCamera(window.innerWidth / window.innerHeight);
   vehicle = await createVehicle(scene);
   const world = await createWorld(scene, vehicle);
-  worldController=world;syncGarage();$('garage-button').disabled=false;
+  worldController=world;createDisplayModes(renderer,scene,sun,sky,world);syncGarage();$('garage-button').disabled=false;
   drivingEffects=createDrivingEffects(scene,vehicle);
   const composer=new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene,view.camera));
@@ -232,7 +234,7 @@ async function main() {
       $('sequence-progress').style.width=`${state.progress*100}%`;
       if(state.completed){const project=sequence.project;cancelSequence();openProject(project);}
     }
-    world.update(time,dt);
+    world.update(time,dt,!!activeDialog||sequence.running);
     drivingEffects.update(dt,time,!!activeDialog||sequence.running);
     sound.update(vehicle.motion,!!activeDialog||sequence.running);
     $('speed-value').textContent=String(Math.round(vehicle.speed*3.6)).padStart(2,'0');

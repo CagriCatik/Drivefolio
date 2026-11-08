@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { addLandscape, addNameSculpture } from './landscape.js';
 import { createVehicleVisuals } from './vehicle-visuals.js';
 import { createFacilities } from './facilities.js';
+import {createRaceTrack} from './race-track.js';
 
 const material = (color, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.95, ...extra });
 const materials = {
@@ -27,26 +28,28 @@ function textTexture(text, color = '#354139', background = null, size = 80) {
 function groundText(scene, text, x, z, width, color, angle = 0) {
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(width, width / 4),
     new THREE.MeshBasicMaterial({ map: textTexture(text, color), transparent: true, depthWrite: false }));
-  mesh.rotation.set(-Math.PI / 2, 0, angle); mesh.position.set(x, 0.055, z); scene.add(mesh); return mesh;
+  mesh.rotation.set(-Math.PI / 2, 0, angle); mesh.position.set(x, 0.105, z); scene.add(mesh); return mesh;
 }
 
-function addRoads(scene) {
-  box(scene, 6.8, 0.04, 68, 0, 0.01, -12, materials.road, false);
-  box(scene, 43, 0.045, 6.8, 0, 0.015, 5, materials.road, false);
-  // Short dashed lines give visitors a quiet visual route through the space.
-  for (let z = -43; z <= 20; z += 4) box(scene, 0.13, 0.015, 1.35, 0, 0.04, z, materials.white, false);
-  for (let x = -20; x <= 20; x += 4) {
-    if (Math.abs(x) < 4) continue;
-    box(scene, 1.35, 0.015, 0.13, x, 0.05, 5, materials.white, false);
+function addRoads(scene){
+  // Partition the union of the roads into non-overlapping flat quads. There are
+  // no stacked boxes or seams at the three campus intersections.
+  const rects=[[-3.4,3.4,-46,31],[-44,44,1.6,8.4],[-24,24,-21.4,-14.6],[-24,24,-42.4,-35.6]];
+  const xs=[...new Set(rects.flatMap(r=>r.slice(0,2)))].sort((a,b)=>a-b),zs=[...new Set(rects.flatMap(r=>r.slice(2)))].sort((a,b)=>a-b);
+  const vertices=[],indices=[];
+  for(let i=0;i<xs.length-1;i++)for(let j=0;j<zs.length-1;j++){
+    const x=(xs[i]+xs[i+1])/2,z=(zs[j]+zs[j+1])/2;
+    if(!rects.some(([l,r,t,b])=>x>=l&&x<=r&&z>=t&&z<=b))continue;
+    const n=vertices.length/3;vertices.push(xs[i],0.081,zs[j],xs[i+1],0.081,zs[j],xs[i],0.081,zs[j+1],xs[i+1],0.081,zs[j+1]);indices.push(n,n+2,n+1,n+1,n+2,n+3);
   }
-  box(scene,43,0.045,6.8,0,0.015,-18,materials.road,false);
-  for(let x=-20;x<=20;x+=4){if(Math.abs(x)>4)box(scene,1.35,0.015,0.13,x,0.05,-18,materials.white,false);}
-  box(scene,47,0.045,6.8,0,0.015,-39,materials.road,false);
-  for(let x=-22;x<=22;x+=4){if(Math.abs(x)>4)box(scene,1.35,0.015,0.13,x,0.05,-39,materials.white,false);}
-  groundText(scene,'← FRENET    AI    FMT-MPC →',0,-32,11,'#d5eeef');
-  groundText(scene,'← RADAR    AUTONOMY →',0,-11.5,9,'#d5eeef');
-  groundText(scene,'AI / MCP / A2A  ↑',0,-37,6.2,'#d5eeef');
-  groundText(scene, 'EXPLORE', 0, 21, 5, '#8e9385');
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.setIndex(indices);geometry.computeVertexNormals();
+  const road=new THREE.Mesh(geometry,materials.road);road.receiveShadow=true;scene.add(road);
+  for(let z=-44;z<28;z+=4){if([5,-18,-39].some(c=>Math.abs(c-z)<4.4))continue;box(scene,0.12,0.01,1.3,0,0.093,z,materials.white,false);}
+  for(const [z,extent] of [[5,43],[-18,23],[-39,23]])for(let x=-extent;x<extent;x+=4){if(Math.abs(x)<4.5)continue;box(scene,1.3,0.01,0.12,x,0.093,z,materials.white,false);}
+  groundText(scene,'← FRENET    AI    FMT-MPC →',0,-32,9,'#d5eeef');
+  groundText(scene,'← RADAR    AUTONOMY →',0,-11.5,8,'#d5eeef');
+  groundText(scene,'CIRCUIT  ↓',0,24,4.8,'#d5eeef');
+  groundText(scene,'← CIRCUIT',-30,5,5,'#d5eeef',-Math.PI/2);groundText(scene,'CIRCUIT →',30,5,5,'#d5eeef',-Math.PI/2);
 }
 
 export async function createWorld(scene, vehicle) {
@@ -59,23 +62,20 @@ export async function createWorld(scene, vehicle) {
   const lawn=box(scene,160,0.02,160,0,-0.045,0,material('#8cab91'),false);
   box(scene,58,0.025,90,0,-0.025,-17,materials.ground,false);
   addRoads(scene);
-  // Flush light curbs define the boulevard without trapping the vehicle.
-  for(const x of [-3.55,3.55])for(const [start,end] of [[-46,-42.6],[-35.4,-21.6],[-14.4,1.4],[8.6,22]])box(scene,0.22,0.055,end-start,x,0.015,(start+end)/2,material('#cedbdd'),false);
-  for(const z of [5,-18,-39])for(const side of [-1,1]){
-    box(scene,18,0.055,0.22,side*13,0.02,z+3.5,material('#cedbdd'),false);
-    box(scene,18,0.055,0.22,side*13,0.02,z-3.5,material('#cedbdd'),false);
-  }
-  for(const z of [9,-14,-35])for(let i=0;i<6;i++)box(scene,0.55,0.018,1.6,-2.5+i,0.06,z,materials.white,false);
-
+  for(const z of [10,-13,-34])for(let i=0;i<6;i++)box(scene,0.55,0.012,1.3,-2.5+i,0.10,z,materials.white,false);
+  // The western access crosses the water channel on a small bridge.
+  for(const z of [1.1,8.9]){box(scene,7,0.35,0.12,-32,0.65,z,materials.stone);vehicle.addBarrier(-32,z,3.5,0.09,0);}
   const vehicleVisuals=await createVehicleVisuals(vehicle);
   const landscape=addLandscape(scene,vehicle);
   await addNameSculpture(scene);
   const facilities=createFacilities(scene,vehicle);
+  const race=createRaceTrack(scene,vehicle);
   return {
     vehicles:vehicleVisuals,
-    facilities,
-    update(time,dt) {
-      landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt);
+    facilities,race,
+    setNight(value){vehicleVisuals.setNight(value);landscape.setNight(value);race.setNight(value);},
+    update(time,dt,paused) {
+      landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt);race.update(dt,paused);
     },
   };
 }

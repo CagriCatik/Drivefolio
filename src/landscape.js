@@ -25,13 +25,15 @@ export function addLandscape(scene,vehicle){
   for(const [x,z,w,d] of [[-8,0,3,5],[8,0,3,5],[-8,-25,2,8],[8,-25,2,8],[-27,-18,4,13],[27,-18,4,13],[-27,-42,4,10],[27,-42,4,10]]){
     block(scene,w+0.3,0.08,d+0.3,x,-0.01,z,concrete);block(scene,w,0.08,d,x,0.035,z,mat('#84a88c'));
   }
-  for(const [x,z] of [[6,18],[-25,4],[25,4],[-25,-17],[25,-39]]){
+  for(const [x,z] of [[6,18],[-25,10.5],[25,10.5],[-25,-17],[25,-39]]){
     block(scene,2.5,0.14,0.7,x,0.55,z,timber);block(scene,2.5,0.5,0.1,x,0.85,z-0.3,timber);
     for(const side of [-0.9,0.9])block(scene,0.1,0.5,0.55,x+side,0.26,z,metal);
     vehicle.addObstacle(x,z,1.3,0.4);
   }
+  const nightLights=[];
   const lightMaterial=new THREE.MeshStandardMaterial({color:'#e4fbff',emissive:'#b9eaff',emissiveIntensity:1.2});
-  for(const [x,z] of [[-4.6,15],[4.6,8],[-4.6,-9],[4.6,-25],[-4.6,-35],[4.6,-42],[-24,5],[24,5]]){
+  for(const [x,z] of [[-4.6,15],[4.6,8],[-4.6,-9],[4.6,-25],[-4.6,-35],[4.6,-42],[-24,9.8],[24,9.8]]){
+    if(nightLights.length<5){const light=new THREE.PointLight('#bce4ff',0,18,1.5);light.position.set(x,3.4,z);scene.add(light);nightLights.push(light);}
     block(scene,0.12,3.7,0.12,x,1.85,z,metal);block(scene,1.5,0.10,0.5,x+0.5,3.7,z,metal);block(scene,1.25,0.04,0.35,x+0.5,3.63,z,lightMaterial);
   }
   // EV chargers and a pergola make the arrival court feel inhabited.
@@ -55,7 +57,7 @@ export function addLandscape(scene,vehicle){
   }
   const canal=new THREE.Mesh(new THREE.PlaneGeometry(6,88),new THREE.MeshStandardMaterial({color:'#5d9fa9',roughness:0.24,metalness:0.25}));canal.rotation.x=-Math.PI/2;canal.position.set(-32,-0.025,-16);scene.add(canal);
   for(const x of [-28.9,-35.1])block(scene,0.25,0.10,88,x,0,-16,concrete);
-  return {update(time){crowns.forEach((c,i)=>c.rotation.z=Math.sin(time*0.8+i)*0.015);canal.material.color.setHSL(0.52,0.25,0.49+Math.sin(time*0.4)*0.01);}};
+  return {setNight(value){nightLights.forEach(light=>light.intensity=value?22:0);},update(time){crowns.forEach((c,i)=>c.rotation.z=Math.sin(time*0.8+i)*0.015);canal.material.color.setHSL(0.52,0.25,0.49+Math.sin(time*0.4)*0.01);}};
 }
 
 export async function addNameSculpture(scene){

@@ -27,10 +27,9 @@ export function createCarVisual(model, vehicle) {
     if(/^energy|cellsEnergy/i.test(n.name))n.visible=false;
     if(/^wheelSuspension|wheelGuard/i.test(n.name))n.visible=false;
   });
-  const left=new THREE.PointLight('#ffca7c',1.5,5);left.position.set(0.6,0.75,1.5);vehicle.group.add(left);
   let roll=0,pitch=0;
-  return {group:assembly,paint(color){assembly.traverse(n=>{if(n.isMesh&&/^bodyPainted|wheelPainted/i.test(n.name))n.material.color.set(color);});},dispose(){assembly.removeFromParent();left.removeFromParent();assembly.traverse(n=>{if(n.isMesh)n.material.dispose();});},update(dt,time,headlights=true){
-    left.visible=headlights;headLights.forEach(n=>n.visible=headlights);
+  return {group:assembly,paint(color){assembly.traverse(n=>{if(n.isMesh&&/^bodyPainted|wheelPainted/i.test(n.name))n.material.color.set(color);});},dispose(){assembly.removeFromParent();assembly.traverse(n=>{if(n.isMesh)n.material.dispose();});},update(dt,time,headlights=true){
+    headLights.forEach(n=>n.visible=headlights);
     const motion=vehicle.motion;
     roll=THREE.MathUtils.lerp(roll,-motion.steering*Math.min(motion.speed/12,1)*0.1,1-Math.exp(-8*dt));
     pitch=THREE.MathUtils.lerp(pitch,-motion.acceleration*0.0025,1-Math.exp(-7*dt));

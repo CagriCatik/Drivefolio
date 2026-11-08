@@ -46,7 +46,7 @@ export async function createVehicleVisuals(vehicle) {
   select(selected);
   return {select,toggleLights:lights.toggle,
     paint(id){const next=getPaint(id);active.paint(next.color);paint=id;},
-    update(dt,time){active.update(dt,time);lights.update();},
+    update(dt,time){active.update(dt,time,lights.enabled);lights.update();},
     get selected(){return selected;},get selectedPaint(){return paint;},
   };
 }

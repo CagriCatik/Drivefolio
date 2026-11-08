@@ -1,6 +1,8 @@
 export const locations = [
   {id:'garage',label:'Garage · Fahrzeug & Lackierung',x:-17,z:16,radius:4},
   {id:'robotics',label:'Robotics-Labor · Projekt entdecken',x:-15,z:1.5,radius:4},
+  {id:'dynamics',label:'Vehicle Dynamics · Testgelände entdecken',x:15,z:3,radius:3.5},
+  {id:'testing',label:'SpecToTest · Demo starten',x:0,z:-20.5,radius:3.5},
 ];
 export function createInteractions(items=locations) {
   let held=false;

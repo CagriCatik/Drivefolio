@@ -71,6 +71,7 @@ export async function createVehicle(scene) {
   }
   function stop() {
     body.setLinvel({ x: 0, y: 0, z: 0 }, true); body.setAngvel({ x: 0, y: 0, z: 0 }, true); speed = 0;
+    signedSpeed=0;previousSpeed=0;acceleration=0;impact=0;lastInput={};steering=0;
   }
   function addObstacle(x, z, halfX, halfZ) {
     world.createCollider(RAPIER.ColliderDesc.cuboid(halfX, 2, halfZ).setTranslation(x, 0, z));

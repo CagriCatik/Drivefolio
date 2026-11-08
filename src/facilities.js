@@ -1,13 +1,7 @@
 import * as THREE from 'three';
 
-const mat=color=>new THREE.MeshStandardMaterial({color,roughness:0.85});
-function block(parent,w,h,d,x,y,z,material){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;}
-function label(parent,text,x,y,z,width,color='#faebd7'){
-  const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=192;
-  const ctx=canvas.getContext('2d');ctx.fillStyle=color;ctx.font='bold 68px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,512,96,990);
-  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
-  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(width,width*192/1024),new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide}));mesh.position.set(x,y,z);parent.add(mesh);return mesh;
-}
+import {mat,block,label} from './scene-primitives.js';
+import {createProjectAreas} from './project-areas.js';
 
 function createGarage(scene,vehicle){
   const group=new THREE.Group();group.position.set(-17,0,14);scene.add(group);
@@ -85,6 +79,6 @@ function createRoboticsLab(scene,vehicle){
 }
 
 export function createFacilities(scene,vehicle){
-  const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle);createRamp(scene,vehicle);
-  return {update(time,dt){garage.update(dt);lab.update(time);}};
+  const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle),areas=createProjectAreas(scene,vehicle);createRamp(scene,vehicle);
+  return {setTestingStage:areas.setTestingStage,update(time,dt){garage.update(dt);lab.update(time);areas.update(time);}};
 }

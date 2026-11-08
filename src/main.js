@@ -1,7 +1,6 @@
 import './style.css';
 import * as THREE from 'three';
 import { projects } from './projects.js';
-import { createParkingController } from './parking.js';
 import { createInput } from './input.js';
 import { createPortfolioCamera } from './camera.js';
 import { createVehicle } from './vehicle.js';
@@ -13,11 +12,12 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { createInteractions } from './interactions.js';
+import { createTestSequence } from './test-sequence.js';
 import { vehicles,paints,getVehicle } from './vehicle-catalog.js';
 
 const $ = id => document.getElementById(id);
 const input = createInput();
-const parking = createParkingController(projects.filter(p=>p.id!=='robotics'));
+const sequence=createTestSequence();
 const interactions=createInteractions();
 const sound=createAudio();
 const visited = new Set();
@@ -34,11 +34,11 @@ function dismissWelcome() {
 }
 
 function showDialog(dialog) {
+  if(sequence.running)cancelSequence();
   if (activeDialog) activeDialog.close();
   previousFocus = document.activeElement;
   activeDialog = dialog;
   input.setEnabled(false); vehicle?.stop();
-  $('parking-hint').hidden = true;
   $('interaction-hint').hidden=true;
   dialog.showModal();
 }
@@ -88,6 +88,17 @@ for (const project of projects) {
   button.addEventListener('click', () => openProject(project)); $('project-list').append(button);
 }
 
+function cancelSequence(){
+  sequence.cancel();$('sequence-card').hidden=true;
+  worldController?.facilities.setTestingStage(-1,0);input.setEnabled(true);resetClock=true;
+}
+function startTestSequence(){
+  dismissWelcome();vehicle.stop();input.setEnabled(false);sequence.start();sound.chime();
+  $('interaction-hint').hidden=true;$('sequence-card').hidden=false;
+}
+$('sequence-cancel').addEventListener('click',cancelSequence);
+window.addEventListener('keydown',e=>{if(e.code==='Escape'&&sequence.running)cancelSequence();});
+
 $('projects-button').addEventListener('click', () => showDialog($('list-dialog')));
 $('direct-button').addEventListener('click', () => showDialog($('list-dialog')));
 $('about-button').addEventListener('click', () => showDialog($('about-dialog')));
@@ -127,10 +138,11 @@ $('zoom-in').addEventListener('click', () => view?.zoom(-0.12));
 $('zoom-out').addEventListener('click', () => view?.zoom(0.12));
 $('reset-button').addEventListener('click', () => {
   if (!ready) return;
-  input.clear(); vehicle.reset(); parking.reset(); view.reset(vehicle.group.position); resetClock = true;
+  cancelSequence();
+  input.clear(); vehicle.reset(); view.reset(vehicle.group.position); resetClock = true;
   interactions.reset();
   drivingEffects?.reset();
-  $('parking-hint').hidden = true;
+  if(sequence.running)cancelSequence();
   $('toast').textContent = 'Wieder am Start. Gute Fahrt!'; $('toast').hidden = false;
   setTimeout(() => { $('toast').hidden = true; }, 2200);
 });
@@ -170,7 +182,6 @@ async function main() {
   document.addEventListener('visibilitychange', () => { resetClock = true; input.clear(); vehicle.stop(); });
 
   let last = 0, accumulator = 0, time = 0;
-  let status = { bay: null, progress: 0 };
   let interactionState={location:null,activated:null};
   const fixed = 1 / 60;
   renderer.setAnimationLoop(now => {
@@ -178,39 +189,38 @@ async function main() {
     const dt = resetClock || !last ? 0 : Math.min((now - last) / 1000, 0.08);
     if (resetClock) accumulator = 0;
     last = now; resetClock = false; time += dt;
-    if (!activeDialog) {
+    if (!activeDialog && !sequence.running) {
       accumulator += dt;
       let steps = 0;
       while (accumulator >= fixed && steps < 5) {
         const controls = input.read();
         if (controls.throttle || controls.steering) dismissWelcome();
         vehicle.update(fixed, controls);
-        status = parking.update(vehicle.group.position, vehicle.motion.grounded ? vehicle.speed : Infinity, fixed);
         accumulator -= fixed; steps++;
-        if (status.opened) { openProject(status.opened); accumulator = 0; break; }
         interactionState=interactions.update(vehicle.group.position,vehicle.motion.grounded?vehicle.speed:Infinity,controls.interact);
         if(interactionState.activated){
           if(interactionState.activated.id==='garage')openGarage();
+          else if(interactionState.activated.id==='testing')startTestSequence();
           else openProject(projects.find(p=>p.id===interactionState.activated.id));
           accumulator=0;break;
         }
       }
-      if (!activeDialog) {
+      if (!activeDialog && !sequence.running) {
         $('interaction-hint').hidden=!interactionState.location;
         if(interactionState.location)$('interaction-message').textContent=`${interactionState.location.label} · ${vehicle.speed<1.5?'E drücken':'zum Entdecken anhalten'}`;
-        $('parking-hint').hidden = !status.bay;
-        if (status.bay) {
-          $('parking-message').textContent = status.progress > 0
-            ? `${status.bay.title} — einen Moment stehen bleiben …`
-            : `${status.bay.title} — hier anhalten · Leertaste zum Bremsen`;
-          $('parking-progress').style.width = `${status.progress * 100}%`;
-        }
+
       }
     } else accumulator = 0;
     view.update(dt, vehicle.group.position, vehicle.heading, vehicle.speed > 0.5);
-    world.update(time, status,dt);
-    drivingEffects.update(dt,time,!!activeDialog);
-    sound.update(vehicle.motion,!!activeDialog);
+    if(sequence.running){
+      const state=sequence.update(dt);world.facilities.setTestingStage(state.stage,state.progress);
+      $('sequence-stage').textContent=state.label;
+      $('sequence-progress').style.width=`${state.progress*100}%`;
+      if(state.completed){$('sequence-card').hidden=true;openProject(projects.find(p=>p.id==='testing'));}
+    }
+    world.update(time,dt);
+    drivingEffects.update(dt,time,!!activeDialog||sequence.running);
+    sound.update(vehicle.motion,!!activeDialog||sequence.running);
     $('speed-value').textContent=String(Math.round(vehicle.speed*3.6)).padStart(2,'0');
     $('boost-label').classList.toggle('boosting',!!vehicle.motion.input.boost&&vehicle.speed>2);
     composer.render();

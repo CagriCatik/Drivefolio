@@ -21,6 +21,13 @@ test('laboratory uses an explicit project interaction instead of parking dwell',
   assert.equal(c.update({x:-15,z:1.5},0,true).activated.id,'robotics');
 });
 
+test('all project terminals are distinct explicit interactions',()=>{
+  for(const [id,x,z] of [['robotics',-15,1.5],['dynamics',15,3],['testing',0,-20.5]]){
+    const c=createInteractions();assert.equal(c.update({x,z},0,false).activated,null);
+    assert.equal(c.update({x,z},0,true).activated.id,id);
+  }
+});
+
 test('ramp surface rises continuously towards its launch edge and ends outside its footprint',()=>{
   const r={x:15,z:14,width:5,length:6,height:1.8};
   assert.equal(rampHeightAt(r,15,17),0);

@@ -9,10 +9,10 @@ function createSportVisual(model,vehicle) {
   const scale=1.8/size.x;model.scale.setScalar(scale);model.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);
   const wheels=[];
   model.traverse(n=>{if(!n.isMesh)return;n.material=n.material.clone();n.castShadow=true;n.receiveShadow=true;if(/^wheel/i.test(n.name))wheels.push({mesh:n,base:n.rotation.y,front:/front/i.test(n.name)});});
-  const body=model.getObjectByName('body');
+  const painted=[];model.traverse(n=>{if(n.isMesh&&/^(body|spoiler)$/.test(n.name))painted.push(n);});
   const paintUniform={value:new THREE.Color('#db3b32')};
-  if(body?.isMesh){
-    body.material.onBeforeCompile=shader=>{
+  for(const part of painted){
+    part.material.onBeforeCompile=shader=>{
       shader.uniforms.uBodyPaint=paintUniform;
       shader.fragmentShader='uniform vec3 uBodyPaint;\n'+shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
         #ifdef USE_MAP

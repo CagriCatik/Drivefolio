@@ -12,12 +12,13 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { createInteractions } from './interactions.js';
-import { createTestSequence } from './test-sequence.js';
+import { createDemoSequence } from './demo-sequence.js';
 import { vehicles,paints,getVehicle } from './vehicle-catalog.js';
 
 const $ = id => document.getElementById(id);
 const input = createInput();
-const sequence=createTestSequence();
+const sequence=createDemoSequence();
+let selectedProject=null;
 const interactions=createInteractions();
 const sound=createAudio();
 const visited = new Set();
@@ -60,6 +61,8 @@ for (const dialog of dialogs) {
 
 function openProject(project) {
   dismissWelcome();
+  selectedProject=project;
+  $('project-demo').disabled=!ready;
   $('project-title').textContent = project.title;
   $('project-category').textContent = `${project.number} / ${project.category}`;
   $('project-category-art').textContent = project.category;
@@ -90,13 +93,20 @@ for (const project of projects) {
 
 function cancelSequence(){
   sequence.cancel();$('sequence-card').hidden=true;
-  worldController?.facilities.setTestingStage(-1,0);input.setEnabled(true);resetClock=true;
+  worldController?.facilities.setDemo(null,-1,0);input.setEnabled(true);resetClock=true;
 }
-function startTestSequence(){
-  dismissWelcome();vehicle.stop();input.setEnabled(false);sequence.start();sound.chime();
+function startDemo(project){
+  if(!ready||!project)return;
+  if(activeDialog){activeDialog.close();activeDialog=null;}
+  dismissWelcome();vehicle.stop();input.setEnabled(false);sequence.start(project);sound.chime();
+  $('sequence-title').textContent=project.title+' / WELT-DEMO';
+  $('sequence-stage').textContent=project.stages[0];
+  $('sequence-progress').style.width='0%';
+  worldController.facilities.setDemo(project.id,0,0);
   $('interaction-hint').hidden=true;$('sequence-card').hidden=false;
 }
 $('sequence-cancel').addEventListener('click',cancelSequence);
+$('project-demo').addEventListener('click',()=>startDemo(selectedProject));
 window.addEventListener('keydown',e=>{if(e.code==='Escape'&&sequence.running)cancelSequence();});
 
 $('projects-button').addEventListener('click', () => showDialog($('list-dialog')));
@@ -200,23 +210,22 @@ async function main() {
         interactionState=interactions.update(vehicle.group.position,vehicle.motion.grounded?vehicle.speed:Infinity,controls.interact);
         if(interactionState.activated){
           if(interactionState.activated.id==='garage')openGarage();
-          else if(interactionState.activated.id==='testing')startTestSequence();
-          else openProject(projects.find(p=>p.id===interactionState.activated.id));
+          else startDemo(projects.find(p=>p.id===interactionState.activated.id));
           accumulator=0;break;
         }
       }
       if (!activeDialog && !sequence.running) {
         $('interaction-hint').hidden=!interactionState.location;
-        if(interactionState.location)$('interaction-message').textContent=`${interactionState.location.label} · ${vehicle.speed<1.5?'E drücken':'zum Entdecken anhalten'}`;
+        if(interactionState.location)$('interaction-message').textContent=`${interactionState.location.label} · ${Math.abs(vehicle.speed)<1.5?'E drücken':'zum Entdecken anhalten'}`;
 
       }
     } else accumulator = 0;
-    view.update(dt, vehicle.group.position, vehicle.heading, vehicle.speed > 0.5);
+    view.update(dt, sequence.running?sequence.project.position:vehicle.group.position, vehicle.heading, !sequence.running&&vehicle.speed > 0.5);
     if(sequence.running){
-      const state=sequence.update(dt);world.facilities.setTestingStage(state.stage,state.progress);
+      const state=sequence.update(dt);world.facilities.setDemo(sequence.project.id,state.stage,state.progress);
       $('sequence-stage').textContent=state.label;
       $('sequence-progress').style.width=`${state.progress*100}%`;
-      if(state.completed){$('sequence-card').hidden=true;openProject(projects.find(p=>p.id==='testing'));}
+      if(state.completed){const project=sequence.project;cancelSequence();openProject(project);}
     }
     world.update(time,dt);
     drivingEffects.update(dt,time,!!activeDialog||sequence.running);

@@ -31,14 +31,18 @@ function groundText(scene, text, x, z, width, color, angle = 0) {
 }
 
 function addRoads(scene) {
-  box(scene, 6.8, 0.04, 58, 0, 0.01, -8, materials.road, false);
+  box(scene, 6.8, 0.04, 68, 0, 0.01, -12, materials.road, false);
   box(scene, 43, 0.045, 6.8, 0, 0.015, 5, materials.road, false);
   // Short dashed lines give visitors a quiet visual route through the space.
-  for (let z = -33; z <= 20; z += 4) box(scene, 0.13, 0.015, 1.35, 0, 0.04, z, materials.white, false);
+  for (let z = -43; z <= 20; z += 4) box(scene, 0.13, 0.015, 1.35, 0, 0.04, z, materials.white, false);
   for (let x = -20; x <= 20; x += 4) {
     if (Math.abs(x) < 4) continue;
     box(scene, 1.35, 0.015, 0.13, x, 0.05, 5, materials.white, false);
   }
+  box(scene,43,0.045,6.8,0,0.015,-18,materials.road,false);
+  for(let x=-20;x<=20;x+=4){if(Math.abs(x)>4)box(scene,1.35,0.015,0.13,x,0.05,-18,materials.white,false);}
+  groundText(scene,'RADAR  ←    →  AUTONOMY',0,-13,9,'#665366');
+  groundText(scene,'AI / MCP / A2A  ↑',0,-37,6.2,'#665366');
   groundText(scene, 'EXPLORE', 0, 21, 5, '#8e9385');
 }
 

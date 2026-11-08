@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import {mat,block,label} from './scene-primitives.js';
 import {createProjectAreas} from './project-areas.js';
+import {createExhibitions} from './exhibition-areas.js';
 
 function createGarage(scene,vehicle){
   const group=new THREE.Group();group.position.set(-17,0,14);scene.add(group);
@@ -44,8 +45,8 @@ function createRoboticsLab(scene,vehicle){
   block(group,12,0.08,12,0,0.02,0,floor);
   block(group,12,2.5,0.25,0,1.25,-6,dark);
   block(group,0.25,1.3,10,-6,0.65,-1,walls);block(group,0.25,1.3,10,6,0.65,-1,walls);
-  label(group,'ROBOTICS LAB',0,1.65,-5.83,8.4);
-  label(group,'LIVE LIDAR DEMO',0,0.8,-5.8,6.3,'#9de4d0');
+  label(group,'JETRACER LAB',0,1.65,-5.83,8.4);
+  label(group,'ROS 2  /  RC WORKSHOP',0,0.8,-5.8,6.3,'#9de4d0');
   const entrance=label(group,'E  /  PROJEKT ENTDECKEN',0,0.1,6.5,7,'#405d51');entrance.rotation.x=-Math.PI/2;
   vehicle.addObstacle(x,z-6,6,0.15);vehicle.addObstacle(x-6,z-1,0.15,5);vehicle.addObstacle(x+6,z-1,0.15,5);
   const blockers=[];
@@ -54,7 +55,20 @@ function createRoboticsLab(scene,vehicle){
   }
   blockers.push(...group.children.filter(n=>n.isMesh&&n.geometry.type==='BoxGeometry'&&n.position.y>0.6));
   const robot=new THREE.Group();group.add(robot);
-  const chassis=new THREE.Mesh(new THREE.CylinderGeometry(0.65,0.65,0.35,20),mat('#e7dec8'));chassis.position.y=0.25;chassis.castShadow=true;robot.add(chassis);
+  block(robot,0.85,0.22,1.3,0,0.32,0,mat('#e8b368'));
+  block(robot,0.55,0.18,0.55,0,0.52,-0.1,dark);
+  for(const rx of [-0.48,0.48])for(const rz of [-0.42,0.42])block(robot,0.23,0.38,0.38,rx,0.22,rz,mat('#343941'));
+  block(robot,0.23,0.27,0.13,0,0.72,0.35,dark);
+  block(robot,0.12,0.10,0.05,0,0.75,0.43,mat('#a3e9dc'));
+  // An RC workbench, Jetson board and charging equipment behind the demo loop.
+  block(group,5,0.18,1.4,0,0.95,-4.1,mat('#ac805e'));
+  for(const bx of [-2,2])block(group,0.18,0.9,1.1,bx,0.45,-4.1,dark);
+  block(group,1.3,0.09,0.8,-1.1,1.09,-4.1,mat('#46937c'));
+  block(group,0.45,0.2,0.4,-1.1,1.24,-4.1,dark);
+  for(let i=0;i<5;i++)block(group,0.05,0.24,0.4,-1.3+i*0.1,1.3,-4.1,mat('#9dafa7'));
+  block(group,1.4,0.85,0.12,1.2,1.5,-4.55,dark);
+  label(group,'ROS 2',1.2,1.5,-4.46,1.2,'#a4efda');
+  vehicle.addObstacle(x,z-4.1,2.5,0.7);
   block(robot,0.35,0.12,0.3,0,0.49,0,dark);
   const scanner=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.13,0.18,12),new THREE.MeshStandardMaterial({color:'#8cebd2',emissive:'#62cdbb',emissiveIntensity:1}));scanner.position.y=0.62;robot.add(scanner);
   const count=48,scanPositions=new Float32Array(count*6),points=new Float32Array(count*3);
@@ -79,6 +93,6 @@ function createRoboticsLab(scene,vehicle){
 }
 
 export function createFacilities(scene,vehicle){
-  const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle),areas=createProjectAreas(scene,vehicle);createRamp(scene,vehicle);
-  return {setTestingStage:areas.setTestingStage,update(time,dt){garage.update(dt);lab.update(time);areas.update(time);}};
+  const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle),areas=createProjectAreas(scene,vehicle),exhibitions=createExhibitions(scene,vehicle);createRamp(scene,vehicle);
+  return {setDemo:exhibitions.setDemo,update(time,dt){garage.update(dt);lab.update(time);areas.update(time);exhibitions.update(time);}};
 }

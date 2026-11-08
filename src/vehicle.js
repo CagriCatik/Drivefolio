@@ -94,8 +94,8 @@ export async function createVehicle(scene) {
     ramps.push({x,z,width,length,height});
   }
   // World bounds stop visitors from driving into an empty, endless plane.
-  addObstacle(-35, -12, 1, 54); addObstacle(35, -12, 1, 54);
-  addObstacle(0, 29, 35, 1); addObstacle(0, -53, 35, 1);
+  addObstacle(-35, -17, 1, 54); addObstacle(35, -17, 1, 54);
+  addObstacle(0, 29, 35, 1); addObstacle(0, -62, 35, 1);
   reset();
   return { group, update, reset, stop, addObstacle, addProp, addRamp, setProfile,
     get profile(){return profile.id;},

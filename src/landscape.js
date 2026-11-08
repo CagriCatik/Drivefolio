@@ -12,7 +12,7 @@ function random(seed) { let n=seed; return () => { n=(Math.imul(n,1664525)+10139
 
 export function addLandscape(scene, vehicle) {
   const rng=random(42), dummy=new THREE.Object3D(), treeGroups=[];
-  const centers=[[-7,16],[7,17],[-7,6],[8,7],[-24,1],[-24,-9],[-10,-13],[24,-12],[23,4],[-8,-24],[8,-37],[-7,-36],[-21,-28],[22,-30],[-26,18],[24,21]];
+  const centers=[[-7,16],[7,17],[-7,6],[8,7],[-24,1],[-24,-9],[-10,-13],[24,-12],[23,4],[-25,-20],[8,-37],[-7,-36],[-25,-36],[26,-35],[-26,18],[24,21]];
   const leafColors=['#e6927f','#f5b48c','#ce7189','#c3ba5a'];
   const leafCanvas=document.createElement('canvas');leafCanvas.width=leafCanvas.height=64;
   const leafContext=leafCanvas.getContext('2d');leafContext.fillStyle='#ffffff';leafContext.beginPath();leafContext.ellipse(32,32,28,12,-0.4,0,Math.PI*2);leafContext.fill();

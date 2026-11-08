@@ -24,13 +24,15 @@ Die im Terminal angezeigte URL öffnen. Ein Doppelklick auf die HTML-Datei funkt
 | --- | --- |
 | Garage, links hinter dem Startplatz | Tor öffnet bei Annäherung. Im Eingang bei (-17, 16) E drücken oder den Garage-Button verwenden. Offroader/Sportwagen und vier Lackierungen stehen bereit. |
 | Rampe, rechts hinter dem Startplatz | Bei (15, 14) von Süden nach Norden anfahren. Ein echter Keil-Collider erzeugt den Sprung; kein versteckter Sprung-Trigger. |
-| Robotics-Labor, links an der Querstraße | Ein Demoroboter fährt eine vorgegebene Kreisbahn. 48 LiDAR-Raycasts gegen die Laboreinrichtung werden mit 10 Hz aktualisiert. Am Eingang (-15, 1.5) öffnet E das Projekt. |
-| Vehicle-Dynamics-Testgelände, rechts an der Querstraße | Zwei animierte Modelle zeigen Vorder- und Hinterachslenkung auf markierten Demonstrationsbahnen. Pylonen sind physisch beweglich. E am Terminal (15, 3) öffnet das Projekt. |
-| SpecToTest-Station, am nördlichen Straßenende | E bei (0, -20.5) startet eine kurze Vorschau: Textspezifikation, Mapping und Python-Testcode. Danach öffnet sich die Projektkarte. Escape oder Abbrechen beendet die Vorschau vorzeitig. |
+| JetRacer-Werkstatt, erste Querstraße links | RC-Modell mit Kamera/LiDAR, Jetson-Werkbank und ROS-2-Anzeige. 48 LiDAR-Raycasts mit 10 Hz. E bei (-15, 1.5). |
+| Vehicle Dynamics, erste Querstraße rechts | Zwei Modelle illustrieren 2WS/4WS. Bewegliche Pylonen. E bei (15, 3). |
+| RadarTrackBench, zweite Querstraße links | Rotierende Parabolantenne, bewegtes Ziel und Tracking-Tisch mit synthetischen verrauschten Messpunkten und glatter Zielspur. E bei (-15, -20). |
+| Vehicle Autonomy Stack, zweite Querstraße rechts | RC-Modell auf vorgegebener Route, Hindernis-Raycasts und schrittweise aufgedecktes Raster. E bei (15, -20). |
+| AgentSwarm, Straßenende | Coordinator, vier Spezialisten und MCP-Server. Violette Pakete illustrieren A2A-Nachrichten, grüne Pakete MCP-Werkzeugaufrufe. E bei (0, -41). |
 
-Alle Projekte sind außerdem direkt über die normale Projektliste erreichbar. Es gibt keine Projektparkplätze mehr.
+Anhalten und E startet eine kurze, abbrechbare Welt-Demo. Die Kamera zeigt dabei den Ort; danach öffnet sich die jeweilige Projektkarte. Über **Projekte → Projekt → Welt-Demo ansehen** sind alle Vorschauen ohne Fahren erreichbar. Escape, Abbrechen oder Zurücksetzen beendet eine laufende Demo. Die normale Projektliste bleibt auch ohne WebGL verfügbar.
 
-Die Stationen **illustrieren** die GitHub-Projekte. Die 2WS/4WS-Demonstration ist eine animierte Modellansicht, kein berechneter Fahrdynamikvergleich. Die Compiler-Vorschau führt SpecToTest nicht aus. Die LiDAR-Szene führt kein SLAM aus und ist keine eingebundene Instanz von Mobile-Robot-Autonomy.
+Die Stationen sind **illustrative JavaScript-Demos**, keine laufenden Instanzen der verlinkten Projekte: kein Python-Fahrdynamikvergleich, kein tatsächliches SLAM/RRT*/MPC, keine berechneten Kalman-Filter und keine Live-LLM-, MCP- oder A2A-Verbindung. Die Darstellung verwendet synthetische Daten, feste Routen und animierte Nachrichten. Der eigentliche Quellcode ist in jeder Karte verlinkt. Keine API-Schlüssel und kein Backend erforderlich.
 
 ## Steuerung
 
@@ -66,8 +68,8 @@ Touchgeräte erhalten entsprechende Bildschirmtasten. Die Projektliste funktioni
 | `vehicle.js` | Rapier-Welt, Fahrzeug, dynamische Objekte und Rampen |
 | `vehicle-visuals.js`, `car-visual.js` | Austausch und Animation der Fahrzeugmodelle |
 | `interactions.js` | Reine Abstands-/Eingabelogik und Rampenhöhen |
-| `test-sequence.js` | Frameworkfreier Ablauf der Compiler-Vorschau |
-| `facilities.js`, `project-areas.js` | Garage, Rampe und unterschiedliche Projektorte |
+| `demo-sequence.js` | Frameworkfreier Ablauf, Fortschritt und Abbruch der Projektvorschauen |
+| `facilities.js`, `project-areas.js`, `exhibition-areas.js` | Garage, Rampe und fünf unterschiedliche Projektorte |
 | `scene-primitives.js` | Kleine gemeinsame Geometrie- und Beschriftungsfunktionen |
 | `world.js`, `landscape.js` | Boden, Straßen und Umgebung |
 | `camera.js`, `input.js`, `audio.js`, `effects.js` | Kamera und Browseradapter |

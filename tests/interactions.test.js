@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createInteractions,rampHeightAt} from '../src/interactions.js';
+import {createInteractions,rampHeightAt,locations} from '../src/interactions.js';
+import {projects} from '../src/projects.js';
 import {getVehicle,getPaint,vehicles} from '../src/vehicle-catalog.js';
 
 test('facilities require proximity, stopping and a fresh press',()=>{
@@ -17,12 +18,12 @@ test('facilities require proximity, stopping and a fresh press',()=>{
 
 test('laboratory uses an explicit project interaction instead of parking dwell',()=>{
   const c=createInteractions();
-  assert.equal(c.update({x:-15,z:1.5},0,false).location.id,'robotics');
-  assert.equal(c.update({x:-15,z:1.5},0,true).activated.id,'robotics');
+  assert.equal(c.update({x:-15,z:1.5},0,false).location.id,'jetracer');
+  assert.equal(c.update({x:-15,z:1.5},0,true).activated.id,'jetracer');
 });
 
 test('all project terminals are distinct explicit interactions',()=>{
-  for(const [id,x,z] of [['robotics',-15,1.5],['dynamics',15,3],['testing',0,-20.5]]){
+  for(const {id,entrance:{x,z}} of projects){
     const c=createInteractions();assert.equal(c.update({x,z},0,false).activated,null);
     assert.equal(c.update({x,z},0,true).activated.id,id);
   }
@@ -42,4 +43,12 @@ test('vehicle and paint selection reject unknown identifiers; sport has a distin
   assert.throws(()=>getPaint('missing'));
   assert.ok(getVehicle('sport').maxSpeed>getVehicle('offroader').maxSpeed);
   assert.equal(new Set(vehicles.map(v=>v.id)).size,vehicles.length);
+});
+
+test('every project has one reachable terminal and no test specification projects remain',()=>{
+  assert.equal(locations.length,projects.length+1);
+  assert.equal(new Set(locations.map(l=>l.id)).size,locations.length);
+  assert.equal(projects.length,5);
+  assert.ok(!JSON.stringify(projects).match(/spectotest|spec2test|testspec/i));
+  for(const p of projects)assert.equal(locations.filter(l=>l.id===p.id).length,1);
 });

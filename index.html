@@ -15,22 +15,23 @@
       <nav aria-label="Hauptnavigation">
         <button id="projects-button" class="nav-button">Projekte <span>↗</span></button>
         <button id="about-button" class="nav-button">Über mich</button>
-        <a class="github-top" href="https://github.com/CagriCatik" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        <button id="sound-button" class="nav-button" aria-pressed="true">Sound an</button>
       </nav>
     </header>
     <main>
       <section id="welcome" class="welcome">
         <div class="eyebrow"><span class="status-dot"></span> A LITTLE DRIVE THROUGH MY WORK</div>
-        <h1>Gute Ideen.<br>Neue Wege.</h1>
-        <p>Ich bin Çağrı. Ich entwickle Software für<br class="desktop-break"> Fahrzeuge, Roboter und die Dinge dazwischen.</p>
+        <h1>Einfach<br>losfahren.</h1>
+        <p>Eine kleine Welt für meine Projekte.<br>Setz dich ans Steuer und schau dich um.</p>
         <div class="welcome-note"><span class="keycaps">W A S D</span><span>Fahr los. Parke bei einem Projekt.<br>Entdecke, was dahintersteckt.</span></div>
-        <button id="explore-button" class="explore-button">Losfahren <span>→</span></button>
+        <button id="explore-button" class="explore-button">Click to start <span>→</span></button>
         <button id="direct-button" class="text-button">Lieber direkt zu den Projekten ↗</button>
       </section>
       <div class="world-caption"><span>THE PROJECT NEIGHBOURHOOD</span><span>01 — 03</span></div>
       <div id="loading" class="loading" role="status"><span class="spinner"></span><span id="loading-text">Die kleine Welt wird vorbereitet …</span></div>
       <div id="parking-hint" class="parking-hint" role="status" hidden><span id="parking-message"></span><span class="progress-track"><i id="parking-progress"></i></span></div>
       <div id="toast" class="toast" role="status" hidden></div>
+      <div class="speed-display"><span id="speed-value">00</span><small>KM/H</small><div id="boost-label">SHIFT / BOOST</div></div>
       <div class="world-tools" aria-label="Welt steuern">
         <button id="zoom-in" aria-label="Hineinzoomen">+</button>
         <button id="zoom-out" aria-label="Herauszoomen">−</button>
@@ -38,10 +39,10 @@
       </div>
       <div class="touch-controls" aria-label="Fahrzeugsteuerung">
         <div><button data-drive="KeyA" aria-label="Links lenken">←</button><button data-drive="KeyD" aria-label="Rechts lenken">→</button></div>
-        <div><button data-drive="KeyW" aria-label="Vorwärts fahren">↑</button><button data-drive="KeyS" aria-label="Rückwärts fahren">↓</button><button data-drive="Space" aria-label="Bremsen">■</button></div>
+        <div><button data-drive="KeyW" aria-label="Vorwärts fahren">↑</button><button data-drive="KeyS" aria-label="Rückwärts fahren">↓</button><button data-drive="Space" aria-label="Bremsen">■</button><button data-drive="ShiftLeft" aria-label="Boost">⚡</button><button data-drive="KeyJ" aria-label="Springen">J</button></div>
       </div>
     </main>
-    <footer class="site-footer"><span><i class="status-dot"></i> EXPLORATION MODE</span><span class="keyboard-help"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> Fahren <span class="separator">/</span> <kbd>SPACE</kbd> Bremsen</span><button id="credits-button">Credits & Inspiration ↗</button></footer>
+    <footer class="site-footer"><span><i class="status-dot"></i> EXPLORE THE PLAYGROUND</span><span class="keyboard-help"><kbd>W A S D</kbd> Fahren <span class="separator">/</span> <kbd>SPACE</kbd> Drift <span class="separator">/</span> <kbd>SHIFT</kbd> Boost <span class="separator">/</span> <kbd>J</kbd> Springen</span><button id="credits-button">Credits & Inspiration ↗</button></footer>
 
     <dialog id="project-dialog" class="project-dialog">
       <button class="dialog-close" data-close aria-label="Projekt schließen">×</button>
@@ -51,7 +52,7 @@
 
     <dialog id="list-dialog" class="list-dialog"><button class="dialog-close" data-close aria-label="Projektliste schließen">×</button><div class="eyebrow">SELECTED WORK / 2026</div><h2>Drei Wege.<br>Viel Neugier.</h2><p>Fahr zu einer Station oder öffne ein Projekt direkt.</p><div id="project-list"></div></dialog>
     <dialog id="about-dialog" class="about-dialog"><button class="dialog-close" data-close aria-label="Über mich schließen">×</button><div class="eyebrow">HELLO, I'M ÇAĞRI</div><h2>Software trifft<br>Bewegung.</h2><p>Ich bin Mustafa Çağrı Çatık, Softwareentwickler mit Interesse an Robotics, Automotive und Testautomatisierung.</p><p>Mich interessiert, wie aus Modellen und Algorithmen funktionierende Systeme werden — von der Simulation bis zum fahrenden Roboter.</p><div class="tags"><span>Python</span><span>JavaScript</span><span>ROS / ROS 2</span><span>Automotive</span></div><a class="primary-link" href="https://github.com/CagriCatik" target="_blank" rel="noopener noreferrer">Mein GitHub-Profil <span>↗</span></a></dialog>
-    <dialog id="credits-dialog" class="about-dialog"><button class="dialog-close" data-close aria-label="Credits schließen">×</button><div class="eyebrow">BUILT WITH CURIOSITY</div><h2>Eine kleine Welt.<br>Viele gute Zutaten.</h2><p>Konzept und Kamerakomposition inspiriert von <a href="https://bruno-simon.com" target="_blank" rel="noopener noreferrer">Bruno Simon</a>. Die Kameraparameter wurden aus seinem MIT-lizenzierten folio-2025 adaptiert.</p><p>Fahrzeug- und Stadtmodelle von Kenney, übernommen aus RaceTrack. Grafik mit Three.js, Kollisionen mit Rapier.</p><p><a href="./licenses/bruno-simon-MIT.txt">Bruno Simon: MIT</a> · <a href="./licenses/kenney-car-kit.txt">Kenney Car Kit: CC0</a> · <a href="./licenses/kenney-city-kit.txt">City Kit Credits</a></p></dialog>
+    <dialog id="credits-dialog" class="about-dialog"><button class="dialog-close" data-close aria-label="Credits schließen">×</button><div class="eyebrow">BUILT WITH CURIOSITY</div><h2>Eine kleine Welt.<br>Viele gute Zutaten.</h2><p>Konzept, Offroader-Modell und Kamerakomposition von <a href="https://bruno-simon.com" target="_blank" rel="noopener noreferrer">Bruno Simon</a> beziehungsweise seinem MIT-lizenzierten folio-2025. Diese Umsetzung besitzt eine eigene kompakte Welt und vereinfachte Fahrzeugphysik.</p><p>Garagenmodelle von Kenney, übernommen aus RaceTrack. Grafik mit Three.js, Kollisionen mit Rapier. Alle Sounds werden lokal synthetisiert.</p><p><a href="./licenses/bruno-simon-MIT.txt">Bruno Simon: MIT</a> · <a href="./licenses/kenney-car-kit.txt">Kenney Car Kit: CC0</a> · <a href="./licenses/kenney-city-kit.txt">City Kit Credits</a></p></dialog>
     <noscript><div class="noscript"><h1>Çağrı Çatık — Projekte</h1><p>Die befahrbare Welt benötigt JavaScript. Meine Projekte kannst du auch direkt auf GitHub ansehen:</p><a href="https://github.com/CagriCatik/Mobile-Robot-Autonomy">Mobile Robot Autonomy</a><a href="https://github.com/CagriCatik/Vehicle-Dynamics">Vehicle Dynamics</a><a href="https://github.com/CagriCatik/SpecToTest">SpecToTest</a></div></noscript>
     <script type="module" src="/src/main.js"></script>
   </body>

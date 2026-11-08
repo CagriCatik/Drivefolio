@@ -29,3 +29,21 @@ test('portfolio camera has Bruno-style FOV and does not rotate with car heading'
   assert.ok(before.angleTo(view.camera.quaternion) < 0.001);
   view.resize(0.5); assert.equal(view.camera.aspect, 0.5);
 });
+
+test('acceleration reaches cruising speed; boost is faster instead of fighting hidden damping', async () => {
+  const v=await createVehicle(new THREE.Scene());
+  for(let i=0;i<90;i++)v.update(1/60,{throttle:1,steering:0,brake:false,boost:false});
+  assert.ok(v.speed>15 && v.speed<16.1,`cruising speed: ${v.speed}`);
+  v.reset();
+  for(let i=0;i<120;i++)v.update(1/60,{throttle:1,steering:0,brake:false,boost:true});
+  assert.ok(v.speed>24 && v.speed<26.1,`boost speed: ${v.speed}`);
+});
+
+test('jump is edge-triggered, lands under gravity and cannot repeat while held',async()=>{
+  const v=await createVehicle(new THREE.Scene());
+  const step=()=>v.update(1/60,{throttle:0,steering:0,brake:false,jump:true});
+  for(let i=0;i<20;i++)step();
+  assert.ok(v.group.position.y>1,'jump leaves the ground');
+  for(let i=0;i<120;i++)step();
+  assert.ok(v.group.position.y<0.03,'holding jump does not trigger more jumps');
+});

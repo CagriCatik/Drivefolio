@@ -53,7 +53,7 @@ Die drei Stationen werden in `src/projects.js` definiert: Titel, Kurzbeschreibun
 | `src/world.js` | Modelle, Boden, Beschilderung, statische Kollisionen |
 | `src/main.js` | Initialisierung, Dialoge und Simulationsschleife |
 
-Das Fahrzeug ist ein vereinfachtes Arcade-Modell mit planarer Starrkörperkollision, kein vollständiges Fahrwerks- oder Reifenmodell. Die Kamera verwendet Brunos 25°-Perspektive mit festem Weltwinkel. Dies ist eine kleine eigenständige Umsetzung, kein unveränderter Fork seiner vollständigen Welt.
+Das Fahrzeug ist ein vereinfachtes Arcade-Modell mit Starrkörperkollision, Schwerkraft und Sprungimpuls. Es ist kein vollständiges Fahrwerks- oder Reifenmodell. Die Kamera verwendet Brunos 25°-Perspektive mit festem Weltwinkel. Dies ist eine kleine eigenständige Umsetzung, kein unveränderter Fork seiner vollständigen Welt.
 
 ## Validierung
 
@@ -65,7 +65,7 @@ npm run preview
 
 Tests decken Parkerkennung, zu schnelles Durchfahren, einmaliges Öffnen, Wiedereintritt, ungültige Eingaben, Fahrzeugbewegung, Bremsen, Gebäudekollisionen, Reset, Kamerarichtung und lokale Modellressourcen ab.
 
-**Status der ersten Version:** Tests und Produktions-Build geprüft. Projektliste, Projektkarte und GitHub-Link im Browser geprüft. Der bereitgestellte Vorschau-Browser hat WebGL deaktiviert; die gerenderte 3D-Welt und Touchbedienung konnten dort noch nicht visuell abgenommen werden. Vor der finalen Freigabe im eigenen Browser auf der echten Pages-URL prüfen: Texturen, Blickwinkel, alle drei Parkflächen, Smartphone-Steuerung, Dialogpause und Reset.
+**Status der ersten Version:** Tests und Produktions-Build geprüft. Projektliste, Projektkarte und GitHub-Link im Browser geprüft. Die erste Version wurde anschließend auf GitHub Pages auch visuell geladen. Die aktuelle Überarbeitung ergänzt Offroader, Vegetation, Bloom, Staub, Spuren und synthetischen Sound; Touchbedienung muss weiterhin auf einem echten Smartphone geprüft werden. Vor der finalen Freigabe im eigenen Browser auf der echten Pages-URL prüfen: Texturen, Blickwinkel, alle drei Parkflächen, Smartphone-Steuerung, Dialogpause und Reset.
 
 ## Credits und Lizenzen
 
@@ -74,4 +74,15 @@ Tests decken Parkerkennung, zu schnelles Durchfahren, einmaliges Öffnen, Wieder
 - Three.js: MIT. Rapier: Apache-2.0. Vite: MIT. Die jeweiligen Paketlizenzen liegen in den npm-Paketen; verwendete Laufzeitlizenzen werden im Build mit ausgeliefert.
 - Zusätzlicher Anwendungscode: MIT, siehe `LICENSE`.
 
-Keine Analytics, keine externen Schriftarten und kein WebSocket-Server.
+Keine Analytics und kein WebSocket-Server. Die Helvetiker-Schrift wird lokal als Typeface-JSON ausgeliefert; die ursprünglichen Font-Lizenzhinweise stehen innerhalb dieser Datei.
+
+## Version 0.2 — Playground
+
+- Originales Offroader-Modell aus folio-2025 (Bruno Simon, MIT), vier separat animierte Räder, sichtbare Lenkung und Karosserieneigung.
+- 16 m/s Reisegeschwindigkeit, 26 m/s Boost, Handbremse/Drift, J für Sprünge und H für die Hupe.
+- Kamera deutlich näher am Fahrzeug; keine Drehung mit der Fahrzeugrichtung.
+- Instanzierte Vegetation mit Wind, 3D-Namensschrift, Bänke, Laternen, bewegliche Kisten und beleuchtete Stationen.
+- Bloom, Staubpartikel, begrenzter Reifenspur-Pool und lokal erzeugte Motor-, Brems- und Hinweistöne.
+- Separate Module `landscape.js`, `car-visual.js`, `effects.js` und `audio.js` halten Gestaltung, Fahrzeugdarstellung und Seiteneffekte aus der Parkerkennung heraus.
+
+Diese Version adaptiert Fahrzeugmodell und Kamera aus der Referenz, aber nicht deren vollständiges Rendering-, Gelände- oder Fahrwerksystem.

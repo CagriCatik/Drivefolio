@@ -1,6 +1,6 @@
 export function createInput() {
   const keys = new Set();
-  const owned = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'];
+  const owned = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'ShiftLeft', 'ShiftRight', 'KeyJ', 'KeyH'];
   let enabled = true;
   const clear = () => { keys.clear(); };
   window.addEventListener('keydown', e => {
@@ -23,6 +23,9 @@ export function createInput() {
       throttle: Number(keys.has('KeyW') || keys.has('ArrowUp')) - Number(keys.has('KeyS') || keys.has('ArrowDown')),
       steering: Number(keys.has('KeyA') || keys.has('ArrowLeft')) - Number(keys.has('KeyD') || keys.has('ArrowRight')),
       brake: keys.has('Space'),
+      boost: keys.has('ShiftLeft') || keys.has('ShiftRight'),
+      jump: keys.has('KeyJ'),
+      horn: keys.has('KeyH'),
     }),
     setEnabled(value) { enabled = value; clear(); },
     clear,

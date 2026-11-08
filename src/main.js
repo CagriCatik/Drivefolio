@@ -6,18 +6,26 @@ import { createInput } from './input.js';
 import { createPortfolioCamera } from './camera.js';
 import { createVehicle } from './vehicle.js';
 import { createWorld } from './world.js';
+import { createDrivingEffects } from './effects.js';
+import { createAudio } from './audio.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const $ = id => document.getElementById(id);
 const input = createInput();
 const parking = createParkingController(projects);
+const sound=createAudio();
 const visited = new Set();
-let vehicle, view, activeDialog = null, previousFocus = null;
+let vehicle, view, drivingEffects, activeDialog = null, previousFocus = null;
 let started = false, ready = false, resetClock = false;
 const dialogs = [...document.querySelectorAll('dialog')];
 
 function dismissWelcome() {
   if (started) return;
   started = true;
+  sound.start();
   $('welcome').classList.add('dismissed');
   $('welcome').inert = true;
 }
@@ -60,6 +68,7 @@ function openProject(project) {
     const span = document.createElement('span'); span.textContent = tag; return span;
   }));
   visited.add(project.id);
+  sound.chime();
   showDialog($('project-dialog'));
 }
 
@@ -79,6 +88,9 @@ $('projects-button').addEventListener('click', () => showDialog($('list-dialog')
 $('direct-button').addEventListener('click', () => showDialog($('list-dialog')));
 $('about-button').addEventListener('click', () => showDialog($('about-dialog')));
 $('credits-button').addEventListener('click', () => showDialog($('credits-dialog')));
+$('sound-button').addEventListener('click', () => {
+  const enabled=sound.toggle();$('sound-button').textContent=enabled?'Sound an':'Sound aus';$('sound-button').setAttribute('aria-pressed',String(enabled));
+});
 $('explore-button').disabled = true;
 $('explore-button').addEventListener('click', dismissWelcome);
 $('zoom-in').addEventListener('click', () => view?.zoom(-0.12));
@@ -86,6 +98,7 @@ $('zoom-out').addEventListener('click', () => view?.zoom(0.12));
 $('reset-button').addEventListener('click', () => {
   if (!ready) return;
   input.clear(); vehicle.reset(); parking.reset(); view.reset(vehicle.group.position); resetClock = true;
+  drivingEffects?.reset();
   $('parking-hint').hidden = true;
   $('toast').textContent = 'Wieder am Start. Gute Fahrt!'; $('toast').hidden = false;
   setTimeout(() => { $('toast').hidden = true; }, 2200);
@@ -94,25 +107,31 @@ window.addEventListener('keydown', e => { if (e.code === 'Escape' && !activeDial
 
 async function main() {
   const renderer = new THREE.WebGLRenderer({ canvas: $('world'), antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.25;
-  const scene = new THREE.Scene(); scene.background = new THREE.Color('#e9e3d6');
-  scene.fog = new THREE.Fog('#e9e3d6', 105, 195);
-  scene.add(new THREE.HemisphereLight('#fff9ed', '#b2b7a1', 2.5));
-  const sun = new THREE.DirectionalLight('#fff4df', 3.3); sun.position.set(-30, 55, 20);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+  const scene = new THREE.Scene(); scene.background = new THREE.Color('#cda285');
+  scene.fog = new THREE.Fog('#cda285', 57, 115);
+  scene.add(new THREE.HemisphereLight('#d1b4fc', '#80506a', 1.45));
+  const sun = new THREE.DirectionalLight('#ffd09a', 3.2); sun.position.set(-18, 32, 20);
   sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, { left: -65, right: 65, top: 65, bottom: -65, near: 1, far: 160 });
   sun.shadow.normalBias = 0.025; sun.shadow.bias = -0.00015; scene.add(sun);
   view = createPortfolioCamera(window.innerWidth / window.innerHeight);
   vehicle = await createVehicle(scene);
   const world = await createWorld(scene, vehicle);
+  drivingEffects=createDrivingEffects(scene,vehicle);
+  const composer=new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene,view.camera));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth,window.innerHeight),0.42,0.35,1.5));
+  composer.addPass(new OutputPass());
   ready = true;
   $('loading').hidden = true; $('explore-button').disabled = false;
 
   function resize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
+    composer.setSize(window.innerWidth,window.innerHeight);
     view.resize(window.innerWidth / window.innerHeight);
   }
   window.addEventListener('resize', resize);
@@ -148,8 +167,12 @@ async function main() {
       }
     } else accumulator = 0;
     view.update(dt, vehicle.group.position, vehicle.heading, vehicle.speed > 0.5);
-    world.update(time, status);
-    renderer.render(scene, view.camera);
+    world.update(time, status,dt);
+    drivingEffects.update(dt,time,!!activeDialog);
+    sound.update(vehicle.motion,!!activeDialog);
+    $('speed-value').textContent=String(Math.round(vehicle.speed*3.6)).padStart(2,'0');
+    $('boost-label').classList.toggle('boosting',!!vehicle.motion.input.boost&&vehicle.speed>2);
+    composer.render();
   });
 }
 

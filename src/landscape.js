@@ -6,7 +6,7 @@ import {mat,block,label} from './scene-primitives.js';
 
 export function addLandscape(scene,vehicle){
   const concrete=mat('#d8e2e3'),metal=mat('#334a54'),timber=mat('#a88c6b');
-  const crowns=[],trees=[[-8,16],[8,21],[-25,14],[25,20],[-26,-5],[26,-6],[-26,-29],[26,-29],[-27,-52],[27,-52],[-8,-12],[8,-12],[-8,-33],[8,-33]];
+  const crowns=[],trees=[[-8,11],[8,21],[-25,14],[25,20],[-26,-5],[26,-6],[-26,-29],[26,-29],[-27,-52],[27,-52],[-8,-12],[8,-12],[-8,-33],[8,-33]];
   const crownGeometry=new THREE.IcosahedronGeometry(1,2),leafMaterials=['#4a856d','#60967b','#75a181'].map(mat);
   for(const [i,[x,z]] of trees.entries()){
     block(scene,3.4,0.22,3.4,x,0.08,z,concrete);
@@ -61,7 +61,7 @@ export function addLandscape(scene,vehicle){
 export async function addNameSculpture(scene){
   const font=await new FontLoader().loadAsync(`${import.meta.env.BASE_URL}fonts/name-bold.json`);
   const geometry=new TextGeometry(ownerName,{font,size:0.95,depth:0.24,curveSegments:3,bevelEnabled:true,bevelThickness:0.035,bevelSize:0.02,bevelSegments:1});geometry.center();
-  const text=new THREE.Mesh(geometry,[mat('#f4f9fa'),mat('#237c87')]);text.position.set(-2.2,0.8,18.8);text.rotation.y=Math.PI/4;text.castShadow=true;scene.add(text);
-  const plinth=block(scene,9,0.32,1.45,-2.2,0.16,18.8,mat('#456373'));plinth.rotation.y=Math.PI/4;
-  const strip=block(scene,8.6,0.04,0.1,-2.2,0.34,19.0,new THREE.MeshStandardMaterial({color:'#b8f5e9',emissive:'#69c7ba',emissiveIntensity:0.6}));strip.rotation.y=Math.PI/4;
+  const text=new THREE.Mesh(geometry,[mat('#f4f9fa'),mat('#237c87')]);text.position.set(-8,0.8,19.5);text.rotation.y=Math.PI/4;text.castShadow=true;scene.add(text);
+  const plinth=block(scene,9,0.32,1.45,-8,0.16,19.5,mat('#456373'));plinth.rotation.y=Math.PI/4;
+  const strip=block(scene,8.6,0.04,0.1,-8,0.34,19.7,new THREE.MeshStandardMaterial({color:'#b8f5e9',emissive:'#69c7ba',emissiveIntensity:0.6}));strip.rotation.y=Math.PI/4;
 }

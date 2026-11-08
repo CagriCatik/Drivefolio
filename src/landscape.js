@@ -14,9 +14,12 @@ export function addLandscape(scene, vehicle) {
   const rng=random(42), dummy=new THREE.Object3D(), treeGroups=[];
   const centers=[[-7,16],[7,17],[-7,6],[8,7],[-24,1],[-24,-9],[-10,-13],[24,-12],[23,4],[-8,-24],[8,-37],[-7,-36],[-21,-28],[22,-30],[-26,18],[24,21]];
   const leafColors=['#e6927f','#f5b48c','#ce7189','#c3ba5a'];
-  const foliage=leafColors.map(color=>new THREE.InstancedMesh(new THREE.OctahedronGeometry(0.2,0),mat(color),centers.length*100));
+  const leafCanvas=document.createElement('canvas');leafCanvas.width=leafCanvas.height=64;
+  const leafContext=leafCanvas.getContext('2d');leafContext.fillStyle='#ffffff';leafContext.beginPath();leafContext.ellipse(32,32,28,12,-0.4,0,Math.PI*2);leafContext.fill();
+  const leafTexture=new THREE.CanvasTexture(leafCanvas);
+  const foliage=leafColors.map(color=>new THREE.InstancedMesh(new THREE.PlaneGeometry(0.3,0.23),new THREE.MeshStandardMaterial({color,map:leafTexture,alphaTest:0.5,side:THREE.DoubleSide,roughness:1}),centers.length*500));
   const counts=[0,0,0,0];
-  const grass=new THREE.InstancedMesh(new THREE.ConeGeometry(0.11,0.8,3),mat('#979e51'),centers.length*125);
+  const grass=new THREE.InstancedMesh(new THREE.ConeGeometry(0.15,0.95,3),new THREE.MeshStandardMaterial({color:'#bdbe68',emissive:'#555622',emissiveIntensity:0.3,roughness:1}),centers.length*500);
   let grassIndex=0;
   for(let ti=0;ti<centers.length;ti++) {
     const [x,z]=centers[ti], height=3.1+rng()*1.2;
@@ -27,17 +30,16 @@ export function addLandscape(scene, vehicle) {
       const limb=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.13,1.8,5),wood);
       limb.position.set(x+(branch-1)*0.45,height-0.6,z);limb.rotation.z=(branch-1)*0.65;scene.add(limb);
     }
-    const points=[];
-    for(let i=0;i<310;i++) {
+    for(let i=0;i<1100;i++) {
       const a=rng()*Math.PI*2, r=Math.cbrt(rng())*2.25, v=(rng()-0.5)*2;
       const px=x+Math.cos(a)*r*Math.sqrt(1-v*v), py=height+v*1.55, pz=z+Math.sin(a)*r*Math.sqrt(1-v*v);
       const color=ti%4===3?3:Math.floor(rng()*3);
       dummy.position.set(px,py,pz);dummy.rotation.set(rng(),rng(),rng());dummy.scale.setScalar(0.7+rng()*0.85);dummy.updateMatrix();
-      foliage[color].setMatrixAt(counts[color]++,dummy.matrix);points.push([px,py,pz]);
+      foliage[color].setMatrixAt(counts[color]++,dummy.matrix);
     }
-    for(let i=0;i<125;i++) {
-      const a=rng()*Math.PI*2,r=1.2+Math.sqrt(rng())*2.5;
-      dummy.position.set(x+Math.cos(a)*r,0.3,z+Math.sin(a)*r);
+    for(let i=0;i<500;i++) {
+      const a=rng()*Math.PI*2,r=0.5+Math.sqrt(rng())*3.1;
+      dummy.position.set(x+Math.cos(a)*r,0.37,z+Math.sin(a)*r);
       dummy.rotation.set(0,rng()*6.3,(rng()-0.5)*0.25);dummy.scale.set(0.8,0.5+rng()*0.9,0.8);dummy.updateMatrix();grass.setMatrixAt(grassIndex++,dummy.matrix);
     }
     // Rounded stones break up the edge of the vegetation.

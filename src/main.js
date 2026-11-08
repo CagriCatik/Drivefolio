@@ -152,7 +152,7 @@ async function main() {
         const controls = input.read();
         if (controls.throttle || controls.steering) dismissWelcome();
         vehicle.update(fixed, controls);
-        status = parking.update(vehicle.group.position, vehicle.speed, fixed);
+        status = parking.update(vehicle.group.position, vehicle.motion.grounded ? vehicle.speed : Infinity, fixed);
         accumulator -= fixed; steps++;
         if (status.opened) { openProject(status.opened); accumulator = 0; break; }
       }

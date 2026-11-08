@@ -24,6 +24,7 @@ export function createCarVisual(model, vehicle) {
     if(/^stopLights|backLights/i.test(n.name)){brakeLights.push(n);n.visible=false;}
     if(/^blinker/i.test(n.name)){blinkers.push(n);n.visible=false;}
     if(/^energy|cellsEnergy/i.test(n.name))n.visible=false;
+    if(/^wheelSuspension|wheelGuard/i.test(n.name))n.visible=false;
   });
   const left=new THREE.PointLight('#ffca7c',1.5,5);left.position.set(0.6,0.75,1.5);vehicle.group.add(left);
   let roll=0,pitch=0;

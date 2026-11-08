@@ -1,5 +1,6 @@
 import './style.css';
 import * as THREE from 'three';
+import {createCampusMap} from './campus-map.js';
 import { projects } from './projects.js';
 import { createInput } from './input.js';
 import { createPortfolioCamera } from './camera.js';
@@ -22,6 +23,7 @@ let selectedProject=null;
 const interactions=createInteractions();
 const sound=createAudio();
 const visited = new Set();
+const campusMap=createCampusMap(projects,openProject);
 let vehicle, view, drivingEffects, worldController, activeDialog = null, previousFocus = null;
 let started = false, ready = false, resetClock = false;
 const dialogs = [...document.querySelectorAll('dialog')];
@@ -139,6 +141,9 @@ for(const paint of paints){
   radio.addEventListener('change',()=>{worldController?.vehicles.paint(paint.id);$('garage-status').textContent=`Lackierung: ${paint.name}`;});
   label.append(radio,swatch,text);$('paint-choices').append(label);
 }
+function toggleLights(){if(!worldController)return;const enabled=worldController.vehicles.toggleLights();$('lights-button').textContent=enabled?'Scheinwerfer an · L':'Scheinwerfer aus · L';$('lights-button').setAttribute('aria-pressed',String(enabled));}
+$('lights-button').addEventListener('click',toggleLights);
+window.addEventListener('keydown',e=>{if(e.code==='KeyL'&&!e.repeat&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))toggleLights();});
 $('sound-button').addEventListener('click', () => {
   const enabled=sound.toggle();$('sound-button').textContent=enabled?'Sound an':'Sound aus';$('sound-button').setAttribute('aria-pressed',String(enabled));
 });
@@ -164,10 +169,10 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
-  const scene = new THREE.Scene(); scene.background = new THREE.Color('#cda285');
-  scene.fog = new THREE.Fog('#cda285', 57, 115);
-  scene.add(new THREE.HemisphereLight('#d1b4fc', '#80506a', 1.45));
-  const sun = new THREE.DirectionalLight('#ffd09a', 3.2); sun.position.set(-18, 32, 20);
+  const scene = new THREE.Scene(); scene.background = new THREE.Color('#d4e5eb');
+  scene.fog = new THREE.Fog('#d4e5eb', 85, 155);
+  scene.add(new THREE.HemisphereLight('#e6f4ff', '#81998b', 1.9));
+  const sun = new THREE.DirectionalLight('#fff8ed', 2.5); sun.position.set(-18, 32, 20);
   sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, { left: -65, right: 65, top: 65, bottom: -65, near: 1, far: 160 });
   sun.shadow.normalBias = 0.025; sun.shadow.bias = -0.00015; scene.add(sun);
@@ -178,7 +183,7 @@ async function main() {
   drivingEffects=createDrivingEffects(scene,vehicle);
   const composer=new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene,view.camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth,window.innerHeight),0.42,0.35,1.5));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth,window.innerHeight),0.22,0.3,1.7));
   composer.addPass(new OutputPass());
   ready = true;
   $('loading').hidden = true; $('explore-button').disabled = false;
@@ -232,6 +237,7 @@ async function main() {
     sound.update(vehicle.motion,!!activeDialog||sequence.running);
     $('speed-value').textContent=String(Math.round(vehicle.speed*3.6)).padStart(2,'0');
     $('boost-label').classList.toggle('boosting',!!vehicle.motion.input.boost&&vehicle.speed>2);
+    campusMap.update(vehicle.group.position,vehicle.heading);
     composer.render();
   });
 }

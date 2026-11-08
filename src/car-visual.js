@@ -38,7 +38,7 @@ export function createCarVisual(model, vehicle) {
       wheel.group.rotation.y=wheel.baseY+(wheel.front?motion.steering*0.4:0);
       if(wheel.roller)wheel.roller.rotation.z-=motion.signedSpeed*dt/0.4*(wheel.baseY? -1:1);
     }
-    brakeLights.forEach(n=>n.visible=motion.input.brake||motion.input.throttle<0);
+    brakeLights.forEach(n=>n.visible=motion.input.brake||motion.input.throttle*motion.signedSpeed < -0.5);
     blinkers.forEach((n,i)=>n.visible=Math.abs(motion.steering)>0.3&&Math.sin(time*10)>0&&i===(motion.steering>0?0:1));
   }};
 }

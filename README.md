@@ -37,6 +37,14 @@ Anhalten und E startet eine kurze, abbrechbare Welt-Demo. Die Kamera zeigt dabei
 
 Die Stationen sind **illustrative JavaScript-Demos**, keine laufenden Instanzen der verlinkten Projekte: kein Python-Fahrdynamikvergleich, kein tatsächliches SLAM/RRT*/MPC, keine berechneten Kalman-Filter, Frenet-Optimierung, FMT-Suche oder MPC-Optimierung und keine Live-LLM-, MCP- oder A2A-Verbindung. Die Darstellung verwendet synthetische Daten, feste Routen und animierte Nachrichten. Der eigentliche Quellcode ist in jeder Karte verlinkt. Keine API-Schlüssel und kein Backend erforderlich.
 
+## Moderner Engineering-Campus
+
+Heller Beton, Asphalt, bepflanzte Inseln, kompakte grüne Baumkronen, LED-Masten, Sitzplätze, Pergola, EV-Ladesäulen und ein seitlicher Wasserkanal ersetzen die Wüstenumgebung. Garage mit Solarmodulen und Fassadenfenster; JetRacer-Werkstatt mit offener Überdachung, Hebebühne und Werkzeugwagen. Reifen und Pylonen am Sprungbereich sind bewegliche Rapier-Objekte.
+
+Die Radarantenne richtet sich innerhalb von 18 Metern auf das Besucherfahrzeug aus. Das Display zeigt dabei verrauschte Positionsproben und eine einfache geglättete Spur. Außerhalb des Bereichs bleibt die synthetische Ziel-Demo aktiv. Kein echter Radar- oder Kalman-Filter-Backenddienst.
+
+**Campusplan** zeigt alle sieben Projekte und die aktuelle Fahrzeugposition. Nummern öffnen direkt die Projektkarte. Beide Fahrzeuge besitzen Scheinwerfer (L bzw. Garage), Brems- und Rückfahrlichter. Reifenspuren entstehen beim Driften; Partikel sind auf Drift und hohe Geschwindigkeit begrenzt.
+
 ## Steuerung
 
 | Eingabe | Aktion |
@@ -46,6 +54,7 @@ Die Stationen sind **illustrative JavaScript-Demos**, keine laufenden Instanzen 
 | Shift | Boost |
 | J | Springen |
 | H | Hupe |
+| L | Scheinwerfer umschalten |
 | E | Nahes Projektterminal oder Garage aktivieren; dabei anhalten |
 | + / − | Kamera zoomen |
 | ↺ | Fahrzeug, bewegliche Objekte und laufende Vorschau zurücksetzen |

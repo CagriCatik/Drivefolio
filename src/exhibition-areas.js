@@ -12,20 +12,30 @@ function orb(parent,radius,color,x,y,z){
 function station(scene,vehicle,x,z,title,subtitle,color,width=14,depth=12){
   const group=new THREE.Group();group.position.set(x,0,z);scene.add(group);
   block(group,width,0.08,depth,0,0.02,0,mat(color));
-  block(group,width,2.7,0.25,0,1.35,-depth/2,mat('#4d485e'));
+  block(group,width,2.7,0.25,0,1.35,-depth/2,mat('#344e60'));
   label(group,title,0,1.9,-depth/2+0.16,width-1.2);
   label(group,subtitle,0,0.85,-depth/2+0.18,width-2,'#c4e0d8');
   vehicle.addObstacle(x,z-depth/2,width/2,0.15);
-  const entry=label(group,'E  /  DEMO STARTEN',0,0.12,8,6,'#55495e');entry.rotation.x=-Math.PI/2;
+  const entry=label(group,'E  /  DEMO STARTEN',0,0.12,8,6,'#365a6b');entry.rotation.x=-Math.PI/2;
   for(const sx of [-width/2+0.3,width/2-0.3]){
-    block(group,0.22,1.2,0.22,sx,0.6,depth/2,mat('#5c5366'));
+    block(group,0.22,1.2,0.22,sx,0.6,depth/2,mat('#3c6271'));
     orb(group,0.17,'#d4edca',sx,1.25,depth/2);
   }
   return group;
 }
 
 function createRadar(scene,vehicle){
-  const group=station(scene,vehicle,-15,-28,'RADAR TRACK BENCH','MESSEN  /  FILTERN  /  VERFOLGEN','#99aebe');
+  const group=station(scene,vehicle,-15,-28,'RADAR TRACK BENCH','MESSEN  /  FILTERN  /  VERFOLGEN','#bbcdd4');
+  const shell=mat('#e3ecef'),trim=mat('#365668');
+  block(group,3.1,2.1,1.5,4.2,1.05,-4.4,shell);
+  block(group,3.4,0.16,1.8,4.2,2.18,-4.4,trim);
+  block(group,2.7,0.85,0.04,4.2,1.25,-3.62,new THREE.MeshStandardMaterial({color:'#6aa8bf',metalness:0.25,roughness:0.2}));
+  for(let i=0;i<3;i++)block(group,0.07,0.95,0.08,3.3+i*0.9,1.25,-3.57,trim);
+  label(group,'TRACKING CONTROL',4.2,1.94,-3.55,2.6,'#315463');
+  const trackingStatus=label(group,'FAHRZEUG ERFASST',0,0.14,5.2,5.5,'#24746e');trackingStatus.rotation.x=-Math.PI/2;trackingStatus.visible=false;
+  vehicle.addObstacle(-10.8,-32.4,1.55,0.75);
+  const beamPositions=new Float32Array(6),beamGeometry=new THREE.BufferGeometry();beamGeometry.setAttribute('position',new THREE.BufferAttribute(beamPositions,3));
+  const beam=new THREE.Line(beamGeometry,new THREE.LineBasicMaterial({color:'#59cdbb',transparent:true,opacity:0.3}));beam.frustumCulled=false;group.add(beam);
   const tower=new THREE.Group();tower.position.set(-3.6,0,-1.3);group.add(tower);
   block(tower,2.8,0.28,2.8,0,0.18,0,mat('#68798b'));
   for(const x of [-0.8,0.8])for(const z of [-0.8,0.8]){
@@ -46,7 +56,7 @@ function createRadar(scene,vehicle){
     const points=[];for(let i=0;i<=64;i++){const t=i/64*Math.PI*2;points.push([Math.cos(t)*r,0.71,Math.sin(t)*r]);}line(board,points,'#609489',0.6);
   }
   line(board,[[-2.3,0.72,0],[2.3,0.72,0]],'#609489',0.6);line(board,[[0,0.72,-2.3],[0,0.72,2.3]],'#609489',0.6);
-  label(group,'MESSUNG  /  FILTERSPUR',2.7,1.1,-3.8,4.4,'#d3f3e0');
+  label(group,'MESSUNG  /  FILTERSPUR',2.7,0.15,4.2,4.4,'#355b69').rotation.x=-Math.PI/2;
   const sweep=line(board,[[0,0.74,0],[2.25,0.74,0]],'#b6ffb3');
   const rawGeometry=new THREE.BufferGeometry(),filteredGeometry=new THREE.BufferGeometry();
   const raw=new Float32Array(48*3),filtered=new Float32Array(48*3);
@@ -56,22 +66,33 @@ function createRadar(scene,vehicle){
   const target=new THREE.Group();group.add(target);orb(target,0.16,'#ffe9a4',0,0,0);
   block(target,1.1,0.08,0.15,0,0,0,mat('#e7d7b3'));block(target,0.15,0.08,0.9,0,0,0,mat('#e7d7b3'));
   vehicle.addObstacle(-12.3,-27.5,2.6,3);
-  let last=-1;
+  let last=-1,previousTime=0,smoothedX=0,smoothedZ=0;
+  const history=[];
   return {update(time){
-    antenna.rotation.y=time*0.65;sweep.rotation.y=-time*1.1;
+    const dt=Math.min(0.1,time-previousTime);previousTime=time;
+    const dx=vehicle.group.position.x+15,dz=vehicle.group.position.z+28,near=Math.hypot(dx,dz)<18;
+    trackingStatus.visible=near;beam.visible=near;
+    if(near){
+      const desired=Math.atan2(-dx-3.6,-dz-1.3),delta=Math.atan2(Math.sin(desired-antenna.rotation.y),Math.cos(desired-antenna.rotation.y));antenna.rotation.y+=delta*(1-Math.exp(-4*dt));
+      beamPositions.set([-3.6,3.5,-1.3,dx,0.5,dz]);beamGeometry.attributes.position.needsUpdate=true;
+    }else antenna.rotation.y+=dt*0.65;
+    sweep.rotation.y=-time*1.1;
     target.position.set(Math.cos(time*0.55)*4,4.4+Math.sin(time)*0.25,Math.sin(time*0.55)*2);
     target.rotation.y=-time*0.55;
     if(time-last<0.08)return;last=time;
+    const measurementX=near?THREE.MathUtils.clamp(dx/8,-2.1,2.1):Math.cos(time*0.55)*1.8;
+    const measurementZ=near?THREE.MathUtils.clamp(dz/8,-2.1,2.1):Math.sin(time*0.55)*1.35;
+    smoothedX=THREE.MathUtils.lerp(smoothedX,measurementX,0.35);smoothedZ=THREE.MathUtils.lerp(smoothedZ,measurementZ,0.35);
+    history.push({x:measurementX+Math.sin(time*21)*0.16,z:measurementZ+Math.cos(time*17)*0.16,sx:smoothedX,sz:smoothedZ});if(history.length>48)history.shift();
     for(let i=0;i<48;i++){
-      const t=time*0.55-(47-i)*0.055,x=Math.cos(t)*1.8,z=Math.sin(t)*1.35;
-      filtered.set([x,0.77,z],i*3);raw.set([x+Math.sin(i*17.3+time*4)*0.27,0.8,z+Math.cos(i*13.1+time*3)*0.27],i*3);
+      const sample=history[Math.min(i,history.length-1)];filtered.set([sample.sx,0.77,sample.sz],i*3);raw.set([sample.x,0.8,sample.z],i*3);
     }
     rawGeometry.attributes.position.needsUpdate=true;filteredGeometry.attributes.position.needsUpdate=true;
   }};
 }
 
 function createAutonomy(scene,vehicle){
-  const group=station(scene,vehicle,15,-28,'AUTONOMY FIELD','LIDAR  /  MAP  /  PLAN  /  MPC','#c5b585');
+  const group=station(scene,vehicle,15,-28,'AUTONOMY FIELD','LIDAR  /  MAP  /  PLAN  /  MPC','#cbd7c7');
   const tiles=new THREE.InstancedMesh(new THREE.BoxGeometry(0.62,0.025,0.62),mat('#8e907c'),196);
   const dummy=new THREE.Object3D();const cells=[];
   for(let row=0;row<14;row++)for(let col=0;col<14;col++){
@@ -99,7 +120,7 @@ function createAutonomy(scene,vehicle){
     cells.forEach((cell,i)=>{
       if(Math.hypot(cell.x-p.x,cell.z-p.z)<2.1)revealed.add(i);
       const occupied=obstacles.some(([x,z,w,d])=>Math.abs(cell.x-x)<w/2+0.2&&Math.abs(cell.z-z)<d/2+0.2);
-      color.set(revealed.has(i)?(occupied?'#665f62':'#bfd5ac'):'#8e907c');tiles.setColorAt(i,color);
+      color.set(revealed.has(i)?(occupied?'#526874':'#bfd5ac'):'#8e907c');tiles.setColorAt(i,color);
     });tiles.instanceColor.needsUpdate=true;
     for(let i=0;i<24;i++){
       const a=i/24*Math.PI*2,dx=Math.cos(a),dz=Math.sin(a);let distance=2.4;
@@ -111,7 +132,7 @@ function createAutonomy(scene,vehicle){
 }
 
 function createAgents(scene,vehicle){
-  const group=station(scene,vehicle,0,-49,'AGENT SWARM','AI AGENTS  /  MCP  /  A2A','#b09abe',16);
+  const group=station(scene,vehicle,0,-49,'AGENT SWARM','AI AGENTS  /  MCP  /  A2A','#c0ccd9',16);
   const frame=mat('#564867');
   const nodes=[[-5,1,'ANALYST'],[-5,-2.5,'KNOWLEDGE'],[5,1,'EXECUTOR'],[5,-2.5,'REVIEWER']];
   const lights=[],packets=[];

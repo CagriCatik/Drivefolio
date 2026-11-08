@@ -14,9 +14,9 @@ function car(parent,color){
 function field(scene,vehicle,x,title,subtitle,color){
   const group=new THREE.Group();group.position.set(x,0,-49);scene.add(group);
   block(group,14,0.08,12,0,0.02,0,mat(color));
-  block(group,14,2.5,0.25,0,1.25,-6,mat('#524b59'));
+  block(group,14,2.5,0.25,0,1.25,-6,mat('#344e60'));
   label(group,title,0,1.85,-5.83,12);label(group,subtitle,0,0.85,-5.81,11,'#e9d6bc');
-  label(group,'E  /  DEMO STARTEN',0,0.12,8,6,'#584b56').rotation.x=-Math.PI/2;
+  label(group,'E  /  DEMO STARTEN',0,0.12,8,6,'#365a6b').rotation.x=-Math.PI/2;
   vehicle.addObstacle(x,-55,7,0.15);
   return group;
 }
@@ -25,7 +25,7 @@ function follow(mesh,curve,t){
 }
 
 function createFrenet(scene,vehicle){
-  const group=field(scene,vehicle,-16,'FRENET TRAJECTORY PLANNER','REFERENZ  /  KANDIDATEN  /  AUSWAHL','#b9a48e');
+  const group=field(scene,vehicle,-16,'FRENET TRAJECTORY PLANNER','REFERENZ  /  KANDIDATEN  /  AUSWAHL','#c8d4d7');
   block(group,11.6,0.03,7.7,0,0.09,0,mat('#6d6b70'));
   const candidates=[];
   for(let lane=-2;lane<=2;lane++){
@@ -58,7 +58,7 @@ function createFrenet(scene,vehicle){
 }
 
 function createFMT(scene,vehicle){
-  const group=field(scene,vehicle,16,'FMT-MPC','SUCHBAUM  /  KORRIDOR  /  VORSCHAU','#96aea1');
+  const group=field(scene,vehicle,16,'FMT-MPC','SUCHBAUM  /  KORRIDOR  /  VORSCHAU','#bdcfc9');
   block(group,11.5,0.025,8.2,0,0.1,0,mat('#778d83'));
   const obstacles=[[-1.5,-2.5,1.8,1.3],[0,1.4,1.6,2.3],[3.3,-0.2,1.3,1.8]];
   for(const [x,z,w,d] of obstacles){

@@ -5,7 +5,7 @@ import { createFacilities } from './facilities.js';
 
 const material = (color, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.95, ...extra });
 const materials = {
-  ground: material('#d99a61'), road: material('#c58c60'), green: material('#a4a651'),
+  ground: material('#e1e8e7'), road: material('#566974'), green: material('#a4a651'),
   white: material('#fffaf0'), stone: material('#b4ad9d'), dark: material('#343b36'),
 };
 
@@ -43,19 +43,30 @@ function addRoads(scene) {
   for(let x=-20;x<=20;x+=4){if(Math.abs(x)>4)box(scene,1.35,0.015,0.13,x,0.05,-18,materials.white,false);}
   box(scene,47,0.045,6.8,0,0.015,-39,materials.road,false);
   for(let x=-22;x<=22;x+=4){if(Math.abs(x)>4)box(scene,1.35,0.015,0.13,x,0.05,-39,materials.white,false);}
-  groundText(scene,'FRENET  ←   AI   →  FMT-MPC',0,-34,11,'#665366');
-  groundText(scene,'RADAR  ←    →  AUTONOMY',0,-13,9,'#665366');
-  groundText(scene,'AI / MCP / A2A  ↑',0,-37,6.2,'#665366');
+  groundText(scene,'FRENET  ←   AI   →  FMT-MPC',0,-34,11,'#d5eeef');
+  groundText(scene,'RADAR  ←    →  AUTONOMY',0,-13,9,'#d5eeef');
+  groundText(scene,'AI / MCP / A2A  ↑',0,-37,6.2,'#d5eeef');
   groundText(scene, 'EXPLORE', 0, 21, 5, '#8e9385');
 }
 
 export async function createWorld(scene, vehicle) {
   const paving=document.createElement('canvas');paving.width=paving.height=256;
-  const ctx=paving.getContext('2d');ctx.fillStyle='#f3e0c5';ctx.fillRect(0,0,256,256);
-  ctx.strokeStyle='#dac4a5';ctx.lineWidth=3;ctx.strokeRect(0,0,256,256);ctx.beginPath();ctx.moveTo(0,128);ctx.lineTo(256,128);ctx.moveTo(128,0);ctx.lineTo(128,256);ctx.stroke();
-  const texture=new THREE.CanvasTexture(paving);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(55,55);texture.anisotropy=4;materials.ground.map=texture;
+  const ctx=paving.getContext('2d');ctx.fillStyle='#e5ebea';ctx.fillRect(0,0,256,256);
+  ctx.strokeStyle='#d3dddc';ctx.lineWidth=1;ctx.strokeRect(0,0,256,256);ctx.beginPath();ctx.moveTo(0,128);ctx.lineTo(256,128);ctx.moveTo(128,0);ctx.lineTo(128,256);ctx.stroke();
+  const texture=new THREE.CanvasTexture(paving);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(32,32);texture.anisotropy=4;materials.ground.map=texture;
   box(scene, 160, 0.16, 160, 0, -0.14, 0, materials.ground, false);
+  // A green perimeter frames a compact paved campus.
+  const lawn=box(scene,160,0.02,160,0,-0.045,0,material('#8cab91'),false);
+  box(scene,58,0.025,90,0,-0.025,-17,materials.ground,false);
   addRoads(scene);
+  // Flush light curbs define the boulevard without trapping the vehicle.
+  for(const x of [-3.55,3.55])box(scene,0.22,0.055,66,x,0.015,-12,material('#cedbdd'),false);
+  for(const z of [5,-18,-39])for(const side of [-1,1]){
+    box(scene,18,0.055,0.22,side*13,0.02,z+3.5,material('#cedbdd'),false);
+    box(scene,18,0.055,0.22,side*13,0.02,z-3.5,material('#cedbdd'),false);
+  }
+  for(const z of [9,-14,-35])for(let i=0;i<6;i++)box(scene,0.55,0.018,1.6,-2.5+i,0.06,z,materials.white,false);
+
   const vehicleVisuals=await createVehicleVisuals(vehicle);
   const landscape=addLandscape(scene,vehicle);
   await addNameSculpture(scene);

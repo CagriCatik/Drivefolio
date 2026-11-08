@@ -13,7 +13,7 @@ function modelCar(parent,color){
 
 function createDynamicsArea(scene,vehicle){
   const group=new THREE.Group();group.position.set(15,0,-5);scene.add(group);
-  const asphalt=mat('#716c77'),frame=mat('#62516b'),white=mat('#e6d3b7');
+  const asphalt=mat('#637782'),frame=mat('#344e60'),white=mat('#e6d3b7');
   block(group,14,0.08,14,0,0.03,0,asphalt);
   block(group,14,2.6,0.25,0,1.3,-7,frame);
   label(group,'VEHICLE DYNAMICS',0,1.8,-6.84,10.4);

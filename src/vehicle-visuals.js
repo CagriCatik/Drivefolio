@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createCarVisual } from './car-visual.js';
+import {createVehicleLights} from './vehicle-lights.js';
 import { vehicles,getVehicle,getPaint } from './vehicle-catalog.js';
 
 function createSportVisual(model,vehicle) {
@@ -33,6 +34,7 @@ function createSportVisual(model,vehicle) {
 export async function createVehicleVisuals(vehicle) {
   const loader=new GLTFLoader(),templates=new Map();
   await Promise.all(vehicles.map(async item=>templates.set(item.id,(await loader.loadAsync(`${import.meta.env.BASE_URL}${item.asset}`)).scene)));
+  const lights=createVehicleLights(vehicle);
   let active=null,selected='offroader',paint='red';
   function select(id) {
     getVehicle(id);
@@ -42,9 +44,9 @@ export async function createVehicleVisuals(vehicle) {
     vehicle.setProfile(id);active?.dispose();active=next;selected=id;
   }
   select(selected);
-  return {select,
+  return {select,toggleLights:lights.toggle,
     paint(id){const next=getPaint(id);active.paint(next.color);paint=id;},
-    update(dt,time){active.update(dt,time);},
+    update(dt,time){active.update(dt,time);lights.update();},
     get selected(){return selected;},get selectedPaint(){return paint;},
   };
 }

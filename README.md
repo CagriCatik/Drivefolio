@@ -86,3 +86,14 @@ Keine Analytics und kein WebSocket-Server. Die Helvetiker-Schrift wird lokal als
 - Separate Module `landscape.js`, `car-visual.js`, `effects.js` und `audio.js` halten Gestaltung, Fahrzeugdarstellung und Seiteneffekte aus der Parkerkennung heraus.
 
 Diese Version adaptiert Fahrzeugmodell und Kamera aus der Referenz, aber nicht deren vollständiges Rendering-, Gelände- oder Fahrwerksystem.
+
+## Version 0.3 — Garage, Rampe und Robotics-Labor
+
+- **Garage** im Menü oder bei Weltposition (-17, 16), dort anhalten und E drücken. Das Tor öffnet bei Annäherung.
+- **Zwei Fahrzeuge:** Brunos Offroader und Kenney Sports Sedan. Der Sportwagen hat eigene Beschleunigung, Höchstgeschwindigkeit und Kollisionsmaße. Fahrzeugwechsel bewahrt Position und Lackierung, stoppt aber die Bewegung.
+- **Vier Lackierungen:** Rot, Orange, Weiß und Graphit. Beide Modelle werden vorgeladen; Wechsel erzeugt keine weiteren Modell-Downloads. Ausgetauschte Materialien werden freigegeben, gemeinsam verwendete Geometrien bleiben erhalten.
+- **Physische Keilrampe** rechts hinter dem Startplatz bei (15, 14). Von Süden nach Norden anfahren. Der Collider erzeugt den Sprung; es gibt keinen versteckten Sprung-Trigger.
+- **Robotics-Labor** ersetzt den Robotics-Parkplatz. Am Eingang (-15, 1.5) anhalten und E drücken. Die anderen zwei Projektparkplätze bleiben erhalten.
+- Die sichtbare LiDAR-Demonstration benutzt 48 Raycasts gegen die Laboreinrichtung und aktualisiert diese mit 10 Hz. Der Demoroboter folgt einer vorgegebenen Kreisbahn. Dies ist eine illustrative Szene, keine eingebundene Instanz des Mobile-Robot-Autonomy-Projekts und kein SLAM-System.
+- Neue Module: `vehicle-catalog.js` für Profile/Farben, `vehicle-visuals.js` für den Modellwechsel, `facilities.js` für die Weltobjekte und `interactions.js` für die frameworkfreie Interaktionslogik.
+- Zusätzliche Tests schützen Fahrzeugprofile, Auswahlfehler, Eingabeflanken, Interaktionsabstand und Rampenflug mit anschließender Landung.

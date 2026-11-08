@@ -47,3 +47,23 @@ test('jump is edge-triggered, lands under gravity and cannot repeat while held',
   for(let i=0;i<120;i++)step();
   assert.ok(v.group.position.y<0.03,'holding jump does not trigger more jumps');
 });
+
+test('vehicle selection preserves position, changes handling and survives reset',async()=>{
+  const v=await createVehicle(new THREE.Scene());
+  const before=v.group.position.clone();v.setProfile('sport');
+  assert.equal(v.profile,'sport');assert.ok(v.group.position.equals(before));
+  for(let i=0;i<90;i++)v.update(1/60,{throttle:1,steering:0,brake:false});
+  assert.ok(v.speed>20&&v.speed<21.1);
+  assert.throws(()=>v.setProfile('missing'));assert.equal(v.profile,'sport');
+  v.reset();assert.equal(v.profile,'sport');assert.equal(v.speed,0);
+});
+
+test('a physical ramp launches the car without pressing jump, then gravity brings it down',async()=>{
+  const v=await createVehicle(new THREE.Scene());v.addRamp(0,0,5,6,1.8);
+  let highest=0;
+  for(let i=0;i<190;i++){
+    v.update(1/60,{throttle:1,steering:0,brake:false});highest=Math.max(highest,v.group.position.y);
+  }
+  assert.ok(highest>1.2,`physical ramp peak: ${highest}`);
+  assert.ok(v.group.position.y<0.05,'vehicle lands on the floor');
+});

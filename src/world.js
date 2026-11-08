@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { projects } from './projects.js';
 import { addLandscape, addNameSculpture } from './landscape.js';
-import { createCarVisual } from './car-visual.js';
+import { createVehicleVisuals } from './vehicle-visuals.js';
+import { createFacilities } from './facilities.js';
 
 const loader = new GLTFLoader();
 const base = import.meta.env.BASE_URL;
@@ -88,18 +89,7 @@ function normalizeModel(model, targetWidth) {
 }
 
 async function loadModel(name) {
-  if(name==='car')return (await loader.loadAsync(`${base}models/bruno/offroader.glb`)).scene;
-  const folder = name === 'car' ? 'car' : 'city';
-  return (await loader.loadAsync(`${base}models/${folder}/${name}.glb`)).scene;
-}
-
-function addRobot(scene, x, z) {
-  const group = new THREE.Group(); group.position.set(x, 0, z);
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.05, 0.55, 24), materials.white);
-  body.position.y = 0.42; body.castShadow = true; group.add(body);
-  box(group, 0.7, 0.18, 0.5, 0, 0.8, 0, materials.dark);
-  const lidar = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.3, 12), material('#8ba98f'));
-  lidar.position.set(0, 1, 0); group.add(lidar); scene.add(group);
+  return (await loader.loadAsync(`${base}models/city/${name}.glb`)).scene;
 }
 
 export async function createWorld(scene, vehicle) {
@@ -110,12 +100,12 @@ export async function createWorld(scene, vehicle) {
   const texture=new THREE.CanvasTexture(paving);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(55,55);texture.anisotropy=4;materials.ground.map=texture;
   box(scene, 160, 0.16, 160, 0, -0.14, 0, materials.ground, false);
   addRoads(scene);
-  projects.forEach(project => rings.set(project.id, parkingBay(scene, project)));
-  const [car, garage] = await Promise.all(['car', 'garage'].map(loadModel));
-  const carVisual=createCarVisual(car,vehicle);
+  projects.filter(p=>p.id!=='robotics').forEach(project => rings.set(project.id, parkingBay(scene, project)));
+  const [vehicleVisuals, garage] = await Promise.all([createVehicleVisuals(vehicle), loadModel('garage')]);
 
   // Each station is composed explicitly; no random city blocks can obstruct a bay.
   for (const p of projects) {
+    if(p.id==='robotics')continue;
     const holder = new THREE.Group();
     holder.add(normalizeModel(garage.clone(true), 5.2));
     holder.position.set(p.position.x + 7.6, 0, p.position.z - 9.5); scene.add(holder);
@@ -123,7 +113,7 @@ export async function createWorld(scene, vehicle) {
   }
   const landscape=addLandscape(scene,vehicle);
   await addNameSculpture(scene);
-  addRobot(scene, -20, -11.5);
+  const facilities=createFacilities(scene,vehicle);
   // Stacked test blocks and a small automotive slalom give each area its own cue.
   for (let i = 0; i < 3; i++) box(scene, 1.15, 1.15, 1.15, -5.7, 0.58 + i * 1.2, -34, material(['#a297c5', '#c5bcdb', '#d6d1e4'][i]));
   for (let i = 0; i < 4; i++) {
@@ -131,8 +121,9 @@ export async function createWorld(scene, vehicle) {
     cone.position.set(22 + (i % 2) * 1.8, 0.38, -5 - i * 2); cone.castShadow = true; scene.add(cone);
   }
   return {
+    vehicles:vehicleVisuals,
     update(time, parking, dt) {
-      landscape.update(time);carVisual.update(dt,time);
+      landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt);
       for (const [id, ring] of rings) {
         const active = parking.bay?.id === id;
         ring.material.opacity = active ? 1 : 0.6 + Math.sin(time * 1.6) * 0.15;

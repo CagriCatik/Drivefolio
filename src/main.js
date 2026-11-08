@@ -12,13 +12,16 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { createInteractions } from './interactions.js';
+import { vehicles,paints,getVehicle } from './vehicle-catalog.js';
 
 const $ = id => document.getElementById(id);
 const input = createInput();
-const parking = createParkingController(projects);
+const parking = createParkingController(projects.filter(p=>p.id!=='robotics'));
+const interactions=createInteractions();
 const sound=createAudio();
 const visited = new Set();
-let vehicle, view, drivingEffects, activeDialog = null, previousFocus = null;
+let vehicle, view, drivingEffects, worldController, activeDialog = null, previousFocus = null;
 let started = false, ready = false, resetClock = false;
 const dialogs = [...document.querySelectorAll('dialog')];
 
@@ -36,6 +39,7 @@ function showDialog(dialog) {
   activeDialog = dialog;
   input.setEnabled(false); vehicle?.stop();
   $('parking-hint').hidden = true;
+  $('interaction-hint').hidden=true;
   dialog.showModal();
 }
 
@@ -88,6 +92,32 @@ $('projects-button').addEventListener('click', () => showDialog($('list-dialog')
 $('direct-button').addEventListener('click', () => showDialog($('list-dialog')));
 $('about-button').addEventListener('click', () => showDialog($('about-dialog')));
 $('credits-button').addEventListener('click', () => showDialog($('credits-dialog')));
+function syncGarage(){
+  if(!worldController)return;
+  document.querySelectorAll('input[name="vehicle"]').forEach(r=>r.checked=r.value===worldController.vehicles.selected);
+  document.querySelectorAll('input[name="paint"]').forEach(r=>r.checked=r.value===worldController.vehicles.selectedPaint);
+  $('vehicle-name').textContent=getVehicle(worldController.vehicles.selected).name.toUpperCase();
+}
+function openGarage(){if(!ready)return;dismissWelcome();syncGarage();showDialog($('garage-dialog'));}
+$('garage-button').disabled=true;
+$('garage-button').addEventListener('click',openGarage);
+for(const item of vehicles){
+  const label=document.createElement('label');label.className='vehicle-choice';
+  const radio=document.createElement('input');radio.type='radio';radio.name='vehicle';radio.value=item.id;
+  const title=document.createElement('strong');title.textContent=item.name;
+  const description=document.createElement('small');description.textContent=item.description;
+  const speed=document.createElement('span');speed.textContent=`${Math.round(item.maxSpeed*3.6)} km/h · Boost ${Math.round(item.boostSpeed*3.6)} km/h`;
+  radio.addEventListener('change',()=>{if(!worldController)return;worldController.vehicles.select(item.id);drivingEffects.reset();syncGarage();sound.chime();$('garage-status').textContent=`${item.name} ist bereit. Deine Lackierung bleibt erhalten.`;});
+  label.append(radio,title,description,speed);$('vehicle-choices').append(label);
+}
+for(const paint of paints){
+  const label=document.createElement('label');label.className='paint-choice';label.style.setProperty('--paint',paint.color);
+  const radio=document.createElement('input');radio.type='radio';radio.name='paint';radio.value=paint.id;
+  const swatch=document.createElement('span');swatch.className='paint-swatch';
+  const text=document.createElement('span');text.textContent=paint.name;
+  radio.addEventListener('change',()=>{worldController?.vehicles.paint(paint.id);$('garage-status').textContent=`Lackierung: ${paint.name}`;});
+  label.append(radio,swatch,text);$('paint-choices').append(label);
+}
 $('sound-button').addEventListener('click', () => {
   const enabled=sound.toggle();$('sound-button').textContent=enabled?'Sound an':'Sound aus';$('sound-button').setAttribute('aria-pressed',String(enabled));
 });
@@ -98,6 +128,7 @@ $('zoom-out').addEventListener('click', () => view?.zoom(0.12));
 $('reset-button').addEventListener('click', () => {
   if (!ready) return;
   input.clear(); vehicle.reset(); parking.reset(); view.reset(vehicle.group.position); resetClock = true;
+  interactions.reset();
   drivingEffects?.reset();
   $('parking-hint').hidden = true;
   $('toast').textContent = 'Wieder am Start. Gute Fahrt!'; $('toast').hidden = false;
@@ -121,6 +152,7 @@ async function main() {
   view = createPortfolioCamera(window.innerWidth / window.innerHeight);
   vehicle = await createVehicle(scene);
   const world = await createWorld(scene, vehicle);
+  worldController=world;syncGarage();$('garage-button').disabled=false;
   drivingEffects=createDrivingEffects(scene,vehicle);
   const composer=new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene,view.camera));
@@ -139,6 +171,7 @@ async function main() {
 
   let last = 0, accumulator = 0, time = 0;
   let status = { bay: null, progress: 0 };
+  let interactionState={location:null,activated:null};
   const fixed = 1 / 60;
   renderer.setAnimationLoop(now => {
     if (document.hidden) { last = now; accumulator = 0; return; }
@@ -155,8 +188,16 @@ async function main() {
         status = parking.update(vehicle.group.position, vehicle.motion.grounded ? vehicle.speed : Infinity, fixed);
         accumulator -= fixed; steps++;
         if (status.opened) { openProject(status.opened); accumulator = 0; break; }
+        interactionState=interactions.update(vehicle.group.position,vehicle.motion.grounded?vehicle.speed:Infinity,controls.interact);
+        if(interactionState.activated){
+          if(interactionState.activated.id==='garage')openGarage();
+          else openProject(projects.find(p=>p.id===interactionState.activated.id));
+          accumulator=0;break;
+        }
       }
       if (!activeDialog) {
+        $('interaction-hint').hidden=!interactionState.location;
+        if(interactionState.location)$('interaction-message').textContent=`${interactionState.location.label} · ${vehicle.speed<1.5?'E drücken':'zum Entdecken anhalten'}`;
         $('parking-hint').hidden = !status.bay;
         if (status.bay) {
           $('parking-message').textContent = status.progress > 0

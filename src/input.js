@@ -1,6 +1,6 @@
 export function createInput() {
   const keys = new Set();
-  const owned = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'ShiftLeft', 'ShiftRight', 'KeyJ', 'KeyH'];
+  const owned = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'ShiftLeft', 'ShiftRight', 'KeyJ', 'KeyH', 'KeyE'];
   let enabled = true;
   const clear = () => { keys.clear(); };
   window.addEventListener('keydown', e => {
@@ -26,6 +26,7 @@ export function createInput() {
       boost: keys.has('ShiftLeft') || keys.has('ShiftRight'),
       jump: keys.has('KeyJ'),
       horn: keys.has('KeyH'),
+      interact: keys.has('KeyE'),
     }),
     setEnabled(value) { enabled = value; clear(); },
     clear,

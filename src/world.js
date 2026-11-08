@@ -43,8 +43,8 @@ function addRoads(scene) {
   for(let x=-20;x<=20;x+=4){if(Math.abs(x)>4)box(scene,1.35,0.015,0.13,x,0.05,-18,materials.white,false);}
   box(scene,47,0.045,6.8,0,0.015,-39,materials.road,false);
   for(let x=-22;x<=22;x+=4){if(Math.abs(x)>4)box(scene,1.35,0.015,0.13,x,0.05,-39,materials.white,false);}
-  groundText(scene,'FRENET  ←   AI   →  FMT-MPC',0,-34,11,'#d5eeef');
-  groundText(scene,'RADAR  ←    →  AUTONOMY',0,-13,9,'#d5eeef');
+  groundText(scene,'← FRENET    AI    FMT-MPC →',0,-32,11,'#d5eeef');
+  groundText(scene,'← RADAR    AUTONOMY →',0,-11.5,9,'#d5eeef');
   groundText(scene,'AI / MCP / A2A  ↑',0,-37,6.2,'#d5eeef');
   groundText(scene, 'EXPLORE', 0, 21, 5, '#8e9385');
 }
@@ -60,7 +60,7 @@ export async function createWorld(scene, vehicle) {
   box(scene,58,0.025,90,0,-0.025,-17,materials.ground,false);
   addRoads(scene);
   // Flush light curbs define the boulevard without trapping the vehicle.
-  for(const x of [-3.55,3.55])box(scene,0.22,0.055,66,x,0.015,-12,material('#cedbdd'),false);
+  for(const x of [-3.55,3.55])for(const [start,end] of [[-46,-42.6],[-35.4,-21.6],[-14.4,1.4],[8.6,22]])box(scene,0.22,0.055,end-start,x,0.015,(start+end)/2,material('#cedbdd'),false);
   for(const z of [5,-18,-39])for(const side of [-1,1]){
     box(scene,18,0.055,0.22,side*13,0.02,z+3.5,material('#cedbdd'),false);
     box(scene,18,0.055,0.22,side*13,0.02,z-3.5,material('#cedbdd'),false);

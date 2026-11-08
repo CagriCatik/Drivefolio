@@ -48,7 +48,7 @@ test('vehicle and paint selection reject unknown identifiers; sport has a distin
 test('every project has one reachable terminal and no test specification projects remain',()=>{
   assert.equal(locations.length,projects.length+1);
   assert.equal(new Set(locations.map(l=>l.id)).size,locations.length);
-  assert.equal(projects.length,5);
+  assert.equal(projects.length,7);
   assert.ok(!JSON.stringify(projects).match(/spectotest|spec2test|testspec/i));
   for(const p of projects)assert.equal(locations.filter(l=>l.id===p.id).length,1);
 });

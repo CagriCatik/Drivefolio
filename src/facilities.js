@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import {mat,block,label} from './scene-primitives.js';
 import {createProjectAreas} from './project-areas.js';
 import {createExhibitions} from './exhibition-areas.js';
+import {createPlanningAreas} from './planning-areas.js';
 
 function createGarage(scene,vehicle){
   const group=new THREE.Group();group.position.set(-17,0,14);scene.add(group);
@@ -14,7 +15,7 @@ function createGarage(scene,vehicle){
   const door=block(group,9.3,2.9,0.14,0,1.5,4.5,mat('#c7b9ae'));
   for(let i=0;i<6;i++)block(door,9.3,0.035,0.02,0,-1.25+i*0.45,0.08,frame);
   label(group,'GARAGE',0,3.4,4.73,5.1);
-  const welcome=label(group,'E  /  FAHRZEUG WECHSELN',0,0.18,6.2,6.3);welcome.rotation.x=-Math.PI/2;
+  const welcome=label(group,'E  /  FAHRZEUG WÄHLEN',0,0.18,6.2,6.3);welcome.rotation.x=-Math.PI/2;
   const glow=new THREE.MeshStandardMaterial({color:'#b9e0cb',emissive:'#85d7b2',emissiveIntensity:1.8});
   block(group,8.8,0.04,0.15,0,0.09,3.8,glow);
   vehicle.addObstacle(-22,14,0.2,4.5);vehicle.addObstacle(-12,14,0.2,4.5);vehicle.addObstacle(-17,9.5,5,0.2);
@@ -47,7 +48,7 @@ function createRoboticsLab(scene,vehicle){
   block(group,0.25,1.3,10,-6,0.65,-1,walls);block(group,0.25,1.3,10,6,0.65,-1,walls);
   label(group,'JETRACER LAB',0,1.65,-5.83,8.4);
   label(group,'ROS 2  /  RC WORKSHOP',0,0.8,-5.8,6.3,'#9de4d0');
-  const entrance=label(group,'E  /  PROJEKT ENTDECKEN',0,0.1,6.5,7,'#405d51');entrance.rotation.x=-Math.PI/2;
+  const entrance=label(group,'E  /  DEMO STARTEN',0,0.1,6.5,7,'#405d51');entrance.rotation.x=-Math.PI/2;
   vehicle.addObstacle(x,z-6,6,0.15);vehicle.addObstacle(x-6,z-1,0.15,5);vehicle.addObstacle(x+6,z-1,0.15,5);
   const blockers=[];
   for(const [ox,oz,w,d] of [[-4,-1,1.2,1.2],[3,-3,1.6,1],[4,2,0.7,1.5]]){
@@ -93,6 +94,6 @@ function createRoboticsLab(scene,vehicle){
 }
 
 export function createFacilities(scene,vehicle){
-  const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle),areas=createProjectAreas(scene,vehicle),exhibitions=createExhibitions(scene,vehicle);createRamp(scene,vehicle);
-  return {setDemo:exhibitions.setDemo,update(time,dt){garage.update(dt);lab.update(time);areas.update(time);exhibitions.update(time);}};
+  const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle),areas=createProjectAreas(scene,vehicle),exhibitions=createExhibitions(scene,vehicle),planning=createPlanningAreas(scene,vehicle);createRamp(scene,vehicle);
+  return {setDemo(id,stage,progress){exhibitions.setDemo(id,stage,progress);planning.setDemo(id,stage,progress);},update(time,dt){garage.update(dt);lab.update(time);areas.update(time);exhibitions.update(time);planning.update(time);}};
 }

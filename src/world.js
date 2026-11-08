@@ -41,6 +41,9 @@ function addRoads(scene) {
   }
   box(scene,43,0.045,6.8,0,0.015,-18,materials.road,false);
   for(let x=-20;x<=20;x+=4){if(Math.abs(x)>4)box(scene,1.35,0.015,0.13,x,0.05,-18,materials.white,false);}
+  box(scene,47,0.045,6.8,0,0.015,-39,materials.road,false);
+  for(let x=-22;x<=22;x+=4){if(Math.abs(x)>4)box(scene,1.35,0.015,0.13,x,0.05,-39,materials.white,false);}
+  groundText(scene,'FRENET  ←   AI   →  FMT-MPC',0,-34,11,'#665366');
   groundText(scene,'RADAR  ←    →  AUTONOMY',0,-13,9,'#665366');
   groundText(scene,'AI / MCP / A2A  ↑',0,-37,6.2,'#665366');
   groundText(scene, 'EXPLORE', 0, 21, 5, '#8e9385');

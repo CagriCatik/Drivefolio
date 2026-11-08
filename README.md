@@ -28,11 +28,14 @@ Die im Terminal angezeigte URL öffnen. Ein Doppelklick auf die HTML-Datei funkt
 | Vehicle Dynamics, erste Querstraße rechts | Zwei Modelle illustrieren 2WS/4WS. Bewegliche Pylonen. E bei (15, 3). |
 | RadarTrackBench, zweite Querstraße links | Rotierende Parabolantenne, bewegtes Ziel und Tracking-Tisch mit synthetischen verrauschten Messpunkten und glatter Zielspur. E bei (-15, -20). |
 | Vehicle Autonomy Stack, zweite Querstraße rechts | RC-Modell auf vorgegebener Route, Hindernis-Raycasts und schrittweise aufgedecktes Raster. E bei (15, -20). |
-| AgentSwarm, Straßenende | Coordinator, vier Spezialisten und MCP-Server. Violette Pakete illustrieren A2A-Nachrichten, grüne Pakete MCP-Werkzeugaufrufe. E bei (0, -41). |
+| AgentSwarm, dritte Querstraße mittig | Coordinator, vier Spezialisten und MCP-Server. Violette Pakete illustrieren A2A-Nachrichten, grüne Pakete MCP-Werkzeugaufrufe. E bei (0, -41). |
+
+| Frenet Trajectory Planner, dritte Querstraße links | Referenzlinie, mehrere Trajektorienkandidaten und ein animiertes Ausweichmanöver. E bei (-16, -41). |
+| FMT-MPC, dritte Querstraße rechts | Hindernisfläche mit Sicherheitsrändern, illustrativer Suchbaum, feste geglättete Route und Vorschauhorizont. E bei (16, -41). |
 
 Anhalten und E startet eine kurze, abbrechbare Welt-Demo. Die Kamera zeigt dabei den Ort; danach öffnet sich die jeweilige Projektkarte. Über **Projekte → Projekt → Welt-Demo ansehen** sind alle Vorschauen ohne Fahren erreichbar. Escape, Abbrechen oder Zurücksetzen beendet eine laufende Demo. Die normale Projektliste bleibt auch ohne WebGL verfügbar.
 
-Die Stationen sind **illustrative JavaScript-Demos**, keine laufenden Instanzen der verlinkten Projekte: kein Python-Fahrdynamikvergleich, kein tatsächliches SLAM/RRT*/MPC, keine berechneten Kalman-Filter und keine Live-LLM-, MCP- oder A2A-Verbindung. Die Darstellung verwendet synthetische Daten, feste Routen und animierte Nachrichten. Der eigentliche Quellcode ist in jeder Karte verlinkt. Keine API-Schlüssel und kein Backend erforderlich.
+Die Stationen sind **illustrative JavaScript-Demos**, keine laufenden Instanzen der verlinkten Projekte: kein Python-Fahrdynamikvergleich, kein tatsächliches SLAM/RRT*/MPC, keine berechneten Kalman-Filter, Frenet-Optimierung, FMT-Suche oder MPC-Optimierung und keine Live-LLM-, MCP- oder A2A-Verbindung. Die Darstellung verwendet synthetische Daten, feste Routen und animierte Nachrichten. Der eigentliche Quellcode ist in jeder Karte verlinkt. Keine API-Schlüssel und kein Backend erforderlich.
 
 ## Steuerung
 
@@ -69,7 +72,7 @@ Touchgeräte erhalten entsprechende Bildschirmtasten. Die Projektliste funktioni
 | `vehicle-visuals.js`, `car-visual.js` | Austausch und Animation der Fahrzeugmodelle |
 | `interactions.js` | Reine Abstands-/Eingabelogik und Rampenhöhen |
 | `demo-sequence.js` | Frameworkfreier Ablauf, Fortschritt und Abbruch der Projektvorschauen |
-| `facilities.js`, `project-areas.js`, `exhibition-areas.js` | Garage, Rampe und fünf unterschiedliche Projektorte |
+| `facilities.js`, `project-areas.js`, `exhibition-areas.js` | Garage, Rampe und sieben unterschiedliche Projektorte |
 | `scene-primitives.js` | Kleine gemeinsame Geometrie- und Beschriftungsfunktionen |
 | `world.js`, `landscape.js` | Boden, Straßen und Umgebung |
 | `camera.js`, `input.js`, `audio.js`, `effects.js` | Kamera und Browseradapter |
@@ -88,5 +91,5 @@ Vite verwendet `base: './'`, damit Modelle, Texturen, Schrift und JavaScript auc
 - [Bruno Simon / folio-2025](https://github.com/brunosimon/folio-2025): Konzept, Offroader-Modell und adaptierte Kameraparameter, MIT. Hinweis unter `public/licenses/bruno-simon-MIT.txt`.
 - Kenney Car Kit und City Kit, CC0, aus [RaceTrack](https://github.com/CagriCatik/RaceTrack). Originalhinweise unter `public/licenses/`.
 - Three.js: MIT. Rapier: Apache-2.0. Vite: MIT. Laufzeitlizenzen werden mit ausgeliefert.
-- Die Helvetiker-Schrift wird lokal als Typeface-JSON ausgeliefert; die ursprünglichen Font-Lizenzhinweise stehen innerhalb dieser Datei.
+- Die Namensskulptur zeigt **Çağrı Çatık** mit einem lokalen DejaVu-Sans-Bold-Subset einschließlich Ç, ğ und ı. Lizenz: `public/licenses/dejavu-fonts.txt`. Reproduzierbare Konvertierung mit FontTools: `python tools/build-name-font.py /path/to/DejaVuSans-Bold.ttf`. Die ursprüngliche Helvetiker-Datei bleibt mit ihren Lizenzhinweisen erhalten.
 - Zusätzlicher Anwendungscode: MIT, siehe `LICENSE`.

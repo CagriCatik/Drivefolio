@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {ownerName} from './identity.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
@@ -12,7 +13,7 @@ function random(seed) { let n=seed; return () => { n=(Math.imul(n,1664525)+10139
 
 export function addLandscape(scene, vehicle) {
   const rng=random(42), dummy=new THREE.Object3D(), treeGroups=[];
-  const centers=[[-7,16],[7,17],[-7,6],[8,7],[-24,1],[-24,-9],[-10,-13],[24,-12],[23,4],[-25,-20],[8,-37],[-7,-36],[-25,-36],[26,-35],[-26,18],[24,21]];
+  const centers=[[-7,16],[7,17],[-7,6],[8,7],[-24,1],[-24,-9],[-10,-13],[24,-12],[23,4],[-25,-20],[27,-52],[-27,-46],[-25,-36],[26,-35],[-26,18],[24,21]];
   const leafColors=['#e6927f','#f5b48c','#ce7189','#c3ba5a'];
   const leafCanvas=document.createElement('canvas');leafCanvas.width=leafCanvas.height=64;
   const leafContext=leafCanvas.getContext('2d');leafContext.fillStyle='#ffffff';leafContext.beginPath();leafContext.ellipse(32,32,28,12,-0.4,0,Math.PI*2);leafContext.fill();
@@ -59,7 +60,7 @@ export function addLandscape(scene, vehicle) {
   });
   grass.count=grassIndex;grass.receiveShadow=true;scene.add(grass);
   // Low fences and benches make the world feel inhabited.
-  for(const [x,z] of [[-7,21],[6,-15],[-24,-18],[22,12],[-8,-39]]) {
+  for(const [x,z] of [[-7,21],[6,-15],[-24,-18],[22,12],[-28,-44]]) {
     for(let i=-1;i<=1;i++)block(scene,x+i*1.7,0.8,z,0.18,1.6,0.18,wood);
     block(scene,x,0.6,z,3.6,0.15,0.16,wood);block(scene,x,1.2,z,3.6,0.15,0.16,wood);
     vehicle.addObstacle(x,z,1.9,0.18);
@@ -92,8 +93,8 @@ export function addLandscape(scene, vehicle) {
 }
 
 export async function addNameSculpture(scene) {
-  const font=await new FontLoader().loadAsync(`${import.meta.env.BASE_URL}fonts/helvetiker-bold.json`);
-  const geometry=new TextGeometry('CAGRI CATIK',{font,size:0.95,depth:0.24,curveSegments:3,bevelEnabled:true,bevelThickness:0.035,bevelSize:0.02,bevelSegments:1});
+  const font=await new FontLoader().loadAsync(`${import.meta.env.BASE_URL}fonts/name-bold.json`);
+  const geometry=new TextGeometry(ownerName,{font,size:0.95,depth:0.24,curveSegments:3,bevelEnabled:true,bevelThickness:0.035,bevelSize:0.02,bevelSegments:1});
   geometry.center();
   const text=new THREE.Mesh(geometry,[mat('#f4d1bf'),mat('#aa769a')]);
   text.position.set(-2.2,0.58,18.8);text.rotation.y=Math.PI/4;text.castShadow=true;scene.add(text);

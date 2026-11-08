@@ -26,7 +26,7 @@ export const projects = [
   {
     id: 'autonomy', number: '04', category: 'MAPPING / PLANNING / CONTROL', title: 'Vehicle Autonomy Stack',
     short: 'Erfassen. Planen. Fahren.',
-    description: 'LiDAR-Mapping, Costmaps, nicht-holonome Bewegungsplanung und MPC für autonome Fahrzeuge. Der kleine Parcours illustriert diese Kette mit einer vorgegebenen Route und einer schrittweise aufgedeckten Karte; der Python-Stack läuft auf GitHub.',
+    description: 'LiDAR-Mapping, Costmaps, nicht-holonome Bewegungsplanung und MPC für autonome Fahrzeuge. Der kleine Parcours illustriert diese Kette mit einer vorgegebenen Route und einer schrittweise aufgedeckten Karte; der Python-Quellcode ist auf GitHub verfügbar.',
     tags: ['LiDAR', 'RRT*', 'MPC'], url: 'https://github.com/CagriCatik/Vehicle-Autonomy-Stack',
     color: '#d3ae65', position: {x:15,z:-28}, entrance: {x:15,z:-20},
     stages: ['Umgebung abtasten', 'Karte schrittweise aufdecken', 'Route durch den Parcours', 'Trajektorie verfolgen'],
@@ -38,5 +38,21 @@ export const projects = [
     tags: ['AI Agents', 'MCP', 'A2A'], url: 'https://github.com/CagriCatik/AgentSwarm',
     color: '#b095cf', position: {x:0,z:-49}, entrance: {x:0,z:-41},
     stages: ['A2A · Analyse delegieren', 'MCP · Wissen und Werkzeuge abrufen', 'A2A · Aktion an Executor übergeben', 'Reviewer prüft das Ergebnis'],
+  },
+  {
+    id: 'frenet', number: '06', category: 'TRAJECTORY PLANNING', title: 'Frenet Trajectory Planner',
+    short: 'Viele Möglichkeiten. Eine Trajektorie.',
+    description: 'Trajektorienplanung im Frenet-Koordinatensystem mit longitudinalen und lateralen Polynomen, Kostenbewertung, Grid Search oder PSO und OBB-Kollisionsprüfung. Die Strecke illustriert mehrere Kandidaten und ein Ausweichmanöver auf einer vorgegebenen Bahn.',
+    tags: ['Frenet', 'PSO', 'Trajectory Planning'], url: 'https://github.com/CagriCatik/Frenet-Trajectory-Planner',
+    color: '#bc946d', position: {x:-16,z:-49}, entrance: {x:-16,z:-41},
+    stages: ['Referenzlinie und Frenet-Koordinaten', 'Trajektorienkandidaten erzeugen', 'Kollisionen und Kosten bewerten', 'Ausgewählte Trajektorie verfolgen'],
+  },
+  {
+    id: 'fmt', number: '07', category: 'MOTION PLANNING / MPC', title: 'FMT-MPC',
+    short: 'Vom Suchbaum zur Bewegung.',
+    description: 'Fast-Marching-Tree-Planung auf einer Hinderniskarte, Korridorglättung und modellprädiktive Pfadverfolgung mit einem kinematischen Fahrzeugmodell. Die Station illustriert Baumwachstum, einen gewählten Korridor und einen Vorschauhorizont entlang einer festen Route.',
+    tags: ['FMT', 'MPC', 'Motion Planning'], url: 'https://github.com/CagriCatik/FMT-MPC',
+    color: '#7ea69b', position: {x:16,z:-49}, entrance: {x:16,z:-41},
+    stages: ['Hindernisse und Sicherheitsabstände', 'Suchbaum aus Stichproben aufbauen', 'Korridor auswählen und glätten', 'Pfad mit MPC-Vorschau verfolgen'],
   },
 ];

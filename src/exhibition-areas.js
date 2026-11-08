@@ -25,7 +25,7 @@ function station(scene,vehicle,x,z,title,subtitle,color,width=14,depth=12){
 }
 
 function createRadar(scene,vehicle){
-  const group=station(scene,vehicle,-15,-28,'RADAR TRACK BENCH','MEASURE  /  FILTER  /  TRACK','#99aebe');
+  const group=station(scene,vehicle,-15,-28,'RADAR TRACK BENCH','MESSEN  /  FILTERN  /  VERFOLGEN','#99aebe');
   const tower=new THREE.Group();tower.position.set(-3.6,0,-1.3);group.add(tower);
   block(tower,2.8,0.28,2.8,0,0.18,0,mat('#68798b'));
   for(const x of [-0.8,0.8])for(const z of [-0.8,0.8]){
@@ -46,7 +46,7 @@ function createRadar(scene,vehicle){
     const points=[];for(let i=0;i<=64;i++){const t=i/64*Math.PI*2;points.push([Math.cos(t)*r,0.71,Math.sin(t)*r]);}line(board,points,'#609489',0.6);
   }
   line(board,[[-2.3,0.72,0],[2.3,0.72,0]],'#609489',0.6);line(board,[[0,0.72,-2.3],[0,0.72,2.3]],'#609489',0.6);
-  label(group,'RAW  /  FILTERED',2.7,1.1,-3.8,4.4,'#d3f3e0');
+  label(group,'MESSUNG  /  FILTERSPUR',2.7,1.1,-3.8,4.4,'#d3f3e0');
   const sweep=line(board,[[0,0.74,0],[2.25,0.74,0]],'#b6ffb3');
   const rawGeometry=new THREE.BufferGeometry(),filteredGeometry=new THREE.BufferGeometry();
   const raw=new Float32Array(48*3),filtered=new Float32Array(48*3);
@@ -90,7 +90,7 @@ function createAutonomy(scene,vehicle){
   orb(car,0.1,'#aeffdf',0,0.65,0);
   const raysGeometry=new THREE.BufferGeometry(),rays=new Float32Array(24*6);raysGeometry.setAttribute('position',new THREE.BufferAttribute(rays,3));
   const scan=new THREE.LineSegments(raysGeometry,new THREE.LineBasicMaterial({color:'#b4ffe0',transparent:true,opacity:0.35}));scan.frustumCulled=false;group.add(scan);
-  const status=label(group,'ILLUSTRATIVE MAPPING DEMO',0,0.13,5.5,9,'#655941');status.rotation.x=-Math.PI/2;
+  const status=label(group,'ILLUSTRATIVE KARTIERUNGS-DEMO',0,0.13,5.5,9,'#655941');status.rotation.x=-Math.PI/2;
   let last=-1,progress=null,revealed=new Set();const color=new THREE.Color();
   return {setDemo(stage,p){progress=stage<0?null:p;if(stage===0&&p<0.03)revealed.clear();},update(time){
     const t=progress===null?(time*0.035)%1:progress,p=route.getPointAt(Math.min(t,0.9999)),ahead=route.getPointAt(Math.min(t+0.006,1));
@@ -133,8 +133,8 @@ function createAgents(scene,vehicle){
   block(group,3,1.4,1.0,0,0.7,-3.8,frame);vehicle.addObstacle(0,-52.8,1.5,0.5);
   for(let i=0;i<4;i++)block(group,2.6,0.06,0.05,0,0.3+i*0.3,-3.27,glow('#a6e9d4'));
   label(group,'MCP TOOLS',0,1.8,-3.3,3.1,'#d4ffe9');
-  label(group,'A2A  /  AGENT MESSAGES',-3.7,0.13,5.2,5.6,'#644d79').rotation.x=-Math.PI/2;
-  label(group,'MCP  /  TOOL CALLS',3.7,0.13,5.2,5.3,'#365f55').rotation.x=-Math.PI/2;
+  label(group,'A2A  /  AGENTEN-NACHRICHTEN',-3.7,0.13,5.2,5.6,'#644d79').rotation.x=-Math.PI/2;
+  label(group,'MCP  /  WERKZEUGAUFRUFE',3.7,0.13,5.2,5.3,'#365f55').rotation.x=-Math.PI/2;
   let stage=-1;
   return {setDemo(next){stage=next;},update(time){
     core.rotation.y=time*0.6;core.rotation.z=Math.sin(time)*0.2;ring.rotation.z=time*0.3;

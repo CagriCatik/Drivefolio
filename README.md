@@ -53,6 +53,14 @@ An der Startlinie beginnt bei Bewegung die Rundenzeit. Vier geordnete Kontrollpu
 
 **Nachtmodus** verändert Himmel, Umgebungslicht und Strecken-/Campusleuchten. **Dark Mode** verändert unabhängig davon die Bedienoberfläche. Beide Einstellungen werden lokal gespeichert, sofern der Browser das erlaubt. Beide Fahrzeuge besitzen zwei symmetrische Spot-Scheinwerfer mit gemeinsamen Schalter (L/Garage). Beim Kenney-Fahrzeug trennen zentrierte Rad-Drehpunkte die vertikale Lenkachse von der rollenden Achse.
 
+## Verbundene Strecke und autonomes Pace Car
+
+Curbs und Leitplanken sind durchgehende Extrusionen mit gemeinsamen Eckpunkten, geschlossener Rundkursnaht und exakt ausgeschnittenen Zufahrten. Campus und Boxengasse enden am inneren Fahrbahnrand auf derselben Höhe. Äußere Leitplanken bleiben geschlossen. Physische Leitplankensegmente verwenden dieselbe Kurve wie die sichtbaren Schienen.
+
+Ein regelbasiertes autonomes Pace Car folgt der äußeren Fahrspur. Es reduziert die Geschwindigkeit in Kurven und bremst für das Besucherfahrzeug in seinem Fahrkorridor. Es besitzt einen kinematischen Rapier-Collider, animierte Räder und Bremslichter. Die blaue Markierung im Campusplan zeigt seine Position. **Campusplan → Streckenübersicht** zeigt den gesamten Rundkurs; **Zurück ans Steuer** beendet die Übersicht.
+
+Östlich des Campus verbindet eine Boxengasse drei Werkstattboxen, Campus-Servicezufahrt und zwei Streckenöffnungen. Hinzu kommen Werkzeugwagen, Reifenracks, eine überdachte Tribüne mit Zuschauern, Streckenwerbung, Servicefahrzeug, Fahrradständer, Solarfeld und ein Brunnen am Ankunftsplatz.
+
 ## Steuerung
 
 | Eingabe | Aktion |

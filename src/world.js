@@ -2,11 +2,13 @@ import * as THREE from 'three';
 import { addLandscape, addNameSculpture } from './landscape.js';
 import { createVehicleVisuals } from './vehicle-visuals.js';
 import { createFacilities } from './facilities.js';
+import {rectUnion} from './road-network.js';
+import {createCampusDetails} from './campus-details.js';
 import {createRaceTrack} from './race-track.js';
 
 const material = (color, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.95, ...extra });
 const materials = {
-  ground: material('#e1e8e7'), road: material('#566974'), green: material('#a4a651'),
+  ground: material('#e1e8e7'), road: material('#435b67'), green: material('#a4a651'),
   white: material('#fffaf0'), stone: material('#b4ad9d'), dark: material('#343b36'),
 };
 
@@ -32,20 +34,11 @@ function groundText(scene, text, x, z, width, color, angle = 0) {
 }
 
 function addRoads(scene){
-  // Partition the union of the roads into non-overlapping flat quads. There are
-  // no stacked boxes or seams at the three campus intersections.
-  const rects=[[-3.4,3.4,-46,31],[-44,44,1.6,8.4],[-24,24,-21.4,-14.6],[-24,24,-42.4,-35.6]];
-  const xs=[...new Set(rects.flatMap(r=>r.slice(0,2)))].sort((a,b)=>a-b),zs=[...new Set(rects.flatMap(r=>r.slice(2)))].sort((a,b)=>a-b);
-  const vertices=[],indices=[];
-  for(let i=0;i<xs.length-1;i++)for(let j=0;j<zs.length-1;j++){
-    const x=(xs[i]+xs[i+1])/2,z=(zs[j]+zs[j+1])/2;
-    if(!rects.some(([l,r,t,b])=>x>=l&&x<=r&&z>=t&&z<=b))continue;
-    const n=vertices.length/3;vertices.push(xs[i],0.081,zs[j],xs[i+1],0.081,zs[j],xs[i],0.081,zs[j+1],xs[i+1],0.081,zs[j+1]);indices.push(n,n+2,n+1,n+1,n+2,n+3);
-  }
+  const {positions:vertices,indices}=rectUnion();
   const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.setIndex(indices);geometry.computeVertexNormals();
   const road=new THREE.Mesh(geometry,materials.road);road.receiveShadow=true;scene.add(road);
-  for(let z=-44;z<28;z+=4){if([5,-18,-39].some(c=>Math.abs(c-z)<4.4))continue;box(scene,0.12,0.01,1.3,0,0.093,z,materials.white,false);}
-  for(const [z,extent] of [[5,43],[-18,23],[-39,23]])for(let x=-extent;x<extent;x+=4){if(Math.abs(x)<4.5)continue;box(scene,1.3,0.01,0.12,x,0.093,z,materials.white,false);}
+  for(let z=-44;z<25;z+=4){if([5,-18,-39].some(c=>Math.abs(c-z)<4.4))continue;box(scene,0.12,0.01,1.3,0,0.093,z,materials.white,false);}
+  for(const [z,extent] of [[5,38],[-18,23],[-39,23]])for(let x=-extent;x<extent;x+=4){if(Math.abs(x)<4.5)continue;box(scene,1.3,0.01,0.12,x,0.093,z,materials.white,false);}
   groundText(scene,'← FRENET    AI    FMT-MPC →',0,-32,9,'#d5eeef');
   groundText(scene,'← RADAR    AUTONOMY →',0,-11.5,8,'#d5eeef');
   groundText(scene,'CIRCUIT  ↓',0,24,4.8,'#d5eeef');
@@ -70,12 +63,14 @@ export async function createWorld(scene, vehicle) {
   await addNameSculpture(scene);
   const facilities=createFacilities(scene,vehicle);
   const race=createRaceTrack(scene,vehicle);
+  const details=createCampusDetails(scene,vehicle);
   return {
     vehicles:vehicleVisuals,
+    setOverview(value){scene.fog.near=value?350:85;scene.fog.far=value?500:155;},
     facilities,race,
     setNight(value){vehicleVisuals.setNight(value);landscape.setNight(value);race.setNight(value);},
     update(time,dt,paused) {
-      landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt);race.update(dt,paused);
+      landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt);race.update(dt,paused);details.update(time,dt);
     },
   };
 }

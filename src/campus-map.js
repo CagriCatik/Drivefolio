@@ -5,5 +5,5 @@ export function createCampusMap(projects,openProject){
   for(const project of projects){
     const button=document.createElement('button'),p=mapPosition(project.position.x,project.position.z);button.className='map-project';button.style.left=p.x+'%';button.style.top=p.y+'%';button.textContent=project.number;button.title=project.title;button.setAttribute('aria-label',project.title+' öffnen');button.addEventListener('click',()=>openProject(project));canvas.append(button);
   }
-  return {update(position,heading){if(panel.hidden)return;const p=mapPosition(position.x,position.z);marker.style.left=p.x+'%';marker.style.top=p.y+'%';marker.style.transform=`translate(-50%,-50%) rotate(${-heading*180/Math.PI+180}deg)`;}};
+  return {update(position,heading,traffic){if(panel.hidden)return;const p=mapPosition(position.x,position.z);marker.style.left=p.x+'%';marker.style.top=p.y+'%';if(traffic){const ai=mapPosition(traffic.x,traffic.z),dot=document.getElementById('map-pace');dot.style.left=ai.x+'%';dot.style.top=ai.y+'%';dot.style.transform=`translate(-50%,-50%) rotate(${-traffic.heading*180/Math.PI+180}deg)`;}marker.style.transform=`translate(-50%,-50%) rotate(${-heading*180/Math.PI+180}deg)`;}};
 }

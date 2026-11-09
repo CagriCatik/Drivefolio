@@ -79,6 +79,15 @@ export async function createVehicle(scene) {
   function addBarrier(x,z,halfLength,halfWidth,angle){
     world.createCollider(RAPIER.ColliderDesc.cuboid(halfLength,0.7,halfWidth).setTranslation(x,0.65,z).setRotation({x:0,y:Math.sin(angle/2),z:0,w:Math.cos(angle/2)}));
   }
+  function addTraffic(mesh,initial,halfWidth,halfLength){
+    const traffic=world.createRigidBody(RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(initial.x,0.5,initial.z));
+    world.createCollider(RAPIER.ColliderDesc.cuboid(halfWidth,0.4,halfLength).setFriction(0.3),traffic);
+    return {setPose(pose){
+      const rotation={x:0,y:Math.sin(pose.heading/2),z:0,w:Math.cos(pose.heading/2)};
+      traffic.setNextKinematicTranslation({x:pose.x,y:0.5,z:pose.z});traffic.setNextKinematicRotation(rotation);
+      mesh.position.set(pose.x,0.08,pose.z);mesh.quaternion.set(rotation.x,rotation.y,rotation.z,rotation.w);
+    }};
+  }
   function addProp(mesh, x, y, z, half = 0.5) {
     const propBody = world.createRigidBody(RAPIER.RigidBodyDesc.dynamic().setTranslation(x,y,z).setLinearDamping(0.4).setAngularDamping(0.7).setCcdEnabled(true));
     world.createCollider(RAPIER.ColliderDesc.cuboid(half,half,half).setMass(12).setFriction(0.7).setRestitution(0.25), propBody);
@@ -100,7 +109,7 @@ export async function createVehicle(scene) {
   addObstacle(-55, -17, 1, 65); addObstacle(55, -17, 1, 65);
   addObstacle(0, 43, 55, 1); addObstacle(0, -76, 55, 1);
   reset();
-  return { group, update, reset, stop, addObstacle, addBarrier, addProp, addRamp, setProfile,
+  return { group, update, reset, stop, addObstacle, addBarrier, addTraffic, addProp, addRamp, setProfile,
     get profile(){return profile.id;},
     get speed() { return speed; }, get heading() { return heading; },
     get motion() { return { speed, signedSpeed, steering, acceleration, impact, input: lastInput, grounded: group.position.y-surfaceHeight() < 0.12 }; },

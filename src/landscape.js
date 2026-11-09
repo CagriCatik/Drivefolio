@@ -41,7 +41,7 @@ export function addLandscape(scene,vehicle){
     block(scene,0.8,1.5,0.5,x,0.75,14,concrete);block(scene,0.55,0.65,0.04,x,1.0,14.27,metal);block(scene,0.1,0.5,0.08,x+0.55,0.75,14.2,mat('#31aa9b'));
     label(scene,'EV',x,1.05,14.31,0.48,'#a8f2e4');vehicle.addObstacle(x,14,0.65,0.35);
   }
-  const pergola=new THREE.Group();pergola.position.set(24,0,24);scene.add(pergola);
+  const pergola=new THREE.Group();pergola.position.set(24,0,22.8);scene.add(pergola);
   for(const x of [-2,2])for(const z of [-1.5,1.5])block(pergola,0.12,2.8,0.12,x,1.4,z,metal);
   for(let i=0;i<9;i++)block(pergola,4.5,0.12,0.16,0,2.85,-1.7+i*0.42,timber);
   // Movable equipment stays outside the main routes, near the jump area.

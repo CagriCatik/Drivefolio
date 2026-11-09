@@ -192,3 +192,11 @@ Die Klanglandschaft entsteht vollständig lokal mit Web Audio: Brunnen, Kanal, B
 Version 0.20 ergänzt einen äußeren Landschaftsgürtel mit 44 locker gruppierten Bäumen, Sträuchern, bewegten Wiesengräsern und Blüten. Ein durchgängiger, 2,2 m breiter Spazierweg liegt 16,5 m außerhalb der Rennstrecken-Mittellinie; Baumkronen und Wiesenpflanzung lassen ihn frei. Zwei Radfahrer, drei Spaziergänger und ein kleiner Vogelschwarm beleben den Bereich. Ein Teich mit Steinen und Schilf sowie flache Hügel hinter dem Baumgürtel geben den freien Flächen Struktur. Die Bodenfläche ist für die Landschaft erweitert; der Campus und die Rennstrecke behalten ihre Geometrie.
 
 `exterior-plan.js` erzeugt alle Standorte deterministisch und hält die Außenleitplanken, die Lampenlinie, Tribüne und Schilder frei. Besucherfiguren sind dekorative Animationen auf dem äußeren Weg; bei pausierter Welt halten sie an. Bäume und Wiese verwenden Instancing, Blätter und Gräser bewegen sich im Windshader. Die Projektstationen bleiben unverändert.
+
+## Aufenthaltsorte im Außenpark
+
+Version 0.21 ergänzt einen Holzsteg am östlichen Teichufer mit zwei originalen Bruno-Bänken, Unterkonstruktion, einem Holztritt und einer Verbindung zum Spazierweg. Die neue Zuschauerterrasse liegt neben der bestehenden östlichen Tribüne, außerhalb der Fahrbahn und des umlaufenden Weges. Ein kleiner Kaffeestand, zwei Sonnenschirme, Tische und weitere Bänke bilden einen gemeinsamen Aufenthaltsort. Vier Zuschauer wenden sich vorbeifahrenden Fahrzeugen zu; einer hebt dabei seine Kamera.
+
+Zwei Enten bewegen sich auf langsamen, geschwungenen Routen im freien Teichbereich. Ihre Routen halten Abstand zueinander und zum Steg; kleine Wasserringe laufen aus. Bodenvariationen, gemähte Randstreifen und dunklere Baumstandorte werden einmalig in eine lokale Bodentextur gebacken, ohne zusätzliche überlappende Bodenflächen. Die Pflanzplanung hält Terrasse, Steg und ihre Verbindungen frei.
+
+Warme Poller markieren Spazierweg und Aufenthaltsorte. Vier tatsächliche Lichtquellen beleuchten Steg und Zuschauerterrasse; dezente additive Lichtflächen unter den übrigen Pollern vermeiden viele weitere Lichtquellen. Leuchtflächen, Lichtquellen und Lichtflächen schalten gemeinsam mit dem Nachtmodus und sind am Tag aus. Die Projektstationen und ihre Inhalte werden nicht verändert.

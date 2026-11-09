@@ -1,3 +1,6 @@
+import {createParkGround} from './park-ground.js';
+import {createExteriorPlan} from './exterior-plan.js';
+import {createParkDestinations} from './park-destinations.js';
 import {createExteriorLandscape} from './exterior-landscape.js';
 import {createShowroom} from './showroom.js';
 import {createServiceForecourt} from './service-forecourt.js';
@@ -53,6 +56,7 @@ function addRoads(scene){
 }
 
 export async function createWorld(scene, vehicle) {
+  const exteriorPlan=createExteriorPlan();
   const paving=document.createElement('canvas');paving.width=paving.height=256;
   const ctx=paving.getContext('2d');ctx.fillStyle='#e5ebea';ctx.fillRect(0,0,256,256);
   ctx.strokeStyle='#d3dddc';ctx.lineWidth=1;ctx.strokeRect(0,0,256,256);ctx.beginPath();ctx.moveTo(0,128);ctx.lineTo(256,128);ctx.moveTo(128,0);ctx.lineTo(128,256);ctx.stroke();
@@ -69,7 +73,7 @@ export async function createWorld(scene, vehicle) {
   }
   const terrainGeometry=new THREE.BufferGeometry();terrainGeometry.setAttribute('position',new THREE.Float32BufferAttribute(terrainPositions,3));terrainGeometry.setIndex(terrainIndices.flat());terrainGeometry.addGroup(0,terrainIndices[0].length,0);terrainGeometry.addGroup(terrainIndices[0].length,terrainIndices[1].length,1);terrainGeometry.computeVertexNormals();
   worldUV(terrainGeometry,0.5);
-  const terrain=new THREE.Mesh(terrainGeometry,[material('#8cab91'),materials.ground]);terrain.receiveShadow=true;scene.add(terrain);
+  const terrain=new THREE.Mesh(terrainGeometry,[createParkGround(exteriorPlan.trees),materials.ground]);terrain.receiveShadow=true;scene.add(terrain);
   addRoads(scene);
   createServiceForecourt(scene);
   for(const z of [10,-13,-34])for(let i=0;i<6;i++)box(scene,0.55,0.012,1.3,-2.5+i,0.10,z,materials.white,false);
@@ -77,7 +81,8 @@ export async function createWorld(scene, vehicle) {
   for(const z of [1.1,8.9]){box(scene,7,0.35,0.12,-32,0.65,z,materials.stone);vehicle.addBarrier(-32,z,3.5,0.09,0);}
   const vehicleVisuals=await createVehicleVisuals(vehicle);
   const landscape=addLandscape(scene,vehicle);
-  const exterior=createExteriorLandscape(scene);
+  const exterior=createExteriorLandscape(scene,exteriorPlan);
+  const park=await createParkDestinations(scene,exteriorPlan);
   await addNameSculpture(scene);
   const facilities=createFacilities(scene,vehicle);
   const showroom=await createShowroom(facilities.garage.group,vehicle);
@@ -93,12 +98,13 @@ export async function createWorld(scene, vehicle) {
     vehicles:vehicleVisuals,
     setOverview(value){scene.fog.near=value?350:85;scene.fog.far=value?500:155;},
     facilities,race,showroom,
-    setNight(value){referenceGarden.setNight(value);attractions.setNight(value);vehicleVisuals.setNight(value);facilities.station.setNight(value);facilities.setNight(value);landscape.setNight(value);race.setNight(value);},
+    setNight(value){park.setNight(value);referenceGarden.setNight(value);attractions.setNight(value);vehicleVisuals.setNight(value);facilities.station.setNight(value);facilities.setNight(value);landscape.setNight(value);race.setNight(value);},
     update(time,dt,paused) {
       showroom.update(vehicle.profile);
       pin.position.y=3+Math.sin(time*2)*0.25;
       attractions.update(time,dt,paused);
       exterior.update(time,dt,paused);
+      park.update(time,dt,paused,vehicle.group.position);
       landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt,paused);race.update(dt,paused);details.update(time,dt);
     },
   };

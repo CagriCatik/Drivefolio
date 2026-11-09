@@ -3,8 +3,8 @@ import {createExteriorPlan,exteriorTrailMesh} from './exterior-plan.js';
 import {environmentMaterial as mat} from './environment-materials.js';
 import {createVegetationWind} from './vegetation-wind.js';
 import {block} from './scene-primitives.js';
-export function createExteriorLandscape(scene){
- const plan=createExteriorPlan(),group=new THREE.Group();group.name='Circuit exterior / landscape park';scene.add(group);
+export function createExteriorLandscape(scene,plan=createExteriorPlan()){
+ const group=new THREE.Group();group.name='Circuit exterior / landscape park';scene.add(group);
  const dummy=new THREE.Object3D(),tint=new THREE.Color(),wind={value:0},sway=createVegetationWind(wind,0.75);let seed=68;
  const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
  function instances(geometry,material,items,place,shadow=true){const mesh=new THREE.InstancedMesh(geometry,material,items.length);items.forEach((item,i)=>{dummy.position.set(0,0,0);dummy.rotation.set(0,0,0);dummy.scale.set(1,1,1);place(item,i);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);});mesh.castShadow=shadow;mesh.receiveShadow=true;group.add(mesh);return mesh;}

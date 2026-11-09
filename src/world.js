@@ -1,3 +1,4 @@
+import {createExteriorLandscape} from './exterior-landscape.js';
 import {createShowroom} from './showroom.js';
 import {createServiceForecourt} from './service-forecourt.js';
 import {createCampusAttractions} from './campus-attractions.js';
@@ -58,7 +59,7 @@ export async function createWorld(scene, vehicle) {
   const texture=new THREE.CanvasTexture(paving);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(1,1);texture.anisotropy=4;materials.ground.map=texture;
   // One disjoint terrain mesh: paving, grass and the canal opening never
   // occupy the same footprint, even in the distant circuit overview.
-  const xs=[-80,-35,-29,29,80],zs=[-80,-62,-60,28,80],terrainPositions=[],terrainIndices=[[],[]];
+  const xs=[-140,-35,-29,29,140],zs=[-130,-62,-60,28,130],terrainPositions=[],terrainIndices=[[],[]];
   for(let i=0;i<xs.length-1;i++)for(let j=0;j<zs.length-1;j++){
     const x=(xs[i]+xs[i+1])/2,z=(zs[j]+zs[j+1])/2;
     if(x>-35&&x<-29&&z>-60&&z<28)continue;
@@ -76,6 +77,7 @@ export async function createWorld(scene, vehicle) {
   for(const z of [1.1,8.9]){box(scene,7,0.35,0.12,-32,0.65,z,materials.stone);vehicle.addBarrier(-32,z,3.5,0.09,0);}
   const vehicleVisuals=await createVehicleVisuals(vehicle);
   const landscape=addLandscape(scene,vehicle);
+  const exterior=createExteriorLandscape(scene);
   await addNameSculpture(scene);
   const facilities=createFacilities(scene,vehicle);
   const showroom=await createShowroom(facilities.garage.group,vehicle);
@@ -96,6 +98,7 @@ export async function createWorld(scene, vehicle) {
       showroom.update(vehicle.profile);
       pin.position.y=3+Math.sin(time*2)*0.25;
       attractions.update(time,dt,paused);
+      exterior.update(time,dt,paused);
       landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt,paused);race.update(dt,paused);details.update(time,dt);
     },
   };

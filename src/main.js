@@ -1,4 +1,7 @@
 import './style.css';
+import {garageSite} from './service-layout.js';
+import {createWorldExperiments} from './world-experiments.js';
+import {projectEvidence} from './project-evidence.js';
 import {createDiscovery,experimentIds} from './discovery.js';
 import {stories} from './project-stories.js';
 import {createProjectExperiments} from './project-experiments.js';
@@ -33,7 +36,7 @@ let destination=null;
 const experiments=createProjectExperiments(id=>{discovery.mark(id,'tried');syncDiscovery();},id=>{discovery.mark(id,'completed');$('experiment-achievement').hidden=false;syncDiscovery();});
 const campusMap=createCampusMap(projects,openProject);
 let vehicle, view, drivingEffects, worldController, activeDialog = null, previousFocus = null;
-let started = false, ready = false, resetClock = false, overview=false;
+let started = false, ready = false, resetClock = false, overview=false,showroomMode=false,worldLab=null;
 const dialogs = [...document.querySelectorAll('dialog')];
 
 function dismissWelcome() {
@@ -46,6 +49,7 @@ function dismissWelcome() {
 }
 
 function showDialog(dialog) {
+  if(showroomMode)closeShowroom();if(worldLab?.active)closeWorldLab();
   if(activeDialog===dialog&&dialog.open)return;
   if(sequence.running)cancelSequence();
   if (activeDialog) activeDialog.close();
@@ -72,9 +76,34 @@ for (const dialog of dialogs) {
   });
 }
 
+
+function selectShowroomVehicle(id){worldController.vehicles.select(id);drivingEffects?.reset();syncGarage();sound.chime();$('showroom-selection').textContent=`${getVehicle(id).name} ausgewählt`;document.querySelectorAll('[data-showroom-id]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.showroomId===id)));}
+function closeShowroom(){showroomMode=false;worldController?.facilities.garage.setShowroom(false);$('showroom-card').hidden=true;view?.setCloseView(false);input.setEnabled(!overview);resetClock=true;}
+function openShowroom(){
+ if(!ready)return;if(sequence.running)cancelSequence();if(worldLab?.active)closeWorldLab();
+ activeDialog?.close();activeDialog=null;experiments.close();dismissWelcome();overview=false;view.setOverview(false);worldController.setOverview(false);$('track-overview').setAttribute('aria-pressed','false');
+ showroomMode=true;worldController.facilities.garage.setShowroom(true);input.setEnabled(false);vehicle.stop();view.setCloseView(true);$('showroom-card').hidden=false;selectShowroomVehicle(worldController.vehicles.selected);
+ $('showroom-close').focus();
+}
+$('showroom-open').addEventListener('click',openShowroom);$('showroom-close').addEventListener('click',closeShowroom);
+for(const p of vehicles){const b=document.createElement('button');b.textContent=p.name;b.dataset.showroomId=p.id;b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>selectShowroomVehicle(p.id));$('showroom-choices').append(b);}
+$('world').addEventListener('pointerdown',e=>{if(!showroomMode)return;const id=worldController.showroom.pick(e,view.camera);if(id)selectShowroomVehicle(id);});
+window.addEventListener('keydown',e=>{if(showroomMode){if(e.code==='Escape')closeShowroom();const i=Number(e.key)-1;if(i>=0&&i<vehicles.length&&!e.repeat)selectShowroomVehicle(vehicles[i].id);}else if(worldLab?.active&&e.code==='Escape')closeWorldLab();});
+function closeWorldLab(){worldLab?.close();view?.setCloseView(false);input.setEnabled(!overview);resetClock=true;}
+function openWorldLab(project){
+ if(!ready||!experimentIds.includes(project.id))return;selectedProject=project;discovery.mark(project.id);syncDiscovery();if(showroomMode)closeShowroom();if(sequence.running)cancelSequence();activeDialog?.close();activeDialog=null;experiments.close();dismissWelcome();
+ overview=false;view.setOverview(false);worldController.setOverview(false);$('track-overview').setAttribute('aria-pressed','false');vehicle.stop();input.setEnabled(false);view.setCloseView(true);worldLab.open(project);
+}
+$('world-lab-project').addEventListener('click',()=>{const p=worldLab?.project;if(p){closeWorldLab();openProject(p);}});
+$('project-world-lab').addEventListener('click',()=>openWorldLab(selectedProject));$('world-lab-close').addEventListener('click',closeWorldLab);
+
 function openProject(project) {
   dismissWelcome();
   selectedProject=project;
+  $('project-world-lab').hidden=!experimentIds.includes(project.id);$('project-world-lab').disabled=!ready;
+  const evidence=projectEvidence[project.id];$('project-evidence').hidden=!evidence;
+  if(evidence){$('project-evidence-text').textContent=evidence.text;$('project-evidence-link').href=evidence.url;$('project-evidence-link').textContent=evidence.label;$('project-evidence-image').hidden=!evidence.image;if(evidence.image){$('project-evidence-image').src=import.meta.env.BASE_URL+evidence.image;$('project-evidence-image').alt=evidence.alt;}}
+
   $('project-demo').disabled=!ready;
   $('project-title').textContent = project.title;
   $('project-category').textContent = `${project.number} / ${project.category}`;
@@ -136,6 +165,7 @@ function cancelSequence(){
   worldController?.facilities.setDemo(null,-1,0);input.setEnabled(!overview);resetClock=true;
 }
 function startDemo(project){
+  if(showroomMode)closeShowroom();if(worldLab?.active)closeWorldLab();
   overview=false;view?.setOverview(false);worldController?.setOverview(false);$('track-overview').setAttribute('aria-pressed','false');
   if(!ready||!project)return;
   if(activeDialog){activeDialog.close();activeDialog=null;}
@@ -151,7 +181,7 @@ syncDiscovery();
 $('project-demo').addEventListener('click',()=>startDemo(selectedProject));
 window.addEventListener('keydown',e=>{if(e.code==='Escape'&&sequence.running)cancelSequence();});
 
-$('track-overview').addEventListener('click',()=>{if(!ready)return;dismissWelcome();overview=!overview;$('interaction-hint').hidden=true;view.setOverview(overview);worldController.setOverview(overview);input.setEnabled(!overview);vehicle.stop();$('track-overview').setAttribute('aria-pressed',String(overview));$('track-overview').textContent=overview?'Zurück ans Steuer':'Streckenübersicht';});
+$('track-overview').addEventListener('click',()=>{if(!ready)return;if(showroomMode)closeShowroom();if(worldLab?.active)closeWorldLab();dismissWelcome();overview=!overview;$('interaction-hint').hidden=true;view.setOverview(overview);worldController.setOverview(overview);input.setEnabled(!overview);vehicle.stop();$('track-overview').setAttribute('aria-pressed',String(overview));$('track-overview').textContent=overview?'Zurück ans Steuer':'Streckenübersicht';});
 $('projects-button').addEventListener('click', () => showDialog($('list-dialog')));
 $('direct-button').addEventListener('click', () => showDialog($('list-dialog')));
 $('about-button').addEventListener('click', () => showDialog($('about-dialog')));
@@ -194,7 +224,7 @@ $('zoom-in').addEventListener('click', () => view?.zoom(-0.12));
 $('zoom-out').addEventListener('click', () => view?.zoom(0.12));
 $('reset-button').addEventListener('click', () => {
   if (!ready) return;
-  cancelSequence();
+  closeShowroom();closeWorldLab();cancelSequence();
   worldController.race.reset();
   input.clear(); vehicle.reset(); view.reset(vehicle.group.position); resetClock = true;
   interactions.reset();
@@ -223,7 +253,7 @@ async function main() {
   view = createPortfolioCamera(window.innerWidth / window.innerHeight);
   vehicle = await createVehicle(scene);
   const world = await createWorld(scene, vehicle);
-  worldController=world;createDisplayModes(renderer,scene,sun,sky,world);syncGarage();$('garage-button').disabled=false;
+  worldController=world;worldLab=createWorldExperiments(scene,id=>{discovery.mark(id,'tried');syncDiscovery();},id=>{discovery.mark(id,'completed');syncDiscovery();});createDisplayModes(renderer,scene,sun,sky,world);syncGarage();$('garage-button').disabled=false;
   drivingEffects=createDrivingEffects(scene,vehicle);
   const composer=new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene,view.camera));
@@ -248,7 +278,7 @@ async function main() {
     const dt = resetClock || !last ? 0 : Math.min((now - last) / 1000, 0.08);
     if (resetClock) accumulator = 0;
     last = now; resetClock = false; time += dt;
-    if (!activeDialog && !sequence.running&&!overview) {
+    if (!activeDialog && !sequence.running&&!overview&&!showroomMode&&!worldLab?.active) {
       accumulator += dt;
       let steps = 0;
       while (accumulator >= fixed && steps < 5) {
@@ -260,32 +290,33 @@ async function main() {
         if(interactionState.activated){
           if(interactionState.activated.action==='fuel')world.facilities.station.interact();
           else if(interactionState.activated.id==='garage')openGarage();
-          else {const project=projects.find(p=>p.id===interactionState.activated.id);if(experimentIds.includes(project.id))openProject(project);else startDemo(project);}
+          else {const project=projects.find(p=>p.id===interactionState.activated.id);if(experimentIds.includes(project.id))openWorldLab(project);else startDemo(project);}
           accumulator=0;break;
         }
       }
-      if (!activeDialog && !sequence.running&&!overview) {
+      if (!activeDialog && !sequence.running&&!overview&&!showroomMode&&!worldLab?.active) {
         $('interaction-hint').hidden=!interactionState.location||interactionState.location.action==='fuel';
         if(interactionState.location)$('interaction-message').textContent=`${interactionState.location.label} · ${Math.abs(vehicle.speed)<(interactionState.location.action==='fuel'?0.5:1.5)?'E drücken':'anhalten'}`;
 
       }
     } else accumulator = 0;
-    view.update(dt, sequence.running?sequence.project.position:vehicle.group.position, vehicle.heading, !sequence.running&&vehicle.speed > 0.5);
+    view.update(dt,showroomMode?garageSite:worldLab?.active?worldLab.project.position:sequence.running?sequence.project.position:vehicle.group.position,vehicle.heading,!sequence.running&&!showroomMode&&!worldLab?.active&&vehicle.speed>0.5);
     if(sequence.running){
       const state=sequence.update(dt);world.facilities.setDemo(sequence.project.id,state.stage,state.progress);
       $('sequence-stage').textContent=state.label;
       $('sequence-progress').style.width=`${state.progress*100}%`;
       if(state.completed){const project=sequence.project;cancelSequence();openProject(project);}
     }
-    world.update(time,dt,!!activeDialog||sequence.running||overview);
+    worldLab?.update(dt);
+    world.update(time,dt,!!activeDialog||sequence.running||overview||showroomMode||!!worldLab?.active);
     const fuel=vehicle.fuel;
     $('fuel-level').textContent=`${Math.round(fuel.fraction*100)} %`;
     $('fuel-meter').value=fuel.fraction;
     $('fuel-indicator').classList.toggle('fuel-low',fuel.fraction<0.15);
     $('fuel-indicator').title=fuel.fraction<=0?'Tank leer · Notlauf zur Tankstelle':`${fuel.liters.toFixed(1)} von 50 Litern`;
     $('fuel-status').textContent=fuel.refueling?'TANKT …':fuel.fraction<=0?'NOTLAUF':fuel.fraction<0.15?'RESERVE':'TANK';
-    drivingEffects.update(dt,time,!!activeDialog||sequence.running);
-    sound.update(vehicle.motion,!!activeDialog||sequence.running);
+    drivingEffects.update(dt,time,!!activeDialog||sequence.running||showroomMode||!!worldLab?.active);
+    sound.update(vehicle.motion,!!activeDialog||sequence.running||showroomMode||!!worldLab?.active);
     $('speed-value').textContent=String(Math.round(vehicle.speed*3.6)).padStart(2,'0');
     $('boost-label').classList.toggle('boosting',!!vehicle.motion.input.boost&&vehicle.speed>2);
     campusMap.update(vehicle.group.position,vehicle.heading,world.race.trafficPose);

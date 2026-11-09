@@ -76,3 +76,10 @@ test('vehicle keeps its tank through reset and profile changes; empty tank permi
  for(let i=0;i<120;i++)v.update(1/60,{throttle:1,steering:0,brake:false,boost:true});
  assert.ok(v.speed>2&&v.speed<=5.1,'empty tank cannot boost but can reach the station');
 });
+
+test('close camera view fits a showroom and widens for portrait screens',()=>{
+ const v=createPortfolioCamera(1.8),p=new THREE.Vector3(29.5,0,16);v.reset(p);v.update(1,p,0,false);const normal=v.camera.position.distanceTo(p);
+ v.setCloseView(true);v.update(1,p,0,false);assert.ok(v.camera.position.distanceTo(p)<normal);
+ v.resize(0.5);v.update(1,p,0,false);assert.ok(v.camera.position.distanceTo(p)>60);
+ v.setCloseView(false);v.resize(1.8);v.update(1,p,0,false);assert.ok(Math.abs(v.camera.position.distanceTo(p)-normal)<0.01);
+});

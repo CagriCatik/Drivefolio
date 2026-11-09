@@ -21,3 +21,10 @@ test('garage activates at its relocated entrance and no longer activates at the 
  const c=createInteractions();assert.equal(c.update({x:-17,z:16},0,true).activated,null);c.reset();assert.equal(c.update(garageSite.entrance,0,true).activated.id,'garage');
  c.reset();assert.equal(c.update(garageSite.entrance,5,true).activated,null);
 });
+
+test('garage front now faces the campus road with a straight approach',()=>{
+ assert.equal(garageSite.rotation,Math.PI);
+ const frontZ=garageSite.z-garageSite.halfDepth;assert.equal(frontZ,11.5);assert.ok(garageSite.entrance.z<frontZ);
+ const c=createInteractions();assert.equal(c.update({x:garageSite.x,z:9.8},0,true).activated.id,'garage');
+ c.reset();assert.equal(c.update({x:garageSite.x,z:22.4},0,true).activated,null,'former rear approach is no longer the entrance');
+});

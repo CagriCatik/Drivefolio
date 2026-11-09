@@ -11,7 +11,7 @@ function orb(parent,radius,color,x,y,z){
   const mesh=new THREE.Mesh(new THREE.SphereGeometry(radius,10,8),glow(color));mesh.position.set(x,y,z);parent.add(mesh);return mesh;
 }
 function station(scene,vehicle,x,z,title,subtitle,color,width=14,depth=12){
-  const group=new THREE.Group();group.position.set(x,0,z);scene.add(group);
+  const group=new THREE.Group();group.name=x===-15&&z===-28?'station-radar':'station-'+title;group.position.set(x,0,z);scene.add(group);
   block(group,width,0.08,depth,0,0.02,0,mat(color));
   block(group,width,2.7,0.25,0,1.35,-depth/2,mat('#344e60'));
   label(group,title,0,1.9,-depth/2+0.16,width-1.2);

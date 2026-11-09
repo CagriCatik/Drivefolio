@@ -1,3 +1,4 @@
+import {createShowroom} from './showroom.js';
 import {createServiceForecourt} from './service-forecourt.js';
 import {createCampusAttractions} from './campus-attractions.js';
 import {createReferenceGarden} from './reference-garden.js';
@@ -77,6 +78,7 @@ export async function createWorld(scene, vehicle) {
   const landscape=addLandscape(scene,vehicle);
   await addNameSculpture(scene);
   const facilities=createFacilities(scene,vehicle);
+  const showroom=await createShowroom(facilities.garage.group,vehicle);
   const race=createRaceTrack(scene,vehicle);
   const details=createCampusDetails(scene,vehicle);
   const referenceGarden=await createReferenceGarden(scene,vehicle);
@@ -88,9 +90,10 @@ export async function createWorld(scene, vehicle) {
     setDestination(project){beacon.visible=!!project;if(project)beacon.position.set(project.entrance.x,0,project.entrance.z);},
     vehicles:vehicleVisuals,
     setOverview(value){scene.fog.near=value?350:85;scene.fog.far=value?500:155;},
-    facilities,race,
+    facilities,race,showroom,
     setNight(value){referenceGarden.setNight(value);attractions.setNight(value);vehicleVisuals.setNight(value);facilities.station.setNight(value);facilities.setNight(value);landscape.setNight(value);race.setNight(value);},
     update(time,dt,paused) {
+      showroom.update(vehicle.profile);
       pin.position.y=3+Math.sin(time*2)*0.25;
       attractions.update(time,dt,paused);
       landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt,paused);race.update(dt,paused);details.update(time,dt);

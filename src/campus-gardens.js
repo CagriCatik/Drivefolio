@@ -15,20 +15,20 @@ export function createCampusGardens(scene,vehicle){
  const shrubs=[],flowers=[];
  for(const [index,[x,z,w,d]] of gardenBeds.entries()){
   block(group,w+0.22,0.07,d+0.22,x,0.005,z,stone);block(group,w,0.08,d,x,0.05,z,soil);
-  const count=Math.ceil(d/0.8);for(let i=0;i<count;i++)for(const side of [-1,1]){
-   const px=x+side*w*0.23,pz=z-d/2+0.4+i*(d-0.8)/Math.max(1,count-1);
-   shrubs.push({x:px,z:pz,scale:0.27+(i%3)*0.06,color:index%3});
+  const count=Math.ceil(d/0.7);for(let i=0;i<count;i++){
+   const px=x+Math.sin(i*2.4+index)*w*0.24,pz=z-d/2+0.4+i*(d-0.8)/Math.max(1,count-1);
+   shrubs.push({x:px,z:pz,scale:0.27+(i%4)*0.04,color:index%3});
    if(i%2===0)flowers.push({x:px+0.12,z:pz+0.12,color:index%2});
   }
  }
  const dummy=new THREE.Object3D();
  for(const [index,color] of ['#65947a','#789b70','#4c806c'].entries()){
-  const items=shrubs.filter(s=>s.color===index),mesh=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),mat(color),items.length);
-  items.forEach((s,i)=>{dummy.position.set(s.x,0.2+s.scale*0.5,s.z);dummy.scale.set(s.scale*1.3,s.scale,s.scale*1.4);dummy.rotation.set(0,i*0.6,0);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);});mesh.castShadow=true;group.add(mesh);
+  const items=shrubs.filter(s=>s.color===index),mesh=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),mat(color),items.length);
+  items.forEach((s,i)=>{dummy.position.set(s.x,0.2+s.scale*0.5,s.z);dummy.scale.set(s.scale*1.5,s.scale*0.85,s.scale*1.2);dummy.rotation.set(0,i*0.6,0);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);});mesh.castShadow=true;group.add(mesh);
  }
  for(const [index,color] of ['#b99fd0','#ebd39c'].entries()){
   const items=flowers.filter(s=>s.color===index),mesh=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.10,0),mat(color),items.length);
-  items.forEach((s,i)=>{dummy.position.set(s.x,0.55,s.z);dummy.scale.set(1,1,1);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);});group.add(mesh);
+  items.forEach((s,i)=>{dummy.position.set(s.x,0.61,s.z);dummy.scale.set(1,1,1);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);});group.add(mesh);
  }
  const luminous=new THREE.MeshStandardMaterial({color:'#e1efcf',emissive:'#e9e4b3',emissiveIntensity:0});
  for(const z of [-48,-31,-10,20]){block(group,0.16,0.85,0.16,-28.15,0.43,z,steel);block(group,0.19,0.08,0.19,-28.15,0.82,z,luminous);}

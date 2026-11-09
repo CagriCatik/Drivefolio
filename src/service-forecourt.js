@@ -9,7 +9,7 @@ export function createServiceForecourt(scene){
  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.setIndex(indices);geometry.computeVertexNormals();worldUV(geometry);
  const floor=new THREE.Mesh(geometry,asphaltMaterial());floor.receiveShadow=true;scene.add(floor);
  const paint=new THREE.MeshBasicMaterial({color:'#c7dfd5',polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4});
- for(const x of [21.15,24.32])block(scene,0.07,0.008,12.1,x,0.095,17.9,paint);
+ for(const x of [24.9,34.1])block(scene,0.07,0.008,2.8,x,0.095,9.95,paint);
  label(scene,'FUEL / GARAGE →',22.65,0.11,10.15,4.6,'#d6e8de').rotation.x=-Math.PI/2;
- label(scene,'GARAGE',garageSite.x,0.11,23.1,4.2,'#d6e8de').rotation.x=-Math.PI/2;
+ label(scene,'GARAGE ↑',garageSite.x,0.11,9.85,4.2,'#d6e8de').rotation.x=-Math.PI/2;
 }

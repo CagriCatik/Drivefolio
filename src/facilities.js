@@ -9,16 +9,19 @@ import {createExhibitions} from './exhibition-areas.js';
 import {createPlanningAreas} from './planning-areas.js';
 
 function createGarage(scene,vehicle){
-  const group=new THREE.Group();group.position.set(garageSite.x,0,garageSite.z);scene.add(group);
+  const group=new THREE.Group();group.position.set(garageSite.x,0,garageSite.z);group.rotation.y=garageSite.rotation;scene.add(group);
   const wall=mat('#d5e3e6'),frame=mat('#354c5c'),floor=mat('#bdcdd0');
   block(group,10,0.08,9,0,0.03,0,floor);
-  block(group,0.4,3.5,9,-5,1.75,0,wall);block(group,0.4,3.5,9,5,1.75,0,wall);
-  block(group,10,3.5,0.4,0,1.75,-4.5,wall);block(group,10.6,0.35,9.6,0,3.7,0,frame);
+  const covers=[block(group,0.4,3.5,9,-5,1.75,0,wall),block(group,0.4,3.5,9,5,1.75,0,wall),block(group,10,3.5,0.4,0,1.75,-4.5,wall)];
+  const roofGlass=new THREE.MeshStandardMaterial({color:'#b4d1cb',transparent:true,opacity:0.13,depthWrite:false,roughness:0.3});
+  const roof=block(group,10.6,0.08,9.6,0,3.7,0,roofGlass);roof.castShadow=false;
+  for(const x of [-5.2,5.2])block(group,0.16,0.28,9.6,x,3.7,0,frame);
+  for(const z of [-4.7,4.7])block(group,10.6,0.28,0.16,0,3.7,z,frame);
   block(group,10,0.65,0.4,0,3.35,4.5,wall);
   // Solar roof, facade fins and a glazed service window.
   for(let i=0;i<5;i++){
-    const panel=block(group,1.65,0.08,5.8,-3.7+i*1.85,3.96,-0.3,mat('#274e6a'));
-    for(let j=0;j<6;j++)block(panel,1.55,0.012,0.025,0,0.05,-2.5+j,mat('#7597ac'));
+    const panel=block(group,1.65,0.08,2.4,-3.7+i*1.85,3.84,-3.2,mat('#274e6a'));
+    for(let j=0;j<5;j++)block(panel,1.55,0.012,0.025,0,0.05,-1+j*0.5,mat('#7597ac'));
   }
   for(let i=0;i<7;i++)block(group,0.08,2.6,0.08,5.25,1.6,-3.5+i,frame);
   block(group,0.04,1.3,2.8,5.23,1.8,-0.4,new THREE.MeshStandardMaterial({color:'#80b4c5',metalness:0.3,roughness:0.2}));
@@ -28,14 +31,14 @@ function createGarage(scene,vehicle){
   const welcome=label(group,'E  /  FAHRZEUG WÄHLEN',0,0.18,6.2,6.3);welcome.rotation.x=-Math.PI/2;
   const glow=new THREE.MeshStandardMaterial({color:'#b9e0cb',emissive:'#85d7b2',emissiveIntensity:0});
   block(group,8.8,0.04,0.15,0,0.09,3.8,glow);
-  vehicle.addObstacle(garageSite.x-5,garageSite.z,0.2,4.5);vehicle.addObstacle(garageSite.x+5,garageSite.z,0.2,4.5);vehicle.addObstacle(garageSite.x,garageSite.z-4.5,5,0.2);
-  return {setNight(value){glow.emissiveIntensity=value?1.8:0;},update(dt){const p=vehicle.group.position,near=Math.hypot(p.x-garageSite.entrance.x,p.z-garageSite.entrance.z)<7;
-    door.position.y=THREE.MathUtils.lerp(door.position.y,near?3:1.5,1-Math.exp(-3*dt));
+  vehicle.addObstacle(garageSite.x-5,garageSite.z,0.2,4.5);vehicle.addObstacle(garageSite.x+5,garageSite.z,0.2,4.5);vehicle.addObstacle(garageSite.x,garageSite.z+4.5,5,0.2);
+  return {group,setShowroom(value){covers.forEach(n=>n.visible=!value);},setNight(value){glow.emissiveIntensity=value?1.8:0;},update(dt){const p=vehicle.group.position,near=Math.hypot(p.x-garageSite.entrance.x,p.z-garageSite.entrance.z)<7;
+    door.position.y=THREE.MathUtils.lerp(door.position.y,near?3.1:1.5,1-Math.exp(-3*dt));
     door.scale.y=THREE.MathUtils.lerp(door.scale.y,near?0.06:1,1-Math.exp(-3*dt));}};
 }
 
 function createRoboticsLab(scene,vehicle){
-  const x=-15,z=-4,group=new THREE.Group();group.position.set(x,0,z);scene.add(group);
+  const x=-15,z=-4,group=new THREE.Group();group.name='station-jetracer';group.position.set(x,0,z);scene.add(group);
   const dark=mat('#304d5e'),floor=mat('#c4d9d7'),walls=mat('#e4edeb');
   block(group,12,0.08,11.6,0,0.02,-0.2,floor);
   block(group,12,2.5,0.25,0,1.25,-6,dark);
@@ -109,5 +112,5 @@ function createRoboticsLab(scene,vehicle){
 
 export function createFacilities(scene,vehicle){
   const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle),areas=createProjectAreas(scene,vehicle),exhibitions=createExhibitions(scene,vehicle),planning=createPlanningAreas(scene,vehicle);const station=createFuelStation(scene,vehicle);
-  return {station,setNight(value){garage.setNight(value);lab.setNight(value);exhibitions.setNight(value);},setDemo(id,stage,progress){exhibitions.setDemo(id,stage,progress);planning.setDemo(id,stage,progress);},update(time,dt,paused){station.update(paused);garage.update(dt);lab.update(time);areas.update(time);exhibitions.update(time);planning.update(time);}};
+  return {station,garage,setNight(value){garage.setNight(value);lab.setNight(value);exhibitions.setNight(value);},setDemo(id,stage,progress){exhibitions.setDemo(id,stage,progress);planning.setDemo(id,stage,progress);},update(time,dt,paused){station.update(paused);garage.update(dt);lab.update(time);areas.update(time);exhibitions.update(time);planning.update(time);}};
 }

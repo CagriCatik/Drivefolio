@@ -22,7 +22,7 @@ Die im Terminal angezeigte URL öffnen. Ein Doppelklick auf die HTML-Datei funkt
 
 | Ort | Inhalt und Interaktion |
 | --- | --- |
-| Garage, rechts neben der Tankstelle | Gemeinsame Zufahrt über den Service-Vorplatz. Tor öffnet bei Annäherung; vor dem Tor bei (29.5, 22.4) E drücken. Vier Fahrzeuge, Lackierung und Scheinwerferwahl. Auch über G im Campusplan erreichbar. |
+| Garage, rechts neben der Tankstelle | Gemeinsame Zufahrt über den Service-Vorplatz. Tor öffnet bei Annäherung; vor dem Tor bei (29.5, 10) E drücken. Vier Fahrzeuge, Lackierung und Scheinwerferwahl. Auch über G im Campusplan erreichbar. |
 | Tankstelle, rechts hinter dem Startplatz | Zwei Fahrspuren, vier Zapfseiten, Überdachung und Servicekiosk. Direkt neben einer Säule anhalten, E startet/beendet kostenloses Tanken. Anzeige mit Tankfüllstand und getankten Litern. |
 | JetRacer-Werkstatt, erste Querstraße links | RC-Modell mit Kamera/LiDAR, Jetson-Werkbank und ROS-2-Anzeige. 48 LiDAR-Raycasts mit 10 Hz. E bei (-15, 1.5). |
 | Vehicle Dynamics, erste Querstraße rechts | Zwei Modelle illustrieren 2WS/4WS. Bewegliche Pylonen. E bei (15, 3). |
@@ -135,7 +135,7 @@ Vite verwendet `base: './'`, damit Modelle, Texturen, Schrift und JavaScript auc
 
 ## Interaktive Projekt-Erlebnisse
 
-JetRacer, RadarTrackBench und Frenet öffnen mit E direkt eine interaktive Projektkarte. Alle Erlebnisse sind auch über die Projektliste ohne Fahren zugänglich, selbst wenn WebGL nicht verfügbar ist. Die bestehenden 3D-Welt-Demos bleiben separat erreichbar.
+JetRacer, RadarTrackBench und Frenet öffnen mit E direkt das steuerbare 3D-Experiment. Die Projektkarte mit zusätzlichen 2D-Experimenten und Originalbelegen bleibt separat erreichbar. Alle Erlebnisse sind auch über die Projektliste ohne Fahren zugänglich, selbst wenn WebGL nicht verfügbar ist. Die bestehenden 3D-Welt-Demos bleiben separat erreichbar.
 
 - JetRacer: Hindernis schalten, Roboter starten; eine Gitter-Breitensuche plant einen freien Weg. Das Lernmodell vereinfacht Fahrzeugkinematik und Sensorik.
 - Radar: Messrauschen verändern, Messung pausieren, Sensor für vier Sekunden unterbrechen. Zwei lineare Kalman-Filter schätzen Position und Geschwindigkeit; RMSE bezieht sich ausschließlich auf synthetische Browserdaten.
@@ -163,4 +163,16 @@ Zwei Sitzplätze schauen auf den Brunnen, zwei zum Kanal, einer zur Robotics-Wer
 
 ## Gemeinsamer Servicebereich
 
-Tankstelle und Garage liegen nebeneinander. Die Garage steht bei (29.5, 16), ihr Tor zeigt zum südlichen Vorplatz. Eine zusammenhängende, überschneidungsfrei erzeugte Asphaltfläche verbindet die Campus-Querstraße, die Tankstelle und den Garageneingang. Die Ladesäulen stehen an der westlichen Garagenwand; Serviceschrank und Van liegen an der östlichen Seite. Die Pergola und ein Baum aus dem neuen Garagenstandort wurden in den früheren westlichen Garagenbereich versetzt. Eingang, Modell, Kollisionen, Torsteuerung und Campusplan beziehen ihre Position aus `service-layout.js`.
+Tankstelle und Garage liegen nebeneinander. Die Garage steht bei (29.5, 16), ihr Tor zeigt nach Norden zur Campus-Querstraße. Eine zusammenhängende, überschneidungsfrei erzeugte Asphaltfläche verbindet die Campus-Querstraße, die Tankstelle und den Garageneingang. Die Ladesäulen stehen an der westlichen Garagenwand; Serviceschrank und Van liegen an der östlichen Seite. Die Pergola und ein Baum aus dem neuen Garagenstandort wurden in den früheren westlichen Garagenbereich versetzt. Eingang, Modell, Kollisionen, Torsteuerung und Campusplan beziehen ihre Position aus `service-layout.js`.
+
+## Prioritäten umgesetzt: Zufahrt → Gestaltung → Showroom → Projektergebnisse
+
+Die Garage ist um 180 Grad gedreht. Ihre Front liegt bei z=11.5; von der Querstraße geht es gerade über den breiten Vorplatz zum E-Eingang bei (29.5, 10). Der Hintergrund des Gebäudes wird nicht mehr als Zufahrt verwendet.
+
+Der gemeinsame Materialhelfer vereinheitlicht helle Mineralflächen und dunkles Metall. Vegetation verwendet gestaffelte, facettierte Kronen mit unterschiedlichen Wuchsformen und unregelmäßig verteilte Strauchgruppen statt gleichförmiger Kugelreihen.
+
+Alle vier vorhandenen Fahrzeugmodelle sind im teilweise verglasten Showroom ausgestellt. „Garage → Fahrzeuge im 3D-Showroom auswählen“ fokussiert die Kamera. Fahrzeug anklicken, Schaltfläche verwenden oder 1–4 drücken; Escape kehrt zum Besucherfahrzeug zurück. Währenddessen pausiert die Fahrphysik.
+
+JetRacer, Radar und Frenet lassen sich in einem separaten 3D-Experiment steuern. Es werden dieselben getesteten Browsermodelle wie für die 2D-Experimente verwendet. Der ursprüngliche Stationsaufbau wird vorübergehend ausgeblendet und beim Verlassen wiederhergestellt; die temporären Geometrien und Materialien werden freigegeben. Im Experiment führen separate Schaltflächen zu Projektbeschreibung und Originalergebnissen.
+
+Die Radar-Vergleichsgrafik unter `public/results/radar-filter-scenarios.png` stammt unverändert aus CagriCatik/RadarTrackBench, `results/comparisons/filter_scenarios/filter_scenario_comparison.png`. Projektkarten verlinken außerdem die originale Frenet-Simulation und den JetRacer-Safety-Supervisor. Die synthetischen Browserdemos werden deutlich von diesen Repository-Artefakten unterschieden.

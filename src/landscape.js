@@ -12,19 +12,21 @@ export function addLandscape(scene,vehicle){
   const concrete=mat('#d8e2e3'),metal=mat('#334a54'),timber=mat('#a88c6b');
   const gardens=createCampusGardens(scene,vehicle);
   const crowns=[],trees=campusTrees;
-  const crownGeometry=new THREE.IcosahedronGeometry(1,2),leafMaterials=['#4a856d','#60967b','#75a181'].map(mat);
+  const leafMaterials=['#557e60','#6d8f65','#82966a','#476e58'].map(mat);
+  const leafGeometry=new THREE.IcosahedronGeometry(1,1);
   for(const [i,[x,z]] of trees.entries()){
-    block(scene,3.4,0.22,3.4,x,0.08,z,concrete);
-    block(scene,3.0,0.08,3.0,x,0.22,z,mat('#688a70'));
-    const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.22,2.6,8),timber);trunk.position.set(x,1.5,z);trunk.castShadow=true;scene.add(trunk);
-    const canopy=new THREE.Group();canopy.position.set(x,3.3+(i%3)*0.18,z);canopy.rotation.y=i*0.71;canopy.scale.set(i%3===0?0.8:1,i%3===0?1.35:1,i%3===0?0.8:1);if(x===8&&z===21)canopy.scale.multiplyScalar(0.72);scene.add(canopy);crowns.push(canopy);
-    for(let n=0;n<4;n++){
-      const mesh=new THREE.Mesh(crownGeometry,leafMaterials[(i+n)%3]);mesh.position.set(Math.cos(n*2.4)*0.65,n===3?0.6:0,Math.sin(n*2.4)*0.65);mesh.scale.set(1.2,1.25,1.2);mesh.castShadow=true;canopy.add(mesh);
+    const slim=i%3===0,groundRadius=slim?1.0:1.35;
+    const bed=new THREE.Mesh(new THREE.CylinderGeometry(groundRadius,groundRadius+0.12,0.11,16),concrete);bed.position.set(x,0.04,z);bed.receiveShadow=true;scene.add(bed);
+    const soil=new THREE.Mesh(new THREE.CylinderGeometry(groundRadius-0.1,groundRadius-0.1,0.04,16),mat('#77876b'));soil.position.set(x,0.11,z);scene.add(soil);
+    const trunkHeight=slim?2.6:2.25;
+    const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.20,trunkHeight,7),timber);trunk.position.set(x,trunkHeight/2+0.1,z);trunk.castShadow=true;scene.add(trunk);
+    const canopy=new THREE.Group();canopy.position.set(x,trunkHeight+0.15,z);canopy.rotation.y=i*1.31;scene.add(canopy);crowns.push(canopy);
+    for(let n=0;n<(slim?4:7);n++){
+      const a=n*2.399+i*0.7,r=slim?0.25:(n===0?0:0.65),mesh=new THREE.Mesh(leafGeometry,leafMaterials[(i+n)%leafMaterials.length]);
+      mesh.position.set(Math.cos(a)*r,slim?n*0.42:(n%3)*0.33,Math.sin(a)*r);mesh.scale.set(slim?0.72:0.92,slim?0.83:0.70,slim?0.60:0.86);mesh.rotation.set(0.12*n,a,0.07*n);mesh.castShadow=true;canopy.add(mesh);
     }
+    if(x===8&&z===21)canopy.scale.multiplyScalar(0.75);
     vehicle.addObstacle(x,z,0.25,0.25);
-    for(const side of [-1,1]){
-      const shrub=new THREE.Mesh(new THREE.IcosahedronGeometry(0.42,1),leafMaterials[i%3]);shrub.position.set(x+side*1.1,0.52,z+0.9);shrub.scale.y=0.7;scene.add(shrub);
-    }
   }
   const nightLights=[];
   const lightMaterial=new THREE.MeshStandardMaterial({color:'#e4fbff',emissive:'#b9eaff',emissiveIntensity:0});

@@ -12,7 +12,7 @@ function car(parent,color){
   return group;
 }
 function field(scene,vehicle,x,title,subtitle,color){
-  const group=new THREE.Group();group.position.set(x,0,-49);scene.add(group);
+  const group=new THREE.Group();group.name=x<0?'station-frenet':'station-fmt';group.position.set(x,0,-49);scene.add(group);
   block(group,14,0.08,12,0,0.02,0,mat(color));
   block(group,14,2.5,0.25,0,1.25,-6,mat('#344e60'));
   label(group,title,0,1.85,-5.83,12);label(group,subtitle,0,0.85,-5.81,11,'#e9d6bc');

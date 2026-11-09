@@ -1,0 +1,6 @@
+// Links verified against the repositories, separate from our illustrative browser models.
+export const projectEvidence={
+ radar:{text:'Originalauswertung: Vergleich von sechs Filtern über Referenzflug, Messausfälle, Glint und Steigflug. Die Grafik stammt aus dem Repository; die interaktive Browserdemo ist davon unabhängig.',image:'results/radar-filter-scenarios.png',alt:'Originalgrafik aus RadarTrackBench: Filtervergleich über vier Szenarien',url:'https://github.com/CagriCatik/RadarTrackBench/blob/main/results/INDEX.md',label:'Vollständige Auswertungen und Versuchsprotokoll öffnen ↗'},
+ frenet:{text:'Die Original-Simulation zeigt den Python-Planer im PyQt-Dashboard. Im Repository sind Kandidatenerzeugung, Kostenbewertung und OBB-Kollisionsprüfung getrennt dokumentiert.',url:'https://github.com/CagriCatik/Frenet-Trajectory-Planner/blob/main/simulation.gif',label:'Original-Simulation im Repository ansehen ↗'},
+ jetracer:{text:'Der originale ROS-2-Aufbau trennt Hardware, Wahrnehmung, Navigation und Sicherheitsüberwachung in eigene Pakete. Ein konkreter Einstieg ist der Safety-Supervisor im Quellcode.',url:'https://github.com/CagriCatik/JetRacer-ROS2/blob/main/src/jetracer_behavior/jetracer_behavior/safety_supervisor.py',label:'Sicherheitsüberwachung im Originalprojekt ansehen ↗'},
+};

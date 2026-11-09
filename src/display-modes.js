@@ -5,9 +5,9 @@ export function createDisplayModes(renderer,scene,sun,sky,world){
   let night=read('drivefolio-night'),dark=read('drivefolio-dark');
   function applyNight(){
     const color=night?'#0a1527':'#d4e5eb';scene.background.set(color);scene.fog.color.set(color);
-    sky.intensity=night?0.38:1.9;sky.color.set(night?'#537ba8':'#e6f4ff');sky.groundColor.set(night?'#142632':'#81998b');
-    sun.intensity=night?0.28:2.5;sun.color.set(night?'#9cc3ff':'#fff8ed');renderer.toneMappingExposure=night?1.25:1;
-    scene.environmentIntensity=night?0.035:0.3;
+    sky.intensity=night?0.38:1.45;sky.color.set(night?'#537ba8':'#f0eddf');sky.groundColor.set(night?'#142632':'#829780');
+    sun.intensity=night?0.28:2.1;sun.color.set(night?'#9cc3ff':'#fff8ed');renderer.toneMappingExposure=night?1.25:1;
+    scene.environmentIntensity=night?0.035:0.22;
     world.setNight(night);nightButton.setAttribute('aria-pressed',String(night));nightButton.textContent=night?'Nachtmodus an':'Nachtmodus aus';
   }
   function applyDark(){document.documentElement.dataset.theme=dark?'dark':'light';darkButton.setAttribute('aria-pressed',String(dark));darkButton.textContent=dark?'Dark Mode an':'Dark Mode aus';}

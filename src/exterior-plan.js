@@ -19,3 +19,8 @@ export function createExteriorPlan(){
  for(let i=0;i<18;i++){const a=i/18*Math.PI*2,x=exteriorPond.x+Math.cos(a)*(exteriorPond.rx+0.35),z=exteriorPond.z+Math.sin(a)*(exteriorPond.rz+0.4);rocks.push({x,z,size:0.3+random()*0.4});}
  return {trail,trees,shrubs,meadow,rocks,pond:exteriorPond};
 }
+export function exteriorTrailMesh(points){
+ const positions=[],indices=[];
+ points.forEach((p,i)=>{const a=points[(i+points.length-1)%points.length],b=points[(i+1)%points.length],dx=b.x-a.x,dz=b.z-a.z,l=Math.hypot(dx,dz);for(const side of [-1,1])positions.push(p.x-dz/l*side*1.1,0.025,p.z+dx/l*side*1.1);const j=(i+1)%points.length;indices.push(i*2,i*2+1,j*2,j*2,i*2+1,j*2+1);});
+ return {positions,indices};
+}

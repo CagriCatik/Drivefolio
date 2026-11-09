@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createExteriorPlan,exteriorDistance,exteriorClear} from '../src/exterior-plan.js';
+import {createExteriorPlan,exteriorDistance,exteriorClear,exteriorTrailMesh} from '../src/exterior-plan.js';
 import {distanceToCircuit} from '../src/race-layout.js';
 import {trackPoints} from '../src/road-network.js';
 const plan=createExteriorPlan(),track=trackPoints();
@@ -18,4 +18,9 @@ test('pond and shore stay outside the circuit and tree roots do not enter the wa
  const p=plan.pond;assert.ok(exteriorDistance(p.x,p.z)>p.rx+10);
  for(const t of plan.trees)assert.ok(((t.x-p.x)/(p.rx+2))**2+((t.z-p.z)/(p.rz+2))**2>=1);
  for(const r of plan.rocks)assert.ok(exteriorClear(r.x,r.z,r.size));
+});
+
+test('exterior trail triangles face upward and close their seam so the walking surface is visible',()=>{
+ const {positions:p,indices}=exteriorTrailMesh(plan.trail);assert.equal(indices.length,plan.trail.length*6);assert.ok(indices.slice(-6).includes(0));
+ for(let i=0;i<indices.length;i+=3){const [a,b,c]=indices.slice(i,i+3).map(v=>v*3),abx=p[b]-p[a],abz=p[b+2]-p[a+2],acx=p[c]-p[a],acz=p[c+2]-p[a+2];assert.ok(abz*acx-abx*acz>0,'upward face winding');}
 });

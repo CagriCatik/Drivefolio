@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {createExteriorPlan} from './exterior-plan.js';
+import {createExteriorPlan,exteriorTrailMesh} from './exterior-plan.js';
 import {environmentMaterial as mat} from './environment-materials.js';
 import {createVegetationWind} from './vegetation-wind.js';
 import {block} from './scene-primitives.js';
@@ -11,18 +11,21 @@ export function createExteriorLandscape(scene){
  instances(new THREE.CylinderGeometry(0.08,0.19,1,7),mat('#857258','timber'),plan.trees,t=>{dummy.position.set(t.x,t.height*0.35,t.z);dummy.scale.set(1,t.height*0.7,1);});
  const shape=new THREE.Shape();shape.moveTo(0,-0.6);shape.quadraticCurveTo(-0.48,0,0,0.6);shape.quadraticCurveTo(0.48,0,0,-0.6);
  const foliageMaterial=new THREE.MeshStandardMaterial({color:'#e0e6cc',roughness:0.95,side:THREE.DoubleSide});foliageMaterial.onBeforeCompile=sway;foliageMaterial.customProgramCacheKey=()=> 'exterior-foliage-wind';
- const leafItems=[];for(const t of plan.trees)for(let i=0;i<145;i++)leafItems.push(t);
+ const leafItems=[];for(const t of plan.trees)for(let i=0;i<220;i++)leafItems.push(t);
  const leaves=instances(new THREE.ShapeGeometry(shape,3),foliageMaterial,leafItems,t=>{const a=random()*6.28,v=random()*2-1,r=Math.cbrt(random()),h=Math.sqrt(1-v*v)*r;dummy.position.set(t.x+Math.cos(a)*h*t.radius,t.height*0.78+v*r*t.radius*(t.type===0?1.25:0.85),t.z+Math.sin(a)*h*t.radius*0.9);dummy.rotation.set(random()*3.14,random()*6.28,random()*6.28);dummy.scale.setScalar(0.43+random()*0.32);});
  for(let i=0;i<leafItems.length;i++){tint.setHSL(0.24+(i%9)*0.008,0.25+(i%5)*0.025,0.28+(i%7)*0.018);leaves.setColorAt(i,tint);}
  const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,side:THREE.DoubleSide});depth.onBeforeCompile=sway;depth.customProgramCacheKey=()=> 'exterior-foliage-shadow';leaves.customDepthMaterial=depth;
+ const coreItems=plan.trees.flatMap(t=>[0,1,2].map(lobe=>({t,lobe})));
+ const coreMaterial=new THREE.MeshStandardMaterial({color:'#7c956d',roughness:1});coreMaterial.onBeforeCompile=sway;coreMaterial.customProgramCacheKey=()=> 'exterior-canopy-core';
+ const cores=instances(new THREE.IcosahedronGeometry(1,1),coreMaterial,coreItems,({t,lobe})=>{const a=lobe*2.1;dummy.position.set(t.x+Math.cos(a)*t.radius*0.2,t.height*0.78+(lobe%2)*0.28,t.z+Math.sin(a)*t.radius*0.2);dummy.scale.set(t.radius*0.66,t.radius*(t.type===0?0.9:0.64),t.radius*0.64);dummy.rotation.y=t.x+lobe;});cores.customDepthMaterial=depth;
+
  instances(new THREE.IcosahedronGeometry(1,1),mat('#617c58'),plan.shrubs,s=>{dummy.position.set(s.x,s.size*0.35,s.z);dummy.scale.set(s.size*1.3,s.size*0.65,s.size);dummy.rotation.y=s.x;});
  const grassGeometry=new THREE.BufferGeometry(),bladeVertices=[];for(const a of [0,2.1,4.2])for(const [x,y,z] of [[-0.065,0,0],[0.065,0,0],[0.025,1,0.04]])bladeVertices.push(x*Math.cos(a)+z*Math.sin(a),y,-x*Math.sin(a)+z*Math.cos(a));grassGeometry.setAttribute('position',new THREE.Float32BufferAttribute(bladeVertices,3));grassGeometry.computeVertexNormals();
  const grassMaterial=new THREE.MeshStandardMaterial({color:'#8b9d6c',roughness:1,side:THREE.DoubleSide});grassMaterial.onBeforeCompile=sway;grassMaterial.customProgramCacheKey=()=> 'exterior-meadow-wind';
  instances(grassGeometry,grassMaterial,plan.meadow,m=>{dummy.position.set(m.x,0,m.z);dummy.scale.set(1,m.height,1);dummy.rotation.y=m.angle;},false);
  instances(new THREE.IcosahedronGeometry(0.085,0),mat('#ded3a5'),plan.meadow.filter(m=>m.flower),m=>{dummy.position.set(m.x,m.height,m.z);dummy.scale.set(1,0.55,1);},false);
  // The trail is a single strip outside all circuit barriers, following the same rounded loop.
- const points=plan.trail,positions=[],indices=[];
- points.forEach((p,i)=>{const a=points[(i+points.length-1)%points.length],b=points[(i+1)%points.length],dx=b.x-a.x,dz=b.z-a.z,l=Math.hypot(dx,dz);for(const side of [-1,1])positions.push(p.x-dz/l*side*1.1,0.025,p.z+dx/l*side*1.1);const j=(i+1)%points.length;indices.push(i*2,j*2,i*2+1,j*2,j*2+1,i*2+1);});
+ const points=plan.trail,{positions,indices}=exteriorTrailMesh(points);
  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();const path=new THREE.Mesh(geo,mat('#c6bca4'));path.receiveShadow=true;group.add(path);
  // Rounded grassy berms sit beyond the forest belt, below the tree line in driving views.
  for(const [x,z,sx,sy,sz] of [[-103,-61,13,2.8,10],[-105,17,12,2.3,15],[101,-51,13,3.1,12],[104,15,11,2.3,13],[-19,93,18,2.6,10],[28,-119,22,2.7,8],[-29,-120,17,2.2,8],[32,93,13,2.2,9]]){const hill=new THREE.Mesh(new THREE.SphereGeometry(1,24,12),mat('#8a9f7d'));hill.position.set(x,-sy*0.45,z);hill.scale.set(sx,sy,sz);hill.receiveShadow=true;group.add(hill);}

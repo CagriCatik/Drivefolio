@@ -16,7 +16,7 @@ export function addLandscape(scene,vehicle){
     block(scene,3.4,0.22,3.4,x,0.08,z,concrete);
     block(scene,3.0,0.08,3.0,x,0.22,z,mat('#688a70'));
     const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.22,2.6,8),timber);trunk.position.set(x,1.5,z);trunk.castShadow=true;scene.add(trunk);
-    const canopy=new THREE.Group();canopy.position.set(x,3.3+(i%3)*0.18,z);canopy.rotation.y=i*0.71;canopy.scale.set(i%3===0?0.8:1,i%3===0?1.35:1,i%3===0?0.8:1);scene.add(canopy);crowns.push(canopy);
+    const canopy=new THREE.Group();canopy.position.set(x,3.3+(i%3)*0.18,z);canopy.rotation.y=i*0.71;canopy.scale.set(i%3===0?0.8:1,i%3===0?1.35:1,i%3===0?0.8:1);if(x===8&&z===21)canopy.scale.multiplyScalar(0.72);scene.add(canopy);crowns.push(canopy);
     for(let n=0;n<4;n++){
       const mesh=new THREE.Mesh(crownGeometry,leafMaterials[(i+n)%3]);mesh.position.set(Math.cos(n*2.4)*0.65,n===3?0.6:0,Math.sin(n*2.4)*0.65);mesh.scale.set(1.2,1.25,1.2);mesh.castShadow=true;canopy.add(mesh);
     }

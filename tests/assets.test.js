@@ -8,6 +8,7 @@ test('each shipped GLB has all external textures and buffers locally available',
   for (const path of [...vehicles.map(v=>'public/'+v.asset),'public/models/city/garage.glb','public/models/city/trees.glb']) {
     const file = readFileSync(path);
     assert.equal(file.toString('ascii', 0, 4), 'glTF');
+    assert.equal(file.length,file.readUInt32LE(8),`${path}: truncated GLB`);
     const size = file.readUInt32LE(12);
     const data = JSON.parse(file.toString('utf8', 20, 20 + size));
     for (const resource of [...(data.images ?? []), ...(data.buffers ?? [])]) {

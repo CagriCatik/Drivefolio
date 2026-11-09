@@ -10,7 +10,10 @@ export function createCampusDetails(scene,vehicle){
     block(group,0.15,2.7,5,-1.5,1.35,0,mat('#d6e3e8'));
     for(const side of [-2.5,2.5])block(group,3,2.7,0.15,0,1.35,side,mat('#d6e3e8'));
     block(group,0.15,0.5,5,1.5,2.45,0,mat('#d6e3e8'));
-    block(group,3.4,0.18,5.4,0,2.8,0,dark);
+    const pitGlass=new THREE.MeshStandardMaterial({color:'#a1c4cc',transparent:true,opacity:0.17,depthWrite:false,roughness:0.25});
+    const roof=block(group,3.4,0.06,5.4,0,2.8,0,pitGlass);roof.castShadow=false;
+    for(const x of [-1.65,1.65])block(group,0.10,0.18,5.4,x,2.8,0,dark);
+    for(const z of [-2.65,2.65])block(group,3.4,0.18,0.10,0,2.8,z,dark);
     const shutter=block(group,0.06,2.0,3.6,1.55,1.05,0,mat('#7c9da9'));
     for(let i=0;i<6;i++)block(shutter,0.02,0.025,3.55,0.04,-0.8+i*0.3,0,dark);
     doors.push({mesh:shutter,x:31.3,z});

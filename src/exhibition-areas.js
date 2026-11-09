@@ -1,3 +1,4 @@
+import {createAIPavilion} from './ai-pavilion.js';
 import * as THREE from 'three';
 import {mat,block,label} from './scene-primitives.js';
 
@@ -133,6 +134,7 @@ function createAutonomy(scene,vehicle){
 
 function createAgents(scene,vehicle){
   const group=station(scene,vehicle,0,-49,'AGENT SWARM','AI AGENTS  /  MCP  /  A2A','#c0ccd9',16);
+  const pavilion=createAIPavilion(group,vehicle);
   const frame=mat('#564867');
   const nodes=[[-5,1,'ANALYST'],[-5,-2.5,'KNOWLEDGE'],[5,1,'EXECUTOR'],[5,-2.5,'REVIEWER']];
   const lights=[],packets=[];
@@ -157,7 +159,7 @@ function createAgents(scene,vehicle){
   label(group,'A2A  /  AGENTEN-NACHRICHTEN',-3.7,0.13,5.2,5.6,'#644d79').rotation.x=-Math.PI/2;
   label(group,'MCP  /  WERKZEUGAUFRUFE',3.7,0.13,5.2,5.3,'#365f55').rotation.x=-Math.PI/2;
   let stage=-1;
-  return {setDemo(next){stage=next;},update(time){
+  return {setNight(value){pavilion.setNight(value);},setDemo(next){stage=next;},update(time){
     core.rotation.y=time*0.6;core.rotation.z=Math.sin(time)*0.2;ring.rotation.z=time*0.3;
     lights.forEach((m,i)=>{const selected=stage<0?Math.floor(time*0.5)%4:stage;m.emissiveIntensity=i===selected?1.5:0.2;});
     packets.forEach(p=>{const selected=stage<0?Math.floor(time*0.5)%4:stage;p.mesh.visible=p.index===selected;p.mesh.position.lerpVectors(p.a,p.b,(time*(p.kind==='mcp'?0.8:0.65)+p.index*0.2)%1);p.mesh.position.y+=0.08;});
@@ -166,5 +168,5 @@ function createAgents(scene,vehicle){
 
 export function createExhibitions(scene,vehicle){
   const areas={radar:createRadar(scene,vehicle),autonomy:createAutonomy(scene,vehicle),agents:createAgents(scene,vehicle)};
-  return {setDemo(id,stage,progress){Object.entries(areas).forEach(([key,area])=>area.setDemo?.(key===id?stage:-1,progress));},update(time){Object.values(areas).forEach(area=>area.update(time));}};
+  return {setNight(value){areas.agents.setNight(value);},setDemo(id,stage,progress){Object.entries(areas).forEach(([key,area])=>area.setDemo?.(key===id?stage:-1,progress));},update(time){Object.values(areas).forEach(area=>area.update(time));}};
 }

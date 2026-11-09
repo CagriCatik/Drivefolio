@@ -1,3 +1,4 @@
+import {createCampusAttractions} from './campus-attractions.js';
 import * as THREE from 'three';
 import { addLandscape, addNameSculpture } from './landscape.js';
 import { createVehicleVisuals } from './vehicle-visuals.js';
@@ -75,6 +76,7 @@ export async function createWorld(scene, vehicle) {
   const facilities=createFacilities(scene,vehicle);
   const race=createRaceTrack(scene,vehicle);
   const details=createCampusDetails(scene,vehicle);
+  const attractions=createCampusAttractions(scene,vehicle);
   const beacon=new THREE.Group();scene.add(beacon);beacon.visible=false;
   const ring=new THREE.Mesh(new THREE.TorusGeometry(1.8,0.07,6,48),new THREE.MeshBasicMaterial({color:'#8df5cd',depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.position.y=0.2;beacon.add(ring);
   const pin=new THREE.Mesh(new THREE.ConeGeometry(0.35,0.8,5),new THREE.MeshBasicMaterial({color:'#8df5cd'}));pin.rotation.z=Math.PI;pin.position.y=3;beacon.add(pin);
@@ -83,9 +85,10 @@ export async function createWorld(scene, vehicle) {
     vehicles:vehicleVisuals,
     setOverview(value){scene.fog.near=value?350:85;scene.fog.far=value?500:155;},
     facilities,race,
-    setNight(value){vehicleVisuals.setNight(value);facilities.station.setNight(value);facilities.setNight(value);landscape.setNight(value);race.setNight(value);},
+    setNight(value){attractions.setNight(value);vehicleVisuals.setNight(value);facilities.station.setNight(value);facilities.setNight(value);landscape.setNight(value);race.setNight(value);},
     update(time,dt,paused) {
       pin.position.y=3+Math.sin(time*2)*0.25;
+      attractions.update(time,dt,paused);
       landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt,paused);race.update(dt,paused);details.update(time,dt);
     },
   };

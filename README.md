@@ -148,3 +148,9 @@ Alle sieben Karten erläutern Problem, Einsatzgebiet und technischen Schwerpunkt
 Warme Pflasterwege folgen dem Campus-Straßennetz. Die Flächen werden geometrisch vereinigt und an Fahrbahnen, Projektflächen, Bauminseln und Tankstellenzufahrt ausgeschnitten. Neue Pflanzbeete mit instanzierten Sträuchern und Blüten strukturieren die Ränder; der westliche Wasserkanal hat einen durchgehenden Promenadenstreifen, Sitzbänke und niedrige Nachtleuchten. Wegweiser führen zu Robotics, Autonomy und Planning.
 
 Die offene JetRacer-Werkstatt erhält niedrige Glasfelder, ein Eingangsportal, Teilelager, Werkzeugwand und eine Fertigungsbank mit animiertem Druckkopf. Der zentrale Roboter und seine LiDAR-Darstellung bleiben sichtbar. Arbeits- und Promenadenbeleuchtung schalten mit dem Nachtmodus; die zugehörigen Leuchtflächen sind tagsüber ausgeschaltet.
+
+## Campus-Eingang, AI-Pavillon und Motorsport-Boxen
+
+Ein offenes Eingangstor und ein Lageplan mit allen sieben Projekten markieren den Ankunftsbereich. Der AI-Pavillon rahmt die AgentSwarm-Station mit drei offenen Bögen und niedrigen Glasfeldern, ohne die Agentenknoten zu verdecken. Drei Boxen zeigen ausgestellte Fahrzeugmodelle, Mechanikerfiguren, Ausrüstung, Flaggen und eine dekorative READY-Tafel. Ihre teilweise verglasten Dächer lassen Einblicke zu. Die Tankstelle erhält einen kostenlosen FUEL-Totem, Bodenpfeile und einen dekorativen Serviceschrank.
+
+Ein kleiner Lieferroboter fährt auf einer festen, von Fahrbahnen getrennten Service-Route an der westlichen Promenade. Er pausiert am Dock, hält in der Nähe des Besucherfahrzeugs und besitzt einen kinematischen Collider. Das ist eine regelbasierte Animation, keine autonome ROS-Navigation. Eingangs-, Boxen- und Pavillonbeleuchtung werden gemeinsam mit dem Nachtmodus geschaltet.

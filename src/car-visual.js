@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createBrunoLightBinding} from './model-light-mounts.js';
 
 // Original offroader model from Bruno Simon / folio-2025, MIT.
 // Its longitudinal axis is +X. Our simulation uses +Z.
@@ -28,7 +29,7 @@ export function createCarVisual(model, vehicle) {
     if(/^wheelSuspension|wheelGuard/i.test(n.name))n.visible=false;
   });
   let roll=0,pitch=0;
-  return {group:assembly,paint(color){assembly.traverse(n=>{if(n.isMesh&&/^bodyPainted|wheelPainted/i.test(n.name))n.material.color.set(color);});},dispose(){assembly.removeFromParent();assembly.traverse(n=>{if(n.isMesh)n.material.dispose();});},update(dt,time,headlights=true){
+  return {group:assembly,lighting:createBrunoLightBinding(chassis),paint(color){assembly.traverse(n=>{if(n.isMesh&&/^bodyPainted|wheelPainted/i.test(n.name))n.material.color.set(color);});},dispose(){assembly.removeFromParent();assembly.traverse(n=>{if(n.isMesh)n.material.dispose();});},update(dt,time,headlights=true){
     headLights.forEach(n=>n.visible=headlights);
     const motion=vehicle.motion;
     roll=THREE.MathUtils.lerp(roll,-motion.steering*Math.min(motion.speed/12,1)*0.1,1-Math.exp(-8*dt));

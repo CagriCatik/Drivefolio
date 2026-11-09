@@ -45,17 +45,6 @@ export function addLandscape(scene,vehicle){
   const pergola=new THREE.Group();pergola.position.set(24,0,22.8);scene.add(pergola);
   for(const x of [-2,2])for(const z of [-1.5,1.5])block(pergola,0.12,2.8,0.12,x,1.4,z,metal);
   for(let i=0;i<9;i++)block(pergola,4.5,0.12,0.16,0,2.85,-1.7+i*0.42,timber);
-  // Movable equipment stays outside the main routes, near the jump area.
-  for(let i=0;i<6;i++){
-    const cone=new THREE.Group(),base=block(cone,0.65,0.10,0.65,0,-0.25,0,metal);
-    const body=new THREE.Mesh(new THREE.ConeGeometry(0.24,0.65,10),mat('#ee985f'));body.position.y=0.1;cone.add(body);
-    const stripe=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.18,0.13,10),mat('#eff5f6'));stripe.position.y=0.12;cone.add(stripe);
-    scene.add(cone);const x=20+(i%2)*1.5,z=19+Math.floor(i/2)*1.2;vehicle.addProp(cone,x,0.4,z,0.32);
-  }
-  for(const [x,z] of [[10,21],[11.2,21],[10.6,22.3]]){
-    const tire=new THREE.Mesh(new THREE.TorusGeometry(0.34,0.16,8,16),mat('#2e3941'));tire.rotation.x=Math.PI/2;
-    const holder=new THREE.Group();holder.add(tire);scene.add(holder);vehicle.addProp(holder,x,0.5,z,0.48);
-  }
   const canal=new THREE.Mesh(new THREE.PlaneGeometry(6,88),new THREE.MeshStandardMaterial({color:'#5d9fa9',roughness:0.24,metalness:0.25}));canal.rotation.x=-Math.PI/2;canal.position.set(-32,-0.025,-16);scene.add(canal);
   for(const x of [-28.9,-35.1])block(scene,0.25,0.10,88,x,0,-16,concrete);
   return {setNight(value){switchFixtures(nightLights,[lightMaterial],value,30);},update(time){crowns.forEach((c,i)=>c.rotation.z=Math.sin(time*0.8+i)*0.015);canal.material.color.setHSL(0.52,0.25,0.49+Math.sin(time*0.4)*0.01);}};

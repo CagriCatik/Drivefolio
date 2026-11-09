@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import {mat,block,label} from './scene-primitives.js';
+import {createHandlingPad} from './handling-pad.js';
 import {createProjectAreas} from './project-areas.js';
 import {createExhibitions} from './exhibition-areas.js';
 import {createPlanningAreas} from './planning-areas.js';
@@ -29,22 +30,6 @@ function createGarage(scene,vehicle){
   return {update(dt){const p=vehicle.group.position,near=Math.hypot(p.x+17,p.z-18)<10;
     door.position.y=THREE.MathUtils.lerp(door.position.y,near?3:1.5,1-Math.exp(-3*dt));
     door.scale.y=THREE.MathUtils.lerp(door.scale.y,near?0.06:1,1-Math.exp(-3*dt));}};
-}
-
-function createRamp(scene,vehicle){
-  const x=15,z=14,width=5,length=6,height=1.8;
-  const vertices=new Float32Array([-2.5,0,3,2.5,0,3,-2.5,0,-3,2.5,0,-3,-2.5,1.8,-3,2.5,1.8,-3]);
-  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.BufferAttribute(vertices,3));
-  geometry.setIndex([0,1,5,0,5,4,0,4,2,1,3,5,2,4,5,2,5,3,0,2,3,0,3,1]);geometry.computeVertexNormals();
-  const ramp=new THREE.Mesh(geometry,mat('#537e91'));ramp.position.set(x,0,z);ramp.castShadow=true;ramp.receiveShadow=true;scene.add(ramp);
-  const lines=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-2.3,0.025,3),new THREE.Vector3(-2.3,1.825,-3),new THREE.Vector3(2.3,0.025,3),new THREE.Vector3(2.3,1.825,-3)]);
-  const rails=new THREE.LineSegments(lines,new THREE.LineBasicMaterial({color:'#fae3a2'}));rails.position.copy(ramp.position);scene.add(rails);
-  const text=label(scene,'BOOST  ↑  JUMP',x,0.12,z+5,5.4,'#624755');text.rotation.x=-Math.PI/2;
-  for(let i=0;i<3;i++){
-    const stripe=block(scene,3,0.035,0.16,x,0.3+i*0.45+0.03,z+2-i*1.5,mat('#ead49d'));
-    stripe.rotation.x=Math.atan(height/length);
-  }
-  vehicle.addRamp(x,z,width,length,height);
 }
 
 function createRoboticsLab(scene,vehicle){
@@ -118,6 +103,6 @@ function createRoboticsLab(scene,vehicle){
 }
 
 export function createFacilities(scene,vehicle){
-  const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle),areas=createProjectAreas(scene,vehicle),exhibitions=createExhibitions(scene,vehicle),planning=createPlanningAreas(scene,vehicle);createRamp(scene,vehicle);
-  return {setDemo(id,stage,progress){exhibitions.setDemo(id,stage,progress);planning.setDemo(id,stage,progress);},update(time,dt){garage.update(dt);lab.update(time);areas.update(time);exhibitions.update(time);planning.update(time);}};
+  const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle),areas=createProjectAreas(scene,vehicle),exhibitions=createExhibitions(scene,vehicle),planning=createPlanningAreas(scene,vehicle);const handling=createHandlingPad(scene,vehicle);
+  return {setDemo(id,stage,progress){exhibitions.setDemo(id,stage,progress);planning.setDemo(id,stage,progress);},update(time,dt,paused){handling.update(paused);garage.update(dt);lab.update(time);areas.update(time);exhibitions.update(time);planning.update(time);}};
 }

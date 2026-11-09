@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import {getVehicle} from './vehicle-catalog.js';
 
 export function lightState(motion,enabled=true){
   const speed=motion.signedSpeed??0,throttle=motion.input?.throttle??0;
@@ -7,19 +6,22 @@ export function lightState(motion,enabled=true){
 }
 export function createVehicleLights(vehicle){
   const group=new THREE.Group();vehicle.group.add(group);
-  function pair(color,y){
-    return [-1,1].map(side=>{const material=new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:0.4,roughness:0.3});const mesh=new THREE.Mesh(new THREE.BoxGeometry(0.25,0.11,0.05),material);mesh.position.set(side*0.58,y,0);group.add(mesh);return mesh;});
-  }
-  const front=pair('#d9f4ff',0.66),rear=pair('#dc454c',0.6),reverse=pair('#f5fbff',0.47);
-  const lamps=[-0.58,0.58].map(x=>{
-    const lamp=new THREE.SpotLight('#e1f5ff',55,24,0.40,0.65,1.2);lamp.position.set(x,0.66,1.6);lamp.target.position.set(x,0.04,16);group.add(lamp,lamp.target);return lamp;
+  const lamps=[-0.5,0.5].map(x=>{
+    const lamp=new THREE.SpotLight('#e1f5ff',55,24,0.40,0.65,1.2);lamp.position.set(x,0.6,1.4);lamp.target.position.set(x,0.04,16);group.add(lamp,lamp.target);return lamp;
   });
-  let night=false;
-  let enabled=true;
-  return {lamps,setNight(value){night=!!value;},toggle(){enabled=!enabled;return enabled;},get enabled(){return enabled;},update(){
-    const state=lightState(vehicle.motion,enabled),profile=getVehicle(vehicle.profile),length=profile.halfLength,height=profile.lightHeight??0.66;
-    front.forEach(m=>{m.position.z=length+0.03;m.position.y=height;m.material.emissiveIntensity=enabled?1.1:0.05;});
-    rear.forEach(m=>{m.position.z=-length-0.03;m.material.emissiveIntensity=state.braking?2.5:0.35;});
-    reverse.forEach(m=>{m.position.z=-length-0.04;m.visible=state.reverse;});lamps.forEach(lamp=>{lamp.visible=enabled;lamp.position.z=length+0.12;lamp.position.y=height;lamp.intensity=night?150:55;});
+  let night=false,enabled=true,binding=null;
+  return {lamps,mount(next){
+    binding=next;next.parent.add(group);group.position.set(0,0,0);group.rotation.set(0,0,0);group.scale.setScalar(1);
+    lamps.forEach((lamp,i)=>{
+      const anchor=next.front[i];lamp.position.copy(anchor).addScaledVector(next.direction,0.006);
+      lamp.target.position.copy(anchor).addScaledVector(next.direction,12);lamp.target.position.y=next.groundY;
+    });
+  },setNight(value){night=!!value;},toggle(){enabled=!enabled;return enabled;},get enabled(){return enabled;},update(){
+    const state=lightState(vehicle.motion,enabled);
+    lamps.forEach(lamp=>{lamp.visible=enabled;lamp.intensity=night?150:55;});
+    if(!binding)return;
+    if(binding.frontLens){binding.frontLens.visible=enabled;binding.frontLens.material.color.set('#f1f6e1').multiplyScalar(night?1.5:1);}
+    if(binding.rearLens){binding.rearLens.visible=enabled||state.braking;binding.rearLens.material.color.set(state.braking?'#ff454c':'#a92b35');}
+    if(binding.reverseLens)binding.reverseLens.visible=state.reverse;
   }};
 }

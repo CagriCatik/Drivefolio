@@ -81,7 +81,7 @@ export async function createWorld(scene, vehicle) {
     facilities,race,
     setNight(value){vehicleVisuals.setNight(value);landscape.setNight(value);race.setNight(value);},
     update(time,dt,paused) {
-      landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt);race.update(dt,paused);details.update(time,dt);
+      landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt,paused);race.update(dt,paused);details.update(time,dt);
     },
   };
 }

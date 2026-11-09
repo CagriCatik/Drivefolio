@@ -17,8 +17,14 @@ export function createFuelStation(scene,vehicle){
     block(group,0.24,3.6,0.24,15.5,1.9,z,dark);vehicle.addObstacle(15.5,z,0.22,0.22);
     for(const x of [14.65,16.35]){block(group,0.1,0.7,0.1,x,0.4,z,yellow);vehicle.addObstacle(x,z,0.08,0.08);}
   }
-  block(group,10.7,0.30,9.2,15.5,3.85,14.5,white);
-  block(group,10.8,0.26,9.3,15.5,3.62,14.5,teal);
+  // A glazed canopy keeps the pumps and parked car visible from the portfolio camera.
+  const glass=new THREE.MeshStandardMaterial({color:'#a9d6dd',transparent:true,opacity:0.16,depthWrite:false,roughness:0.25,metalness:0.15});
+  const roof=block(group,10.7,0.08,9.2,15.5,3.85,14.5,glass);roof.castShadow=false;
+  for(const z of [9.85,19.15])block(group,10.8,0.26,0.18,15.5,3.62,z,teal);
+  for(const x of [10.15,20.85])block(group,0.18,0.26,9.3,x,3.62,14.5,teal);
+  block(group,0.16,0.15,9.2,15.5,3.76,14.5,white);
+  for(const z of [10.5,18.5])block(group,9.4,0.06,0.6,15.5,3.93,z,dark);
+  label(group,'FUEL',15.5,3.96,14.5,4,'#e7f7f1').rotation.x=-Math.PI/2;
   label(group,'CAMPUS FUEL',15.5,3.65,19.19,7.5,'#edf9f7');
   const frontSign=label(group,'CAMPUS FUEL',15.5,3.65,9.81,7.5,'#edf9f7');frontSign.rotation.y=Math.PI;
   const glow=new THREE.MeshStandardMaterial({color:'#e5fff4',emissive:'#bdebdc',emissiveIntensity:0});

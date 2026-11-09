@@ -228,7 +228,7 @@ async function main() {
         }
       }
       if (!activeDialog && !sequence.running&&!overview) {
-        $('interaction-hint').hidden=!interactionState.location;
+        $('interaction-hint').hidden=!interactionState.location||interactionState.location.action==='fuel';
         if(interactionState.location)$('interaction-message').textContent=`${interactionState.location.label} · ${Math.abs(vehicle.speed)<(interactionState.location.action==='fuel'?0.5:1.5)?'E drücken':'anhalten'}`;
 
       }

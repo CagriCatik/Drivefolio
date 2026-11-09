@@ -1,7 +1,10 @@
+import {roadRects,trackPoints} from './road-network.js';
+import {distanceToCircuit} from './race-layout.js';
 import {createSoundscape} from './soundscape.js';
 // Synthesized locally: no downloaded recordings, autoplay or external requests.
 export function createAudio() {
-  let soundscape,context,master,engine,engineGain,filter,noiseGain,enabled=false,lastHorn=false;
+  const circuit=trackPoints();
+  let soundscape,context,master,engine,engineGain,filter,noiseGain,rollingFilter,enabled=false,lastHorn=false;
   function start(){
     if(!context){
       context=new AudioContext();master=context.createGain();master.gain.value=0.1;master.connect(context.destination);
@@ -13,7 +16,7 @@ export function createAudio() {
       const buffer=context.createBuffer(1,context.sampleRate*2,context.sampleRate),data=buffer.getChannelData(0);
       for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*0.4;
       const noise=context.createBufferSource();noise.buffer=buffer;noise.loop=true;
-      const lowpass=context.createBiquadFilter();lowpass.type='lowpass';lowpass.frequency.value=1100;
+      const lowpass=context.createBiquadFilter();rollingFilter=lowpass;lowpass.type='lowpass';lowpass.frequency.value=1100;
       noiseGain=context.createGain();noiseGain.gain.value=0;noise.connect(lowpass);lowpass.connect(noiseGain);noiseGain.connect(master);noise.start();
     }
     master.gain.setTargetAtTime(0.1,context.currentTime,0.04);context.resume().catch(()=>{});enabled=true;return enabled;
@@ -25,7 +28,7 @@ export function createAudio() {
   }
   return {
     start,
-    toggle(){if(!context)return start();enabled=!enabled;master.gain.setTargetAtTime(enabled?0.1:0,context.currentTime,0.04);return enabled;},
+    toggle(){if(!context)return start();enabled=!enabled;if(enabled)context.resume().catch(()=>{});master.gain.setTargetAtTime(enabled?0.1:0,context.currentTime,0.04);return enabled;},
     setHidden(value){if(!context)return;if(value)context.suspend().catch(()=>{});else if(enabled)context.resume().catch(()=>{});},
     update(motion,paused,state={}){
       if(!context)return;
@@ -34,7 +37,10 @@ export function createAudio() {
       engine.frequency.setTargetAtTime(37+motion.speed*7+(motion.input.boost?55:0),t,0.12);
       filter.frequency.setTargetAtTime(140+motion.speed*50,t,0.1);
       engineGain.gain.setTargetAtTime(paused?0:0.08+Math.min(motion.speed/50,0.3),t,0.15);
-      noiseGain.gain.setTargetAtTime(moving&&motion.input.brake?Math.min(motion.speed/20,0.5):0,t,0.06);
+      const p=state.position,onRoad=p&&(roadRects.some(([l,r,a,b])=>p.x>=l&&p.x<=r&&p.z>=a&&p.z<=b)||distanceToCircuit(p,circuit)<3.9),onGrass=p&&!onRoad&&(p.x<-29||p.x>36||p.z<-62||p.z>28);
+      rollingFilter.frequency.setTargetAtTime(onGrass?650:1400,t,0.12);
+      const rolling=moving?Math.min(motion.speed/35,1)*(onGrass?0.17:0.045):0;
+      noiseGain.gain.setTargetAtTime(moving&&motion.input.brake?Math.min(motion.speed/20,0.5):rolling,t,0.06);
       if(motion.input.horn&&!lastHorn)tone(220,0.3,0.8);lastHorn=motion.input.horn;
       if(motion.impact>2)tone(65,0.15,Math.min(motion.impact/10,0.7));
     },

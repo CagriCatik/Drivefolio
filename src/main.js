@@ -236,7 +236,7 @@ async function main() {
   const renderer = new THREE.WebGLRenderer({ canvas: $('world'), antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#d4e5eb');
   scene.fog = new THREE.Fog('#d4e5eb', 85, 155);
@@ -246,7 +246,7 @@ async function main() {
   const sun = new THREE.DirectionalLight('#fff8ed', 2.5); sun.position.set(-18, 32, 20);
   sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, { left: -65, right: 65, top: 65, bottom: -65, near: 1, far: 160 });
-  sun.shadow.normalBias = 0.035; sun.shadow.bias = -0.00015; scene.add(sun);
+  sun.shadow.radius=2.5; sun.shadow.normalBias = 0.035; sun.shadow.bias = -0.00015; scene.add(sun);
   view = createPortfolioCamera(window.innerWidth / window.innerHeight);
   vehicle = await createVehicle(scene);
   const world = await createWorld(scene, vehicle);

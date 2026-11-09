@@ -1,5 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
+import {createAudio} from '../src/audio.js';
 import {createSoundscape} from '../src/soundscape.js';
 function audioFixture(){
  const nodes=[],param=()=>({value:0,setTargetAtTime(v){this.value=v;},setValueAtTime(v){this.value=v;},exponentialRampToValueAtTime(v){this.value=v;},cancelScheduledValues(){}});
@@ -23,4 +24,11 @@ test('refueling makes one start/stop event per transition and a paused scene sto
  scape.update(state,false);assert.equal(oscillators(),before+1);
  scape.update(state,true);assert.equal(oscillators(),before+2);
  scape.update(state,true);assert.equal(oscillators(),before+2);
+});
+
+test('audio is created only after interaction; mute gates the whole mix and unmute resumes a suspended context',()=>{
+ const {context,nodes}=audioFixture();let creations=0,resumes=0,suspends=0;context.destination={};context.resume=()=>{resumes++;return Promise.resolve();};context.suspend=()=>{suspends++;return Promise.resolve();};
+ const original=globalThis.AudioContext;globalThis.AudioContext=function(){creations++;return context;};
+ try{const audio=createAudio();assert.equal(creations,0);audio.start();assert.equal(creations,1);const master=nodes[0];assert.equal(master.gain.value,0.1);audio.toggle();assert.equal(master.gain.value,0);audio.setHidden(true);assert.equal(suspends,1);audio.setHidden(false);const before=resumes;audio.toggle();assert.equal(resumes,before+1);assert.equal(master.gain.value,0.1);}
+ finally{if(original===undefined)delete globalThis.AudioContext;else globalThis.AudioContext=original;}
 });

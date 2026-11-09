@@ -24,7 +24,7 @@ export function createProjectExperiments(onAction,onComplete){
    line(s.history.map(h=>p(h.truth)),'#668398',2);for(const h of s.history)if(h.raw)dot(...p(h.raw),'#eca879',2.5);line(s.history.map(h=>p(h.filtered)),'#83edc7',3);
    const h=s.history.at(-1);if(h){dot(...p(h.truth),'#e2edf6',6);dot(...p(h.filtered),'#83edc7',7);}
    ctx.fillStyle='#e6b58e';ctx.fillText('● Messung',25,30);ctx.fillStyle='#83edc7';ctx.fillText('━ Kalman-Schätzung',170,30);ctx.fillStyle='#a9bdca';ctx.fillText('━ Referenz',395,30);
-   result.textContent=s.gap?`Sensor aus: noch ${s.remaining.toFixed(1)} s · Filter sagt Bewegung voraus`:running?`Positions-RMSE · Messung ${s.rawError.toFixed(2)} · Filter ${s.filterError.toFixed(2)} Modelleinheiten`:'Starte die Messung. Orange Punkte sind verrauscht, Grün zeigt die Filter-Schätzung.';
+   result.textContent=s.gap?`Sensor aus: noch ${s.remaining.toFixed(1)} s · Filter sagt Bewegung voraus`:s.history.length?`${running?'Messung läuft':'Messung pausiert'} · Positions-RMSE: Messung ${s.rawError.toFixed(2)} · Filter ${s.filterError.toFixed(2)} Modelleinheiten`:'Starte die Messung. Orange Punkte sind verrauscht, Grün zeigt die Filter-Schätzung.';
    if(s.completed)complete();
   }else if(id==='frenet'){
    const p=v=>[360+v.x*30,220+v.y*48];

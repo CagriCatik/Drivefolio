@@ -99,6 +99,8 @@ function openProject(project) {
   experiments.open(project.id);
   sound.chime();
   showDialog($('project-dialog'));
+  $('project-dialog').scrollTop=0;
+  $('project-title').tabIndex=-1;$('project-title').focus({preventScroll:true});
 }
 
 

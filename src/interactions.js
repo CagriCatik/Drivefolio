@@ -1,8 +1,9 @@
+import {garageSite} from './service-layout.js';
 import {fuelBays,atFuelPump} from './fuel.js';
 import {projects} from './projects.js';
 export const locations = [
   ...fuelBays.map((b,i)=>({id:`fuel-${i+1}`,action:'fuel',label:'Tankstelle · Tanken / beenden',...b,radius:2.4})),
-  {id:'garage',label:'Garage · Fahrzeug & Lackierung',x:-17,z:16,radius:4},
+  {id:'garage',label:'Garage · Fahrzeug & Lackierung',...garageSite.entrance,radius:3},
   ...projects.map(project=>({id:project.id,label:`${project.title} · Demo starten`,...project.entrance,radius:3.5})),
 ];
 export function createInteractions(items=locations) {

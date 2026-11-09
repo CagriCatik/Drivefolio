@@ -1,3 +1,4 @@
+import {garageSite} from '../src/service-layout.js';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createInteractions,rampHeightAt,locations} from '../src/interactions.js';
@@ -5,7 +6,7 @@ import {projects} from '../src/projects.js';
 import {getVehicle,getPaint,vehicles} from '../src/vehicle-catalog.js';
 
 test('facilities require proximity, stopping and a fresh press',()=>{
-  const c=createInteractions(),p={x:-17,z:16};
+  const c=createInteractions(),p=garageSite.entrance;
   assert.equal(c.update({x:0,z:0},0,true).activated,null);
   assert.equal(c.update(p,0,true).activated,null,'holding E while arriving cannot open a dialog');
   c.update(p,0,false);

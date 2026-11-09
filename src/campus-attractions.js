@@ -1,3 +1,4 @@
+import {serviceCabinet} from './service-layout.js';
 import * as THREE from 'three';
 import {mat,block,label} from './scene-primitives.js';
 import {switchFixtures} from './fixture-lighting.js';
@@ -42,7 +43,7 @@ export function createCampusAttractions(scene,vehicle){
  }
  // Fuel wayfinding and a service cabinet, without introducing misleading paid prices.
  block(group,0.9,2.9,0.4,22.1,1.45,10.5,teal);label(group,'FUEL',22.1,2.4,10.72,0.8,'#e4f9ef');label(group,'FREE',22.1,1.85,10.72,0.8,'#e4f9ef');label(group,'50 L',22.1,1.3,10.72,0.8,'#e4f9ef');vehicle.addObstacle(22.1,10.5,0.5,0.28);
- block(group,0.8,1.1,0.65,22.8,0.55,17,white);block(group,0.5,0.4,0.05,22.8,0.8,17.35,steel);label(group,'SERVICE',22.8,1.3,17.35,1.3,'#3b6d73');vehicle.addObstacle(22.8,17,0.5,0.4);
+ block(group,0.8,1.1,0.65,serviceCabinet.x,0.55,serviceCabinet.z,white);block(group,0.5,0.4,0.05,serviceCabinet.x,0.8,serviceCabinet.z+0.35,steel);label(group,'SERVICE',serviceCabinet.x,1.3,serviceCabinet.z+0.35,1.3,'#3b6d73');vehicle.addObstacle(serviceCabinet.x,serviceCabinet.z,0.5,0.4);
  const paint=new THREE.MeshBasicMaterial({color:'#badbd1',polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4});
  for(const x of [12.3,18.7]){const arrow=new THREE.Shape();arrow.moveTo(-0.28,0.6);arrow.lineTo(0.28,0.6);arrow.lineTo(0.28,-0.15);arrow.lineTo(0.65,-0.15);arrow.lineTo(0,-0.85);arrow.lineTo(-0.65,-0.15);arrow.lineTo(-0.28,-0.15);arrow.closePath();const mark=new THREE.Mesh(new THREE.ShapeGeometry(arrow),paint);mark.rotation.x=-Math.PI/2;mark.position.set(x,0.105,9.2);group.add(mark);}
  // Small delivery robot: service loop, docking pauses and a safe stop for the visitor.

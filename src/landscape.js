@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {evChargers,pergolaSite} from './service-layout.js';
 import {campusTrees} from './campus-plan.js';
 import {createCampusGardens} from './campus-gardens.js';
 import {switchFixtures} from './fixture-lighting.js';
@@ -32,11 +33,12 @@ export function addLandscape(scene,vehicle){
     block(scene,0.12,3.7,0.12,x,1.85,z,metal);block(scene,1.5,0.10,0.5,x+0.5,3.7,z,metal);block(scene,1.25,0.04,0.35,x+0.5,3.63,z,lightMaterial);
   }
   // EV chargers and a pergola make the arrival court feel inhabited.
-  for(const x of [23,26]){
-    block(scene,0.8,1.5,0.5,x,0.75,14,concrete);block(scene,0.55,0.65,0.04,x,1.0,14.27,metal);block(scene,0.1,0.5,0.08,x+0.55,0.75,14.2,mat('#31aa9b'));
-    label(scene,'EV',x,1.05,14.31,0.48,'#a8f2e4');vehicle.addObstacle(x,14,0.65,0.35);
+  for(const {x,z} of evChargers){
+    const charger=new THREE.Group();charger.position.set(x,0,z);charger.rotation.y=-Math.PI/2;scene.add(charger);
+    block(charger,0.8,1.5,0.5,0,0.75,0,concrete);block(charger,0.55,0.65,0.04,0,1.0,0.27,metal);block(charger,0.1,0.5,0.08,0.55,0.75,0.2,mat('#31aa9b'));
+    label(charger,'EV',0,1.05,0.31,0.48,'#a8f2e4');vehicle.addObstacle(x,z,0.35,0.7);
   }
-  const pergola=new THREE.Group();pergola.position.set(24,0,22.8);scene.add(pergola);
+  const pergola=new THREE.Group();pergola.position.set(pergolaSite.x,0,pergolaSite.z);scene.add(pergola);
   for(const x of [-2,2])for(const z of [-1.5,1.5])block(pergola,0.12,2.8,0.12,x,1.4,z,metal);
   for(let i=0;i<9;i++)block(pergola,4.5,0.12,0.16,0,2.85,-1.7+i*0.42,timber);
   const canal=new THREE.Mesh(new THREE.PlaneGeometry(6,88),new THREE.MeshStandardMaterial({color:'#5d9fa9',roughness:0.24,metalness:0.25}));canal.rotation.x=-Math.PI/2;canal.position.set(-32,-0.025,-16);scene.add(canal);

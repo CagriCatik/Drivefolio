@@ -22,7 +22,7 @@ Die im Terminal angezeigte URL öffnen. Ein Doppelklick auf die HTML-Datei funkt
 
 | Ort | Inhalt und Interaktion |
 | --- | --- |
-| Garage, links hinter dem Startplatz | Tor öffnet bei Annäherung. Im Eingang bei (-17, 16) E drücken oder den Garage-Button verwenden. Offroader/Sportwagen und vier Lackierungen stehen bereit. |
+| Garage, rechts neben der Tankstelle | Gemeinsame Zufahrt über den Service-Vorplatz. Tor öffnet bei Annäherung; vor dem Tor bei (29.5, 22.4) E drücken. Vier Fahrzeuge, Lackierung und Scheinwerferwahl. Auch über G im Campusplan erreichbar. |
 | Tankstelle, rechts hinter dem Startplatz | Zwei Fahrspuren, vier Zapfseiten, Überdachung und Servicekiosk. Direkt neben einer Säule anhalten, E startet/beendet kostenloses Tanken. Anzeige mit Tankfüllstand und getankten Litern. |
 | JetRacer-Werkstatt, erste Querstraße links | RC-Modell mit Kamera/LiDAR, Jetson-Werkbank und ROS-2-Anzeige. 48 LiDAR-Raycasts mit 10 Hz. E bei (-15, 1.5). |
 | Vehicle Dynamics, erste Querstraße rechts | Zwei Modelle illustrieren 2WS/4WS. Bewegliche Pylonen. E bei (15, 3). |
@@ -160,3 +160,7 @@ Ein kleiner Lieferroboter fährt auf einer festen, von Fahrbahnen getrennten Ser
 Die früheren neun prozeduralen Einzelbänke wurden vollständig entfernt. Sechs Bänke verwenden nun das originale `static/benches/benches.glb` aus Bruno Simons folio-2025 (MIT, bestehender Lizenzhinweis unter `public/licenses/bruno-simon-MIT.txt`). Die eingebettete Palette bleibt erhalten; Original-Weltpositionen, Rotationen und Physikmarker werden nicht übernommen. Die visuelle Geometrie wird auf 2,15 m Breite, 1 m Höhe und 0,7 m Tiefe skaliert und mit dem tiefsten Punkt auf den Boden gesetzt.
 
 Zwei Sitzplätze schauen auf den Brunnen, zwei zum Kanal, einer zur Robotics-Werkstatt und einer zur Namensskulptur. Sitznischen bekommen eigene Pflaster- beziehungsweise Holzflächen. Der Hauptweg am Kanal bleibt frei. Eine ausgeschnittene Platzfläche um den Brunnen, niedrige Pflanzrahmen, eine steinerne Brunnenabdeckung und dezente Kontaktschatten verbinden den Bereich. Die neue warme Sitzplatzbeleuchtung folgt dem Nachtmodus. Die Aufstellung und Prüfungen liegen in `src/seating-plan.js` und `tests/seating.test.js`.
+
+## Gemeinsamer Servicebereich
+
+Tankstelle und Garage liegen nebeneinander. Die Garage steht bei (29.5, 16), ihr Tor zeigt zum südlichen Vorplatz. Eine zusammenhängende, überschneidungsfrei erzeugte Asphaltfläche verbindet die Campus-Querstraße, die Tankstelle und den Garageneingang. Die Ladesäulen stehen an der westlichen Garagenwand; Serviceschrank und Van liegen an der östlichen Seite. Die Pergola und ein Baum aus dem neuen Garagenstandort wurden in den früheren westlichen Garagenbereich versetzt. Eingang, Modell, Kollisionen, Torsteuerung und Campusplan beziehen ihre Position aus `service-layout.js`.

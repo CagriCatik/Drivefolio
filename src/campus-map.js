@@ -1,3 +1,4 @@
+import {garageSite} from './service-layout.js';
 export function mapPosition(x,z){return {x:Math.max(0,Math.min(100,(x+55)/110*100)),y:Math.max(0,Math.min(100,(z+76)/119*100))};}
 export function createCampusMap(projects,openProject){
   const panel=document.getElementById('campus-map'),canvas=document.getElementById('campus-map-canvas'),toggle=document.getElementById('map-button'),marker=document.getElementById('map-car');
@@ -5,5 +6,6 @@ export function createCampusMap(projects,openProject){
   for(const project of projects){
     const button=document.createElement('button'),p=mapPosition(project.position.x,project.position.z);button.className='map-project';button.dataset.projectId=project.id;button.dataset.projectTitle=project.title;button.style.left=p.x+'%';button.style.top=p.y+'%';button.textContent=project.number;button.title=project.title;button.setAttribute('aria-label',project.title+' öffnen');button.addEventListener('click',()=>openProject(project));canvas.append(button);
   }
+  const garage=document.createElement('button'),gp=mapPosition(garageSite.x,garageSite.z);garage.className='map-project map-garage';garage.style.left=gp.x+'%';garage.style.top=gp.y+'%';garage.textContent='G';garage.title='Garage neben der Tankstelle';garage.setAttribute('aria-label','Garage öffnen');garage.addEventListener('click',()=>document.getElementById('garage-button').click());canvas.append(garage);
   return {update(position,heading,traffic){if(panel.hidden)return;const p=mapPosition(position.x,position.z);marker.style.left=p.x+'%';marker.style.top=p.y+'%';if(traffic){const ai=mapPosition(traffic.x,traffic.z),dot=document.getElementById('map-pace');dot.style.left=ai.x+'%';dot.style.top=ai.y+'%';dot.style.transform=`translate(-50%,-50%) rotate(${-traffic.heading*180/Math.PI+180}deg)`;}marker.style.transform=`translate(-50%,-50%) rotate(${-heading*180/Math.PI+180}deg)`;}};
 }

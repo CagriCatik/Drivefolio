@@ -1,3 +1,4 @@
+import {createServiceForecourt} from './service-forecourt.js';
 import {createCampusAttractions} from './campus-attractions.js';
 import {createReferenceGarden} from './reference-garden.js';
 import * as THREE from 'three';
@@ -68,6 +69,7 @@ export async function createWorld(scene, vehicle) {
   worldUV(terrainGeometry,0.5);
   const terrain=new THREE.Mesh(terrainGeometry,[material('#8cab91'),materials.ground]);terrain.receiveShadow=true;scene.add(terrain);
   addRoads(scene);
+  createServiceForecourt(scene);
   for(const z of [10,-13,-34])for(let i=0;i<6;i++)box(scene,0.55,0.012,1.3,-2.5+i,0.10,z,materials.white,false);
   // The western access crosses the water channel on a small bridge.
   for(const z of [1.1,8.9]){box(scene,7,0.35,0.12,-32,0.65,z,materials.stone);vehicle.addBarrier(-32,z,3.5,0.09,0);}

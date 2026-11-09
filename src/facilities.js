@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 
+import {garageSite} from './service-layout.js';
 import {mat,block,label} from './scene-primitives.js';
 import {createWorkshopDetails} from './workshop-details.js';
 import {createFuelStation} from './fuel-station.js';
@@ -8,7 +9,7 @@ import {createExhibitions} from './exhibition-areas.js';
 import {createPlanningAreas} from './planning-areas.js';
 
 function createGarage(scene,vehicle){
-  const group=new THREE.Group();group.position.set(-17,0,14);scene.add(group);
+  const group=new THREE.Group();group.position.set(garageSite.x,0,garageSite.z);scene.add(group);
   const wall=mat('#d5e3e6'),frame=mat('#354c5c'),floor=mat('#bdcdd0');
   block(group,10,0.08,9,0,0.03,0,floor);
   block(group,0.4,3.5,9,-5,1.75,0,wall);block(group,0.4,3.5,9,5,1.75,0,wall);
@@ -25,10 +26,10 @@ function createGarage(scene,vehicle){
   for(let i=0;i<6;i++)block(door,9.3,0.035,0.02,0,-1.25+i*0.45,0.08,frame);
   label(group,'GARAGE',0,3.4,4.73,5.1);
   const welcome=label(group,'E  /  FAHRZEUG WÄHLEN',0,0.18,6.2,6.3);welcome.rotation.x=-Math.PI/2;
-  const glow=new THREE.MeshStandardMaterial({color:'#b9e0cb',emissive:'#85d7b2',emissiveIntensity:1.8});
+  const glow=new THREE.MeshStandardMaterial({color:'#b9e0cb',emissive:'#85d7b2',emissiveIntensity:0});
   block(group,8.8,0.04,0.15,0,0.09,3.8,glow);
-  vehicle.addObstacle(-22,14,0.2,4.5);vehicle.addObstacle(-12,14,0.2,4.5);vehicle.addObstacle(-17,9.5,5,0.2);
-  return {update(dt){const p=vehicle.group.position,near=Math.hypot(p.x+17,p.z-18)<10;
+  vehicle.addObstacle(garageSite.x-5,garageSite.z,0.2,4.5);vehicle.addObstacle(garageSite.x+5,garageSite.z,0.2,4.5);vehicle.addObstacle(garageSite.x,garageSite.z-4.5,5,0.2);
+  return {setNight(value){glow.emissiveIntensity=value?1.8:0;},update(dt){const p=vehicle.group.position,near=Math.hypot(p.x-garageSite.entrance.x,p.z-garageSite.entrance.z)<7;
     door.position.y=THREE.MathUtils.lerp(door.position.y,near?3:1.5,1-Math.exp(-3*dt));
     door.scale.y=THREE.MathUtils.lerp(door.scale.y,near?0.06:1,1-Math.exp(-3*dt));}};
 }
@@ -108,5 +109,5 @@ function createRoboticsLab(scene,vehicle){
 
 export function createFacilities(scene,vehicle){
   const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle),areas=createProjectAreas(scene,vehicle),exhibitions=createExhibitions(scene,vehicle),planning=createPlanningAreas(scene,vehicle);const station=createFuelStation(scene,vehicle);
-  return {station,setNight(value){lab.setNight(value);exhibitions.setNight(value);},setDemo(id,stage,progress){exhibitions.setDemo(id,stage,progress);planning.setDemo(id,stage,progress);},update(time,dt,paused){station.update(paused);garage.update(dt);lab.update(time);areas.update(time);exhibitions.update(time);planning.update(time);}};
+  return {station,setNight(value){garage.setNight(value);lab.setNight(value);exhibitions.setNight(value);},setDemo(id,stage,progress){exhibitions.setDemo(id,stage,progress);planning.setDemo(id,stage,progress);},update(time,dt,paused){station.update(paused);garage.update(dt);lab.update(time);areas.update(time);exhibitions.update(time);planning.update(time);}};
 }

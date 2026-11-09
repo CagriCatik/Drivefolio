@@ -1,4 +1,7 @@
 import './style.css';
+import {createDiscovery,experimentIds} from './discovery.js';
+import {stories} from './project-stories.js';
+import {createProjectExperiments} from './project-experiments.js';
 import * as THREE from 'three';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {createDisplayModes} from './display-modes.js';
@@ -24,7 +27,10 @@ const sequence=createDemoSequence();
 let selectedProject=null;
 const interactions=createInteractions();
 const sound=createAudio();
-const visited = new Set();
+let discoveryStorage;try{discoveryStorage=window.localStorage;}catch{}
+const discovery=createDiscovery(projects.map(p=>p.id),discoveryStorage);
+let destination=null;
+const experiments=createProjectExperiments(id=>{discovery.mark(id,'tried');syncDiscovery();},id=>{discovery.mark(id,'completed');$('experiment-achievement').hidden=false;syncDiscovery();});
 const campusMap=createCampusMap(projects,openProject);
 let vehicle, view, drivingEffects, worldController, activeDialog = null, previousFocus = null;
 let started = false, ready = false, resetClock = false, overview=false;
@@ -34,11 +40,13 @@ function dismissWelcome() {
   if (started) return;
   started = true;
   sound.start();
+  $('discovery-card').hidden=false;syncDiscovery();
   $('welcome').classList.add('dismissed');
   $('welcome').inert = true;
 }
 
 function showDialog(dialog) {
+  if(activeDialog===dialog&&dialog.open)return;
   if(sequence.running)cancelSequence();
   if (activeDialog) activeDialog.close();
   previousFocus = document.activeElement;
@@ -58,6 +66,7 @@ for (const dialog of dialogs) {
   dialog.addEventListener('close', () => {
     if (activeDialog !== dialog) return;
     activeDialog = null;
+    experiments.close();
     input.setEnabled(!overview); resetClock = true;
     if (previousFocus instanceof HTMLElement && !previousFocus.closest('[inert]')) previousFocus.focus();
   });
@@ -78,13 +87,38 @@ function openProject(project) {
   $('project-tags').replaceChildren(...project.tags.map(tag => {
     const span = document.createElement('span'); span.textContent = tag; return span;
   }));
-  visited.add(project.id);
+  const story=stories[project.id];
+  $('project-problem').textContent=story.problem;$('project-use').textContent=story.use;$('project-focus').textContent=story.focus;
+  $('project-dialog').classList.toggle('has-experiment',experimentIds.includes(project.id));
+  $('project-dialog').querySelector('.project-details').open=false;
+  $('experiment-achievement').hidden=!discovery.completed.has(project.id);
+  $('project-connection').textContent=story.next;
+  const next=projects.find(p=>p.id===discovery.next(project.id));
+  $('project-next').textContent=`${next.title} entdecken →`;$('project-next').onclick=()=>openProject(next);
+  discovery.mark(project.id);syncDiscovery();
+  experiments.open(project.id);
   sound.chime();
   showDialog($('project-dialog'));
 }
 
+
+function syncDiscovery(){
+ $('discovery-count').textContent=`${discovery.viewed.size} / ${projects.length} Projekte entdeckt`;
+ $('discovery-experiments').textContent=`${experimentIds.filter(id=>discovery.tried.has(id)).length} / 3 Experimente ausprobiert`;
+ document.querySelectorAll('[data-project-id]').forEach(el=>{const seen=discovery.viewed.has(el.dataset.projectId);el.classList.toggle('is-discovered',seen);el.title=el.dataset.projectTitle+(seen?' · bereits entdeckt':'');});
+ const next=projects.find(p=>p.id===discovery.next(selectedProject?.id));
+ $('discovery-next').textContent=discovery.viewed.size===projects.length?'Weiter experimentieren →':`${next.title} entdecken →`;
+ $('discovery-next').onclick=()=>openProject(next);
+}
+$('project-find').addEventListener('click',()=>{
+ destination=selectedProject;activeDialog?.close();experiments.close();
+ $('campus-map').hidden=false;$('map-button').setAttribute('aria-expanded','true');
+ document.querySelectorAll('.map-project').forEach(el=>el.classList.toggle('is-destination',el.dataset.projectId===destination.id));
+ worldController?.setDestination(destination);$('destination-distance').hidden=false;
+});
+
 for (const project of projects) {
-  const button = document.createElement('button'); button.className = 'project-row';
+  const button = document.createElement('button'); button.className = 'project-row';button.dataset.projectId=project.id;button.dataset.projectTitle=project.title;
   button.style.setProperty('--project-color', project.color);
   const number = document.createElement('span'); number.className = 'row-number'; number.textContent = project.number;
   const main = document.createElement('span'); main.className = 'row-main';
@@ -103,7 +137,7 @@ function startDemo(project){
   overview=false;view?.setOverview(false);worldController?.setOverview(false);$('track-overview').setAttribute('aria-pressed','false');
   if(!ready||!project)return;
   if(activeDialog){activeDialog.close();activeDialog=null;}
-  dismissWelcome();vehicle.stop();input.setEnabled(false);sequence.start(project);sound.chime();
+  experiments.close();dismissWelcome();vehicle.stop();input.setEnabled(false);sequence.start(project);sound.chime();
   $('sequence-title').textContent=project.title+' / WELT-DEMO';
   $('sequence-stage').textContent=project.stages[0];
   $('sequence-progress').style.width='0%';
@@ -111,6 +145,7 @@ function startDemo(project){
   $('interaction-hint').hidden=true;$('sequence-card').hidden=false;
 }
 $('sequence-cancel').addEventListener('click',cancelSequence);
+syncDiscovery();
 $('project-demo').addEventListener('click',()=>startDemo(selectedProject));
 window.addEventListener('keydown',e=>{if(e.code==='Escape'&&sequence.running)cancelSequence();});
 
@@ -223,7 +258,7 @@ async function main() {
         if(interactionState.activated){
           if(interactionState.activated.action==='fuel')world.facilities.station.interact();
           else if(interactionState.activated.id==='garage')openGarage();
-          else startDemo(projects.find(p=>p.id===interactionState.activated.id));
+          else {const project=projects.find(p=>p.id===interactionState.activated.id);if(experimentIds.includes(project.id))openProject(project);else startDemo(project);}
           accumulator=0;break;
         }
       }
@@ -252,6 +287,8 @@ async function main() {
     $('speed-value').textContent=String(Math.round(vehicle.speed*3.6)).padStart(2,'0');
     $('boost-label').classList.toggle('boosting',!!vehicle.motion.input.boost&&vehicle.speed>2);
     campusMap.update(vehicle.group.position,vehicle.heading,world.race.trafficPose);
+    if(destination){const distance=Math.hypot(vehicle.group.position.x-destination.entrance.x,vehicle.group.position.z-destination.entrance.z);$('destination-distance').textContent=distance<3.5?`${destination.title} · anhalten und E drücken`:`Ziel: ${destination.title} · ${Math.round(distance)} m Luftlinie`;}
+
     composer.render();
   });
 }

@@ -3,7 +3,7 @@ export function createCampusMap(projects,openProject){
   const panel=document.getElementById('campus-map'),canvas=document.getElementById('campus-map-canvas'),toggle=document.getElementById('map-button'),marker=document.getElementById('map-car');
   toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));});
   for(const project of projects){
-    const button=document.createElement('button'),p=mapPosition(project.position.x,project.position.z);button.className='map-project';button.style.left=p.x+'%';button.style.top=p.y+'%';button.textContent=project.number;button.title=project.title;button.setAttribute('aria-label',project.title+' öffnen');button.addEventListener('click',()=>openProject(project));canvas.append(button);
+    const button=document.createElement('button'),p=mapPosition(project.position.x,project.position.z);button.className='map-project';button.dataset.projectId=project.id;button.dataset.projectTitle=project.title;button.style.left=p.x+'%';button.style.top=p.y+'%';button.textContent=project.number;button.title=project.title;button.setAttribute('aria-label',project.title+' öffnen');button.addEventListener('click',()=>openProject(project));canvas.append(button);
   }
   return {update(position,heading,traffic){if(panel.hidden)return;const p=mapPosition(position.x,position.z);marker.style.left=p.x+'%';marker.style.top=p.y+'%';if(traffic){const ai=mapPosition(traffic.x,traffic.z),dot=document.getElementById('map-pace');dot.style.left=ai.x+'%';dot.style.top=ai.y+'%';dot.style.transform=`translate(-50%,-50%) rotate(${-traffic.heading*180/Math.PI+180}deg)`;}marker.style.transform=`translate(-50%,-50%) rotate(${-heading*180/Math.PI+180}deg)`;}};
 }

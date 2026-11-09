@@ -132,3 +132,13 @@ Vite verwendet `base: './'`, damit Modelle, Texturen, Schrift und JavaScript auc
 - Three.js: MIT. Rapier: Apache-2.0. Vite: MIT. Laufzeitlizenzen werden mit ausgeliefert.
 - Die Namensskulptur zeigt **Çağrı Çatık** mit einem lokalen DejaVu-Sans-Bold-Subset einschließlich Ç, ğ und ı. Lizenz: `public/licenses/dejavu-fonts.txt`. Reproduzierbare Konvertierung mit FontTools: `python tools/build-name-font.py /path/to/DejaVuSans-Bold.ttf`. Die ursprüngliche Helvetiker-Datei bleibt mit ihren Lizenzhinweisen erhalten.
 - Zusätzlicher Anwendungscode: MIT, siehe `LICENSE`.
+
+## Interaktive Projekt-Erlebnisse
+
+JetRacer, RadarTrackBench und Frenet öffnen mit E direkt eine interaktive Projektkarte. Alle Erlebnisse sind auch über die Projektliste ohne Fahren zugänglich, selbst wenn WebGL nicht verfügbar ist. Die bestehenden 3D-Welt-Demos bleiben separat erreichbar.
+
+- JetRacer: Hindernis schalten, Roboter starten; eine Gitter-Breitensuche plant einen freien Weg. Das Lernmodell vereinfacht Fahrzeugkinematik und Sensorik.
+- Radar: Messrauschen verändern, Messung pausieren, Sensor für vier Sekunden unterbrechen. Zwei lineare Kalman-Filter schätzen Position und Geschwindigkeit; RMSE bezieht sich ausschließlich auf synthetische Browserdaten.
+- Frenet: Hindernisposition und Sicherheitsabstand verändern. 21 abgetastete Kandidaten werden gegen ein vergrößertes Hindernis geprüft, anschließend entscheidet eine einfache Kostenfunktion. Bei vollständig gesperrter Fahrbahn bleibt das Modell stehen. Kein Aufruf des originalen Python-Planers.
+
+Alle sieben Karten erläutern Problem, Einsatzgebiet und technischen Schwerpunkt. Fachlich verbundene Projekte werden am Kartenende empfohlen. Ein lokaler Entdeckungsfortschritt unterscheidet geöffnete Projekte, ausprobierte Experimente und abgeschlossene Aufgaben. Er überträgt keine Besuchsdaten. Fehlender oder blockierter Browser-Speicher verhindert keine Funktionen. „Station im Campus finden“ markiert den Eingang im Plan und in der 3D-Welt und zeigt die Luftlinienentfernung. Es handelt sich nicht um ein Straßennavigationssystem.

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import RAPIER from '@dimforge/rapier3d-compat';
+import {createFuel} from './fuel.js';
 import { getVehicle } from './vehicle-catalog.js';
 import { rampHeightAt } from './interactions.js';
 
@@ -18,11 +19,15 @@ export async function createVehicle(scene) {
   const ramps=[];
   const surfaceHeight=()=>Math.max(0,...ramps.map(r=>rampHeightAt(r,group.position.x,group.position.z)));
   const props = [];
+  const fuel=createFuel();
   let jumpHeld = false, steering = 0, acceleration = 0, signedSpeed = 0, impact = 0;
   let previousSpeed = 0;
   let lastInput = {};
 
   function update(dt, input) {
+    fuel.update(dt,group.position,speed,input,group.position.y-surfaceHeight()<0.12);
+    if(fuel.refueling)input={...input,throttle:0,steering:0,boost:false,jump:false,brake:true};
+    if(fuel.fraction<=0)input={...input,boost:false};
     const velocity = body.linvel();
     const rotation = body.rotation();
     heading = 2 * Math.atan2(rotation.y, rotation.w);
@@ -33,7 +38,7 @@ export async function createVehicle(scene) {
     let nextSpeed = speed + input.throttle * (input.boost ? profile.acceleration*1.48 : profile.acceleration) * dt;
     if (!input.throttle) nextSpeed *= Math.exp(-1.0 * dt);
     if (input.brake) nextSpeed *= Math.exp(-8 * dt);
-    nextSpeed = THREE.MathUtils.clamp(nextSpeed, -7, input.boost ? profile.boostSpeed : profile.maxSpeed);
+    nextSpeed = THREE.MathUtils.clamp(nextSpeed, -7, fuel.fraction<=0?5:input.boost ? profile.boostSpeed : profile.maxSpeed);
     const lateral = sideSpeed * Math.exp(-(input.brake ? 2.4 : 9) * dt);
     let y = velocity.y;
     if (input.jump && !jumpHeld && body.translation().y < surfaceHeight()+0.55) y = 7;
@@ -61,6 +66,7 @@ export async function createVehicle(scene) {
   }
 
   function reset() {
+    fuel.cancel();
     body.setTranslation({ x: 0, y: 0.43, z: 12 }, true);
     body.setRotation({ x: 0, y: 1, z: 0, w: 0 }, true);
     stop(); previousSpeed = 0; signedSpeed = 0; steering = 0; jumpHeld = false; sync();
@@ -94,6 +100,7 @@ export async function createVehicle(scene) {
     props.push({mesh,body:propBody,spawn:{x,y,z}});
   }
   function setProfile(id) {
+    fuel.cancel();
     const next=getVehicle(id);
     chassisCollider.setShape(new RAPIER.Cuboid(next.halfWidth,0.42,next.halfLength));
     profile=next;stop();previousSpeed=0;signedSpeed=0;
@@ -109,7 +116,7 @@ export async function createVehicle(scene) {
   addObstacle(-55, -17, 1, 65); addObstacle(55, -17, 1, 65);
   addObstacle(0, 43, 55, 1); addObstacle(0, -76, 55, 1);
   reset();
-  return { group, update, reset, stop, addObstacle, addBarrier, addTraffic, addProp, addRamp, setProfile,
+  return { group, fuel, update, reset, stop, addObstacle, addBarrier, addTraffic, addProp, addRamp, setProfile,
     get profile(){return profile.id;},
     get speed() { return speed; }, get heading() { return heading; },
     get motion() { return { speed, signedSpeed, steering, acceleration, impact, input: lastInput, grounded: group.position.y-surfaceHeight() < 0.12 }; },

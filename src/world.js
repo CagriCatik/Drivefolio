@@ -79,7 +79,7 @@ export async function createWorld(scene, vehicle) {
     vehicles:vehicleVisuals,
     setOverview(value){scene.fog.near=value?350:85;scene.fog.far=value?500:155;},
     facilities,race,
-    setNight(value){vehicleVisuals.setNight(value);landscape.setNight(value);race.setNight(value);},
+    setNight(value){vehicleVisuals.setNight(value);facilities.station.setNight(value);landscape.setNight(value);race.setNight(value);},
     update(time,dt,paused) {
       landscape.update(time);vehicleVisuals.update(dt,time);facilities.update(time,dt,paused);race.update(dt,paused);details.update(time,dt);
     },

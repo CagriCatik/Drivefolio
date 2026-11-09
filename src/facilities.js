@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import {mat,block,label} from './scene-primitives.js';
-import {createHandlingPad} from './handling-pad.js';
+import {createFuelStation} from './fuel-station.js';
 import {createProjectAreas} from './project-areas.js';
 import {createExhibitions} from './exhibition-areas.js';
 import {createPlanningAreas} from './planning-areas.js';
@@ -103,6 +103,6 @@ function createRoboticsLab(scene,vehicle){
 }
 
 export function createFacilities(scene,vehicle){
-  const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle),areas=createProjectAreas(scene,vehicle),exhibitions=createExhibitions(scene,vehicle),planning=createPlanningAreas(scene,vehicle);const handling=createHandlingPad(scene,vehicle);
-  return {setDemo(id,stage,progress){exhibitions.setDemo(id,stage,progress);planning.setDemo(id,stage,progress);},update(time,dt,paused){handling.update(paused);garage.update(dt);lab.update(time);areas.update(time);exhibitions.update(time);planning.update(time);}};
+  const garage=createGarage(scene,vehicle),lab=createRoboticsLab(scene,vehicle),areas=createProjectAreas(scene,vehicle),exhibitions=createExhibitions(scene,vehicle),planning=createPlanningAreas(scene,vehicle);const station=createFuelStation(scene,vehicle);
+  return {station,setDemo(id,stage,progress){exhibitions.setDemo(id,stage,progress);planning.setDemo(id,stage,progress);},update(time,dt,paused){station.update(paused);garage.update(dt);lab.update(time);areas.update(time);exhibitions.update(time);planning.update(time);}};
 }

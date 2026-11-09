@@ -221,14 +221,15 @@ async function main() {
         accumulator -= fixed; steps++;
         interactionState=interactions.update(vehicle.group.position,vehicle.motion.grounded?vehicle.speed:Infinity,controls.interact);
         if(interactionState.activated){
-          if(interactionState.activated.id==='garage')openGarage();
+          if(interactionState.activated.action==='fuel')world.facilities.station.interact();
+          else if(interactionState.activated.id==='garage')openGarage();
           else startDemo(projects.find(p=>p.id===interactionState.activated.id));
           accumulator=0;break;
         }
       }
       if (!activeDialog && !sequence.running&&!overview) {
         $('interaction-hint').hidden=!interactionState.location;
-        if(interactionState.location)$('interaction-message').textContent=`${interactionState.location.label} · ${Math.abs(vehicle.speed)<1.5?'E drücken':'zum Entdecken anhalten'}`;
+        if(interactionState.location)$('interaction-message').textContent=`${interactionState.location.label} · ${Math.abs(vehicle.speed)<(interactionState.location.action==='fuel'?0.5:1.5)?'E drücken':'anhalten'}`;
 
       }
     } else accumulator = 0;
@@ -239,7 +240,13 @@ async function main() {
       $('sequence-progress').style.width=`${state.progress*100}%`;
       if(state.completed){const project=sequence.project;cancelSequence();openProject(project);}
     }
-    world.update(time,dt,!!activeDialog||sequence.running);
+    world.update(time,dt,!!activeDialog||sequence.running||overview);
+    const fuel=vehicle.fuel;
+    $('fuel-level').textContent=`${Math.round(fuel.fraction*100)} %`;
+    $('fuel-meter').value=fuel.fraction;
+    $('fuel-indicator').classList.toggle('fuel-low',fuel.fraction<0.15);
+    $('fuel-indicator').title=fuel.fraction<=0?'Tank leer · Notlauf zur Tankstelle':`${fuel.liters.toFixed(1)} von 50 Litern`;
+    $('fuel-status').textContent=fuel.refueling?'TANKT …':fuel.fraction<=0?'NOTLAUF':fuel.fraction<0.15?'RESERVE':'TANK';
     drivingEffects.update(dt,time,!!activeDialog||sequence.running);
     sound.update(vehicle.motion,!!activeDialog||sequence.running);
     $('speed-value').textContent=String(Math.round(vehicle.speed*3.6)).padStart(2,'0');

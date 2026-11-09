@@ -51,7 +51,7 @@ export function createCampusDetails(scene,vehicle){
   for(let i=0;i<4;i++){
     const hoop=new THREE.Mesh(new THREE.TorusGeometry(0.35,0.035,6,16,Math.PI),steel);hoop.position.set(17+i*0.65,0.3,23.5);scene.add(hoop);
   }
-  label(scene,'MOBILITY HUB',18,0.12,24.5,4,'#345d6f').rotation.x=-Math.PI/2;
+  label(scene,'CAMPUS FUEL ↑',15.5,0.12,24.5,5,'#345d6f').rotation.x=-Math.PI/2;
   const van=new THREE.Group();van.position.set(26,0,19);scene.add(van);
   block(van,1.65,1.3,3,0,0.9,0,mat('#d1e5e9'));block(van,1.5,0.55,0.04,0,1.25,1.53,mat('#4b859f'));
   for(const x of [-0.85,0.85])for(const z of [-0.9,0.9]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.3,0.18,10),dark);wheel.rotation.z=Math.PI/2;wheel.position.set(x,0.3,z);van.add(wheel);}

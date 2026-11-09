@@ -67,3 +67,12 @@ test('a physical ramp launches the car without pressing jump, then gravity bring
   assert.ok(highest>1.2,`physical ramp peak: ${highest}`);
   assert.ok(v.group.position.y<0.05,'vehicle lands on the floor');
 });
+
+test('vehicle keeps its tank through reset and profile changes; empty tank permits a slow return',async()=>{
+ const v=await createVehicle(new THREE.Scene());
+ for(let i=0;i<60;i++)v.update(1/60,{throttle:1,steering:0,brake:false});
+ const remaining=v.fuel.liters;assert.ok(remaining<37.5);v.setProfile('suv');v.reset();assert.equal(v.fuel.liters,remaining);
+ v.fuel.update(100000,{x:0,z:12},20,{throttle:1,boost:true});assert.equal(v.fuel.liters,0);
+ for(let i=0;i<120;i++)v.update(1/60,{throttle:1,steering:0,brake:false,boost:true});
+ assert.ok(v.speed>2&&v.speed<=5.1,'empty tank cannot boost but can reach the station');
+});

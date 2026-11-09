@@ -4,7 +4,6 @@ import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {createKenneyLightBinding,modelLightFaces,faceVertices} from '../src/model-light-mounts.js';
 import {createVehicleLights} from '../src/vehicle-lights.js';
-import {createBrakeMeter,insideHandling} from '../src/brake-meter.js';
 
 function bodyModel(file){
   const bytes=readFileSync(file),size=bytes.readUInt32LE(12),json=JSON.parse(bytes.toString('utf8',20,20+size)),bin=28+size;
@@ -37,15 +36,4 @@ test('each Kenney vehicle uses actual body surfaces and headlights follow chassi
     vehicle.motion.signedSpeed=-2;lights.update();assert.equal(binding.reverseLens.visible,true);
     binding.dispose();
   }assert.equal(new Set(origins).size,3,'no shared universal headlight position');
-});
-test('handling lab measures travelled braking distance and rejects pauses and resets',()=>{
-  assert.equal(insideHandling({x:15,z:16}),true);assert.equal(insideHandling({x:0,z:12}),false);
-  const meter=createBrakeMeter();meter.update({x:15,z:17},8,false);meter.update({x:15,z:17.1},8,true);
-  assert.ok(meter.update({x:15,z:18.1},4,true).measuring);
-  const stop=meter.update({x:15,z:18.5},0.1,true);assert.ok(Math.abs(stop.result.distance-1.4)<1e-7);assert.equal(stop.result.startSpeed,8);
-  assert.equal(meter.update({x:15,z:18.5},8,true).measuring,false,'holding brake does not restart the measurement');
-  meter.cancel();meter.update({x:15,z:17},8,false);meter.update({x:15,z:17},8,true);
-  assert.equal(meter.update({x:0,z:12},0,true).measuring,false,'reset teleport cancels instead of producing a braking result');
-  meter.update({x:15,z:17},8,false);meter.update({x:15,z:17},8,true);
-  assert.equal(meter.update({x:15,z:17},0,true,true).measuring,false,'opening a dialog cannot finish a brake test');
 });

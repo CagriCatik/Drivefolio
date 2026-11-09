@@ -23,7 +23,7 @@ Die im Terminal angezeigte URL öffnen. Ein Doppelklick auf die HTML-Datei funkt
 | Ort | Inhalt und Interaktion |
 | --- | --- |
 | Garage, links hinter dem Startplatz | Tor öffnet bei Annäherung. Im Eingang bei (-17, 16) E drücken oder den Garage-Button verwenden. Offroader/Sportwagen und vier Lackierungen stehen bereit. |
-| Handling Lab, rechts hinter dem Startplatz | Flacher Slalom-Parcours mit drei beweglichen Pylonen und markierter Bremszone. Während der Fahrt mit Leertaste bremsen: Die Anzeige misst den tatsächlich zurückgelegten Weg bis zum Stillstand und nennt die Startgeschwindigkeit. |
+| Tankstelle, rechts hinter dem Startplatz | Zwei Fahrspuren, vier Zapfseiten, Überdachung und Servicekiosk. Direkt neben einer Säule anhalten, E startet/beendet kostenloses Tanken. Anzeige mit Tankfüllstand und getankten Litern. |
 | JetRacer-Werkstatt, erste Querstraße links | RC-Modell mit Kamera/LiDAR, Jetson-Werkbank und ROS-2-Anzeige. 48 LiDAR-Raycasts mit 10 Hz. E bei (-15, 1.5). |
 | Vehicle Dynamics, erste Querstraße rechts | Zwei Modelle illustrieren 2WS/4WS. Bewegliche Pylonen. E bei (15, 3). |
 | RadarTrackBench, zweite Querstraße links | Rotierende Parabolantenne, bewegtes Ziel und Tracking-Tisch mit synthetischen verrauschten Messpunkten und glatter Zielspur. E bei (-15, -20). |
@@ -39,7 +39,7 @@ Die Stationen sind **illustrative JavaScript-Demos**, keine laufenden Instanzen 
 
 ## Moderner Engineering-Campus
 
-Heller Beton, Asphalt, bepflanzte Inseln, kompakte grüne Baumkronen, LED-Masten, Sitzplätze, Pergola, EV-Ladesäulen und ein seitlicher Wasserkanal ersetzen die Wüstenumgebung. Garage mit Solarmodulen und Fassadenfenster; JetRacer-Werkstatt mit offener Überdachung, Hebebühne und Werkzeugwagen. Die Pylonen im Handling Lab sind bewegliche Rapier-Objekte.
+Heller Beton, Asphalt, bepflanzte Inseln, kompakte grüne Baumkronen, LED-Masten, Sitzplätze, Pergola, EV-Ladesäulen und ein seitlicher Wasserkanal ersetzen die Wüstenumgebung. Garage mit Solarmodulen und Fassadenfenster; JetRacer-Werkstatt mit offener Überdachung, Hebebühne und Werkzeugwagen. Die Tankstelle hat kollidierbare Zapfsäulen und Stützen sowie nachts geschaltete Beleuchtung.
 
 Die Radarantenne richtet sich innerhalb von 18 Metern auf das Besucherfahrzeug aus. Das Display zeigt dabei verrauschte Positionsproben und eine einfache geglättete Spur. Außerhalb des Bereichs bleibt die synthetische Ziel-Demo aktiv. Kein echter Radar- oder Kalman-Filter-Backenddienst.
 
@@ -73,7 +73,7 @@ Asphalt mit feiner Körnung und Oberflächenstruktur, maßstäbliche Pflasterfug
 
 Die Kenney-Lichtflächen werden direkt aus den nativen Karosseriedreiecken des jeweiligen Modells erzeugt: Sportwagen und SUV verwenden ihre vorhandenen Front- und Heckleuchten, der Rennwagen bündige Flächen am Frontflügel sowie eine zentrale Heckleuchte. Keine universellen schwebenden Leuchtwürfel. Die beiden Lichtkegel hängen am jeweiligen Karosserieobjekt, folgen dessen Neigung und werden nicht aus Kollisionsmaßen abgeleitet. Umlackieren erhält die nativen Lichtflächen. Beim Offroader sind die Lichtkegel an die vorhandene Scheinwerfergeometrie gebunden.
 
-Die frühere Rampe samt Collider wurde aus der Welt entfernt. Das Handling Lab ist eine illustrative Bremswegmessung mit der vorhandenen Arcade-Physik, keine reale Fahrzeugvermessung. Öffnen von Dialogen oder Zurücksetzen bricht eine laufende Messung ab.
+Rampe und Handling-Parcours wurden vollständig entfernt. Alle Fahrzeuge teilen einen 50-Liter-Tank innerhalb der Sitzung (Start 75 %). Verbrauch entsteht beim Fahren; Boost erhöht ihn. Tanken füllt 4 l/s auf. Losfahren, Springen, Dialoge, Übersicht, Fahrzeugwechsel und Reset brechen Tanken ab. Bei leerem Tank bleibt ein Notlauf mit 18 km/h verfügbar, damit das Portfolio zugänglich bleibt. Der Füllstand bleibt beim Fahrzeugwechsel und Reset erhalten.
 
 ## Steuerung
 
@@ -111,7 +111,7 @@ Touchgeräte erhalten entsprechende Bildschirmtasten. Die Projektliste funktioni
 | `vehicle-visuals.js`, `car-visual.js` | Austausch und Animation der Fahrzeugmodelle |
 | `interactions.js` | Reine Abstands-/Eingabelogik und Rampenhöhen |
 | `demo-sequence.js` | Frameworkfreier Ablauf, Fortschritt und Abbruch der Projektvorschauen |
-| `facilities.js`, `project-areas.js`, `exhibition-areas.js` | Garage, Handling Lab und sieben unterschiedliche Projektorte |
+| `facilities.js`, `project-areas.js`, `exhibition-areas.js` | Garage, Tankstelle und sieben unterschiedliche Projektorte |
 | `scene-primitives.js` | Kleine gemeinsame Geometrie- und Beschriftungsfunktionen |
 | `world.js`, `landscape.js` | Boden, Straßen und Umgebung |
 | `camera.js`, `input.js`, `audio.js`, `effects.js` | Kamera und Browseradapter |

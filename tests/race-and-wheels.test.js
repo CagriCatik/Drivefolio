@@ -22,7 +22,7 @@ test('steering axis and wheel center stay fixed while front wheels roll',()=>{
   rig.dispose();
 });
 test('both headlights illuminate forward, toggle together and survive either profile at night',()=>{
-  for(const profile of ['sport','offroader']){
+  for(const profile of ['sport','offroader','suv','race']){
     const vehicle={group:new THREE.Group(),profile,motion:{signedSpeed:0,input:{}}},lights=createVehicleLights(vehicle);
     lights.setNight(true);lights.update();assert.equal(lights.lamps.length,2);
     assert.ok(lights.lamps[0].position.x<0&&lights.lamps[1].position.x>0);

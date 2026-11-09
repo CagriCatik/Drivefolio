@@ -1,5 +1,6 @@
 import './style.css';
 import * as THREE from 'three';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {createDisplayModes} from './display-modes.js';
 import {createCampusMap} from './campus-map.js';
 import { projects } from './projects.js';
@@ -175,6 +176,8 @@ async function main() {
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#d4e5eb');
   scene.fog = new THREE.Fog('#d4e5eb', 85, 155);
+  const reflectionRoom=new RoomEnvironment(),pmrem=new THREE.PMREMGenerator(renderer);
+  scene.environment=pmrem.fromScene(reflectionRoom,0.04).texture;scene.environmentIntensity=0.3;reflectionRoom.dispose();pmrem.dispose();
   const sky=new THREE.HemisphereLight('#e6f4ff', '#81998b', 1.9);scene.add(sky);
   const sun = new THREE.DirectionalLight('#fff8ed', 2.5); sun.position.set(-18, 32, 20);
   sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);

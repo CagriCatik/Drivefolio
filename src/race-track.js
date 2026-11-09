@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import {mat,block,label} from './scene-primitives.js';
 import {createLapTimer,distanceToCircuit} from './race-layout.js';
 import {trackPoints,offsetLoop,joinedStrip,joinedBand,isInnerAccess,ROAD_Y} from './road-network.js';
+import {asphaltMaterial,worldUV} from './surface-materials.js';
+import {switchFixtures} from './fixture-lighting.js';
 import {createPaceCar} from './pace-car.js';
 
 function meshFromData(scene,data,materials){
@@ -14,11 +16,12 @@ function meshFromData(scene,data,materials){
     }geometry.setIndex(sorted);
   }else geometry.setIndex(data.indices);
   geometry.computeVertexNormals();
+  if(materials===asphaltMaterial())worldUV(geometry);
   const mesh=new THREE.Mesh(geometry,materials);mesh.receiveShadow=true;scene.add(mesh);return mesh;
 }
 export function createRaceTrack(scene,vehicle){
   const points=trackPoints(),n=points.length;
-  meshFromData(scene,joinedStrip(points,-3.8,3.8,ROAD_Y),new THREE.MeshStandardMaterial({color:'#435b67',roughness:0.92,side:THREE.DoubleSide}));
+  meshFromData(scene,joinedStrip(points,-3.8,3.8,ROAD_Y),asphaltMaterial());
   const curbMaterials=['#d95c62','#e9f2f3'].map(color=>new THREE.MeshStandardMaterial({color,roughness:0.9,side:THREE.DoubleSide}));
   meshFromData(scene,joinedBand(points,-4.5,-3.8,ROAD_Y,0.18),curbMaterials);
   meshFromData(scene,joinedBand(points,3.8,4.5,ROAD_Y,0.18,p=>!isInnerAccess(p)),curbMaterials);
@@ -63,14 +66,20 @@ export function createRaceTrack(scene,vehicle){
   for(const [cx,cz] of [[-22,-70],[16,-70],[-25,39],[17,39]])for(let i=0;i<5;i++){
     const tire=new THREE.Mesh(new THREE.TorusGeometry(0.3,0.14,6,12),rubber);tire.rotation.x=Math.PI/2;tire.position.set(cx+i*0.6,0.24,cz);scene.add(tire);
   }
-  const nightLights=[];
-  for(const [x,z] of [[-49,-36],[49,-36],[-25,37],[25,-69]]){
-    block(scene,0.16,6,0.16,x,3,z,barrier);block(scene,2,0.35,0.6,x,6,z,mat('#d0e6ec'));
-    const light=new THREE.PointLight('#a9d8ff',0,28,1.4);light.position.set(x,5.5,z);scene.add(light);nightLights.push(light);
+  const nightLights=[],fixtureMaterial=new THREE.MeshStandardMaterial({color:'#d8e6e7',emissive:'#ffedc7',emissiveIntensity:0,roughness:0.3});
+  const lampLine=offsetLoop(points,-7.3);let lampDistance=100;
+  for(let i=0;i<points.length;i++){
+    const p=points[i],q=points[(i+1)%points.length];lampDistance+=Math.hypot(q.x-p.x,q.z-p.z);
+    if(lampDistance<38||p.x>40&&p.z>-30&&p.z<-12)continue;lampDistance=0;
+    const foot=lampLine[i],dx=p.x-foot.x,dz=p.z-foot.z,len=Math.hypot(dx,dz),nx=dx/len,nz=dz/len;
+    block(scene,0.16,6,0.16,foot.x,3,foot.z,barrier);
+    const arm=block(scene,4.8,0.13,0.4,foot.x+nx*2.4,6,foot.z+nz*2.4,barrier);arm.rotation.y=Math.atan2(-nz,nx);
+    const lens=block(scene,1.0,0.12,0.6,foot.x+nx*4.25,5.88,foot.z+nz*4.25,fixtureMaterial);lens.rotation.y=arm.rotation.y;
+    const light=new THREE.PointLight('#fff0d8',0,34,1.6);light.position.set(foot.x+nx*4.2,5.7,foot.z+nz*4.2);scene.add(light);nightLights.push(light);
   }
   const pace=createPaceCar(scene,vehicle,points);
   const timer=createLapTimer(),hud=document.getElementById('race-hud'),format=t=>`${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toFixed(1).padStart(4,'0')}`;
-  return {get trafficPose(){return pace.pose;},setNight(value){nightLights.forEach(l=>l.intensity=value?45:0);},reset:timer.reset,update(dt,paused){
+  return {get trafficPose(){return pace.pose;},setNight(value){switchFixtures(nightLights,[fixtureMaterial],value,72);},reset:timer.reset,update(dt,paused){
     pace.update(dt,paused);
     const state=timer.update(paused?0:dt,vehicle.group.position,paused?0:vehicle.speed);
     hud.hidden=distanceToCircuit(vehicle.group.position,points)>13&&!state.running;

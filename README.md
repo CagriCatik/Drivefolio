@@ -61,6 +61,14 @@ Ein regelbasiertes autonomes Pace Car folgt der äußeren Fahrspur. Es reduziert
 
 Östlich des Campus verbindet eine Boxengasse drei Werkstattboxen, Campus-Servicezufahrt und zwei Streckenöffnungen. Hinzu kommen Werkzeugwagen, Reifenracks, eine überdachte Tribüne mit Zuschauern, Streckenwerbung, Servicefahrzeug, Fahrradständer, Solarfeld und ein Brunnen am Ankunftsplatz.
 
+## Fahrzeuge, Materialien und Straßenbeleuchtung
+
+Vier eigenständige Modelle stehen in der Garage: Brunos Offroader sowie Kenney Sportwagen, SUV und Rennwagen. SUV und Rennwagen stammen aus dem bestehenden CC0-Car-Kit in RaceTrack; alle Modell- und Texturdateien liegen lokal. Die Kenney-Modelle verwenden zentrierte Radachsen mit anhand der Modellgröße berechneten Rollradien. SUV und Rennwagen besitzen eigene Handlingprofile, Kollisionsmaße und Scheinwerferhöhen.
+
+Straßen- und Streckenleuchten schalten ihre Lichtquellen **und** leuchtenden Linsen ausschließlich im Nachtmodus ein. Beim Wechsel zum Tag werden beide vollständig abgeschaltet. Die Leuchten sind über Campus und Rundkurs verteilt. Fahrzeug-Scheinwerfer bleiben unabhängig über L/Garage schaltbar.
+
+Asphalt mit feiner Körnung und Oberflächenstruktur, maßstäbliche Pflasterfugen, schwache Umgebungsreflexionen, Entwässerungsrinnen, Fassadendetails und variierte Baumformen ergänzen die Szene. Reflexionen werden nachts reduziert. Oben links steht ausschließlich Çağrı Çatık ohne Monogramm.
+
 ## Steuerung
 
 | Eingabe | Aktion |

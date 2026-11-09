@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { addLandscape, addNameSculpture } from './landscape.js';
 import { createVehicleVisuals } from './vehicle-visuals.js';
 import { createFacilities } from './facilities.js';
+import {asphaltMaterial,worldUV} from './surface-materials.js';
 import {rectUnion} from './road-network.js';
 import {createCampusDetails} from './campus-details.js';
 import {createRaceTrack} from './race-track.js';
@@ -36,7 +37,8 @@ function groundText(scene, text, x, z, width, color, angle = 0) {
 function addRoads(scene){
   const {positions:vertices,indices}=rectUnion();
   const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.setIndex(indices);geometry.computeVertexNormals();
-  const road=new THREE.Mesh(geometry,materials.road);road.receiveShadow=true;scene.add(road);
+  worldUV(geometry);
+  const road=new THREE.Mesh(geometry,asphaltMaterial());road.receiveShadow=true;scene.add(road);
   for(let z=-44;z<25;z+=4){if([5,-18,-39].some(c=>Math.abs(c-z)<4.4)||[-32,-12,24].some(c=>Math.abs(c-z)<1.6))continue;box(scene,0.12,0.01,1.3,0,0.093,z,materials.white,false);}
   for(const [z,extent] of [[5,38],[-18,23],[-39,23]])for(let x=-extent;x<extent;x+=4){if(Math.abs(x)<4.5||z===5&&Math.abs(Math.abs(x)-30)<1.6)continue;box(scene,1.3,0.01,0.12,x,0.093,z,materials.white,false);}
   groundText(scene,'← FRENET    AI    FMT-MPC →',0,-32,9,'#d5eeef');
@@ -49,7 +51,7 @@ export async function createWorld(scene, vehicle) {
   const paving=document.createElement('canvas');paving.width=paving.height=256;
   const ctx=paving.getContext('2d');ctx.fillStyle='#e5ebea';ctx.fillRect(0,0,256,256);
   ctx.strokeStyle='#d3dddc';ctx.lineWidth=1;ctx.strokeRect(0,0,256,256);ctx.beginPath();ctx.moveTo(0,128);ctx.lineTo(256,128);ctx.moveTo(128,0);ctx.lineTo(128,256);ctx.stroke();
-  const texture=new THREE.CanvasTexture(paving);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(32,32);texture.anisotropy=4;materials.ground.map=texture;
+  const texture=new THREE.CanvasTexture(paving);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(1,1);texture.anisotropy=4;materials.ground.map=texture;
   // One disjoint terrain mesh: paving, grass and the canal opening never
   // occupy the same footprint, even in the distant circuit overview.
   const xs=[-80,-35,-29,29,80],zs=[-80,-62,-60,28,80],terrainPositions=[],terrainIndices=[[],[]];
@@ -61,6 +63,7 @@ export async function createWorld(scene, vehicle) {
     terrainIndices[paved?1:0].push(n,n+2,n+1,n+1,n+2,n+3);
   }
   const terrainGeometry=new THREE.BufferGeometry();terrainGeometry.setAttribute('position',new THREE.Float32BufferAttribute(terrainPositions,3));terrainGeometry.setIndex(terrainIndices.flat());terrainGeometry.addGroup(0,terrainIndices[0].length,0);terrainGeometry.addGroup(terrainIndices[0].length,terrainIndices[1].length,1);terrainGeometry.computeVertexNormals();
+  worldUV(terrainGeometry,0.5);
   const terrain=new THREE.Mesh(terrainGeometry,[material('#8cab91'),materials.ground]);terrain.receiveShadow=true;scene.add(terrain);
   addRoads(scene);
   for(const z of [10,-13,-34])for(let i=0;i<6;i++)box(scene,0.55,0.012,1.3,-2.5+i,0.10,z,materials.white,false);

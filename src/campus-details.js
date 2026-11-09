@@ -56,6 +56,16 @@ export function createCampusDetails(scene,vehicle){
   block(van,1.65,1.3,3,0,0.9,0,mat('#d1e5e9'));block(van,1.5,0.55,0.04,0,1.25,1.53,mat('#4b859f'));
   for(const x of [-0.85,0.85])for(const z of [-0.9,0.9]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.3,0.18,10),dark);wheel.rotation.z=Math.PI/2;wheel.position.set(x,0.3,z);van.add(wheel);}
   vehicle.addObstacle(26,19,0.95,1.6);
+  // Drainage channels belong to the street edge, not the driving lane.
+  for(const x of [-4.4,4.4])for(const z of [-28,-7,15]){
+    block(scene,0.55,0.025,0.9,x,0.035,z,dark);
+    for(let i=0;i<7;i++)block(scene,0.45,0.012,0.025,x,0.055,z-0.36+i*0.12,steel);
+  }
+  // Restrained facade mullions and ventilation grilles add human scale.
+  for(const z of [-32,-25,-18]){
+    for(let i=0;i<5;i++)block(scene,0.04,0.55,0.04,28.17,1.65,z-1.5+i*0.22,steel);
+    block(scene,0.04,0.65,1.8,28.15,1.65,z-0.9,new THREE.MeshStandardMaterial({color:'#76a8bb',metalness:0.45,roughness:0.18}));
+  }
   // A solar service garden occupies the strip behind the project buildings.
   block(scene,11,0.06,2.2,-18,0.02,-56.3,concrete);
   for(let i=0;i<7;i++){const panel=block(scene,1.25,0.08,1.9,-22.3+i*1.45,0.5,-56.3,mat('#315c78'));panel.rotation.x=-0.16;block(scene,0.1,0.4,0.8,-22.3+i*1.45,0.2,-56.3,steel);}

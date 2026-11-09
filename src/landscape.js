@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {switchFixtures} from './fixture-lighting.js';
 import {ownerName} from './identity.js';
 import {FontLoader} from 'three/addons/loaders/FontLoader.js';
 import {TextGeometry} from 'three/addons/geometries/TextGeometry.js';
@@ -12,7 +13,7 @@ export function addLandscape(scene,vehicle){
     block(scene,3.4,0.22,3.4,x,0.08,z,concrete);
     block(scene,3.0,0.08,3.0,x,0.22,z,mat('#688a70'));
     const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.22,2.6,8),timber);trunk.position.set(x,1.5,z);trunk.castShadow=true;scene.add(trunk);
-    const canopy=new THREE.Group();canopy.position.set(x,3.3,z);scene.add(canopy);crowns.push(canopy);
+    const canopy=new THREE.Group();canopy.position.set(x,3.3+(i%3)*0.18,z);canopy.rotation.y=i*0.71;canopy.scale.set(i%3===0?0.8:1,i%3===0?1.35:1,i%3===0?0.8:1);scene.add(canopy);crowns.push(canopy);
     for(let n=0;n<4;n++){
       const mesh=new THREE.Mesh(crownGeometry,leafMaterials[(i+n)%3]);mesh.position.set(Math.cos(n*2.4)*0.65,n===3?0.6:0,Math.sin(n*2.4)*0.65);mesh.scale.set(1.2,1.25,1.2);mesh.castShadow=true;canopy.add(mesh);
     }
@@ -31,9 +32,9 @@ export function addLandscape(scene,vehicle){
     vehicle.addObstacle(x,z,1.3,0.4);
   }
   const nightLights=[];
-  const lightMaterial=new THREE.MeshStandardMaterial({color:'#e4fbff',emissive:'#b9eaff',emissiveIntensity:1.2});
+  const lightMaterial=new THREE.MeshStandardMaterial({color:'#e4fbff',emissive:'#b9eaff',emissiveIntensity:0});
   for(const [x,z] of [[-4.6,15],[4.6,8],[-4.6,-9],[4.6,-25],[-4.6,-35],[4.6,-42],[-24,9.8],[24,9.8]]){
-    if(nightLights.length<5){const light=new THREE.PointLight('#bce4ff',0,18,1.5);light.position.set(x,3.4,z);scene.add(light);nightLights.push(light);}
+    {const light=new THREE.PointLight('#bce4ff',0,18,1.5);light.position.set(x,3.4,z);scene.add(light);nightLights.push(light);}
     block(scene,0.12,3.7,0.12,x,1.85,z,metal);block(scene,1.5,0.10,0.5,x+0.5,3.7,z,metal);block(scene,1.25,0.04,0.35,x+0.5,3.63,z,lightMaterial);
   }
   // EV chargers and a pergola make the arrival court feel inhabited.
@@ -57,7 +58,7 @@ export function addLandscape(scene,vehicle){
   }
   const canal=new THREE.Mesh(new THREE.PlaneGeometry(6,88),new THREE.MeshStandardMaterial({color:'#5d9fa9',roughness:0.24,metalness:0.25}));canal.rotation.x=-Math.PI/2;canal.position.set(-32,-0.025,-16);scene.add(canal);
   for(const x of [-28.9,-35.1])block(scene,0.25,0.10,88,x,0,-16,concrete);
-  return {setNight(value){nightLights.forEach(light=>light.intensity=value?22:0);},update(time){crowns.forEach((c,i)=>c.rotation.z=Math.sin(time*0.8+i)*0.015);canal.material.color.setHSL(0.52,0.25,0.49+Math.sin(time*0.4)*0.01);}};
+  return {setNight(value){switchFixtures(nightLights,[lightMaterial],value,30);},update(time){crowns.forEach((c,i)=>c.rotation.z=Math.sin(time*0.8+i)*0.015);canal.material.color.setHSL(0.52,0.25,0.49+Math.sin(time*0.4)*0.01);}};
 }
 
 export async function addNameSculpture(scene){

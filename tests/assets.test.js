@@ -1,10 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
+import {vehicles} from '../src/vehicle-catalog.js';
 import { dirname, resolve } from 'node:path';
 
 test('each shipped GLB has all external textures and buffers locally available', () => {
-  for (const path of ['public/models/bruno/offroader.glb', 'public/models/car/car.glb', 'public/models/city/garage.glb', 'public/models/city/trees.glb']) {
+  for (const path of [...vehicles.map(v=>'public/'+v.asset),'public/models/city/garage.glb','public/models/city/trees.glb']) {
     const file = readFileSync(path);
     assert.equal(file.toString('ascii', 0, 4), 'glTF');
     const size = file.readUInt32LE(12);

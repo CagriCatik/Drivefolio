@@ -17,9 +17,9 @@ export function createVehicleLights(vehicle){
   let night=false;
   let enabled=true;
   return {lamps,setNight(value){night=!!value;},toggle(){enabled=!enabled;return enabled;},get enabled(){return enabled;},update(){
-    const state=lightState(vehicle.motion,enabled),length=getVehicle(vehicle.profile).halfLength;
-    front.forEach(m=>{m.position.z=length+0.03;m.material.emissiveIntensity=enabled?1.1:0.05;});
+    const state=lightState(vehicle.motion,enabled),profile=getVehicle(vehicle.profile),length=profile.halfLength,height=profile.lightHeight??0.66;
+    front.forEach(m=>{m.position.z=length+0.03;m.position.y=height;m.material.emissiveIntensity=enabled?1.1:0.05;});
     rear.forEach(m=>{m.position.z=-length-0.03;m.material.emissiveIntensity=state.braking?2.5:0.35;});
-    reverse.forEach(m=>{m.position.z=-length-0.04;m.visible=state.reverse;});lamps.forEach(lamp=>{lamp.visible=enabled;lamp.position.z=length+0.12;lamp.intensity=night?150:55;});
+    reverse.forEach(m=>{m.position.z=-length-0.04;m.visible=state.reverse;});lamps.forEach(lamp=>{lamp.visible=enabled;lamp.position.z=length+0.12;lamp.position.y=height;lamp.intensity=night?150:55;});
   }};
 }

@@ -5,7 +5,7 @@ import {vehicles} from '../src/vehicle-catalog.js';
 import { dirname, resolve } from 'node:path';
 
 test('each shipped GLB has all external textures and buffers locally available', () => {
-  for (const path of [...vehicles.map(v=>'public/'+v.asset),'public/models/city/garage.glb','public/models/city/trees.glb']) {
+  for (const path of [...vehicles.map(v=>'public/'+v.asset),'public/models/city/garage.glb','public/models/city/trees.glb','public/models/bruno/benches.glb']) {
     const file = readFileSync(path);
     assert.equal(file.toString('ascii', 0, 4), 'glTF');
     assert.equal(file.length,file.readUInt32LE(8),`${path}: truncated GLB`);

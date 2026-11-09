@@ -30,13 +30,6 @@ export function createCampusGardens(scene,vehicle){
   const items=flowers.filter(s=>s.color===index),mesh=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.10,0),mat(color),items.length);
   items.forEach((s,i)=>{dummy.position.set(s.x,0.55,s.z);dummy.scale.set(1,1,1);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);});group.add(mesh);
  }
- // Furnishings stay in the verge beside the western waterfront path.
- for(const z of [-45,-25,-1,19]){
-  for(let i=0;i<4;i++)block(group,0.11,0.1,1.7,-26.55+i*0.17,0.52,z,wood);
-  block(group,0.08,0.52,1.8,-25.98,0.78,z,wood);
-  for(const end of [-0.6,0.6])block(group,0.56,0.46,0.08,-26.3,0.25,z+end,steel);
-  vehicle.addObstacle(-26.3,z,0.4,0.95);
- }
  const luminous=new THREE.MeshStandardMaterial({color:'#e1efcf',emissive:'#e9e4b3',emissiveIntensity:0});
  for(const z of [-48,-31,-10,20]){block(group,0.16,0.85,0.16,-28.15,0.43,z,steel);block(group,0.19,0.08,0.19,-28.15,0.82,z,luminous);}
  // One light pool covers each pair of low promenade fixtures.

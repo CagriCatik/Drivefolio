@@ -25,11 +25,6 @@ export function addLandscape(scene,vehicle){
       const shrub=new THREE.Mesh(new THREE.IcosahedronGeometry(0.42,1),leafMaterials[i%3]);shrub.position.set(x+side*1.1,0.52,z+0.9);shrub.scale.y=0.7;scene.add(shrub);
     }
   }
-  for(const [x,z] of [[6,18],[-25,10.5],[25,10.5],[-25,-17],[25,-39]]){
-    block(scene,2.5,0.14,0.7,x,0.55,z,timber);block(scene,2.5,0.5,0.1,x,0.85,z-0.3,timber);
-    for(const side of [-0.9,0.9])block(scene,0.1,0.5,0.55,x+side,0.26,z,metal);
-    vehicle.addObstacle(x,z,1.3,0.4);
-  }
   const nightLights=[];
   const lightMaterial=new THREE.MeshStandardMaterial({color:'#e4fbff',emissive:'#b9eaff',emissiveIntensity:0});
   for(const [x,z] of [[-4.6,15],[4.6,8],[-4.6,-9],[4.6,-25],[-4.6,-35],[4.6,-42],[-24,9.8],[24,9.8]]){

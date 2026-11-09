@@ -47,8 +47,8 @@ export function createCampusDetails(scene,vehicle){
     block(sign,4.4,1.5,0.16,0,2.2,0,dark);label(sign,text,0,2.2,0.1,4.0,'#e2ffff');
   }
   // Arrival plaza: a fountain, bike racks and a parked service van.
-  const fountain=new THREE.Mesh(new THREE.CylinderGeometry(1.3,1.45,0.35,28),concrete);fountain.position.set(7,0.2,14);scene.add(fountain);vehicle.addObstacle(7,14,1.45,1.45);
-  const water=new THREE.Mesh(new THREE.CircleGeometry(1.2,28),new THREE.MeshStandardMaterial({color:'#65b3bb',metalness:0.22,roughness:0.2}));water.rotation.x=-Math.PI/2;water.position.set(7,0.39,14);scene.add(water);
+  const fountain=new THREE.Mesh(new THREE.CylinderGeometry(1.3,1.45,0.35,48),mat('#bab6a5'));fountain.position.set(7,0.2,14);scene.add(fountain);vehicle.addObstacle(7,14,1.45,1.45);
+  const water=new THREE.Mesh(new THREE.CircleGeometry(1.2,28),new THREE.MeshStandardMaterial({color:'#609d9e',metalness:0.12,roughness:0.28}));water.rotation.x=-Math.PI/2;water.position.set(7,0.39,14);scene.add(water);
   const jets=[];
   for(let i=0;i<6;i++){const a=i/6*Math.PI*2;const jet=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.06,0.7,6),new THREE.MeshBasicMaterial({color:'#b4e5eb',transparent:true,opacity:0.6}));jet.position.set(7+Math.cos(a)*0.6,0.75,14+Math.sin(a)*0.6);scene.add(jet);jets.push(jet);}
   for(let i=0;i<4;i++){

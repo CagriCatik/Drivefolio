@@ -127,7 +127,7 @@ Vite verwendet `base: './'`, damit Modelle, Texturen, Schrift und JavaScript auc
 
 ## Credits
 
-- [Bruno Simon / folio-2025](https://github.com/brunosimon/folio-2025): Konzept, Offroader-Modell und adaptierte Kameraparameter, MIT. Hinweis unter `public/licenses/bruno-simon-MIT.txt`.
+- [Bruno Simon / folio-2025](https://github.com/brunosimon/folio-2025): Konzept, Offroader-Modell, Bankmodell und adaptierte Kameraparameter, MIT. Hinweis unter `public/licenses/bruno-simon-MIT.txt`.
 - Kenney Car Kit und City Kit, CC0, aus [RaceTrack](https://github.com/CagriCatik/RaceTrack). Originalhinweise unter `public/licenses/`.
 - Three.js: MIT. Rapier: Apache-2.0. Vite: MIT. Laufzeitlizenzen werden mit ausgeliefert.
 - Die Namensskulptur zeigt **Çağrı Çatık** mit einem lokalen DejaVu-Sans-Bold-Subset einschließlich Ç, ğ und ı. Lizenz: `public/licenses/dejavu-fonts.txt`. Reproduzierbare Konvertierung mit FontTools: `python tools/build-name-font.py /path/to/DejaVuSans-Bold.ttf`. Die ursprüngliche Helvetiker-Datei bleibt mit ihren Lizenzhinweisen erhalten.
@@ -154,3 +154,9 @@ Die offene JetRacer-Werkstatt erhält niedrige Glasfelder, ein Eingangsportal, T
 Ein offenes Eingangstor und ein Lageplan mit allen sieben Projekten markieren den Ankunftsbereich. Der AI-Pavillon rahmt die AgentSwarm-Station mit drei offenen Bögen und niedrigen Glasfeldern, ohne die Agentenknoten zu verdecken. Drei Boxen zeigen ausgestellte Fahrzeugmodelle, Mechanikerfiguren, Ausrüstung, Flaggen und eine dekorative READY-Tafel. Ihre teilweise verglasten Dächer lassen Einblicke zu. Die Tankstelle erhält einen kostenlosen FUEL-Totem, Bodenpfeile und einen dekorativen Serviceschrank.
 
 Ein kleiner Lieferroboter fährt auf einer festen, von Fahrbahnen getrennten Service-Route an der westlichen Promenade. Er pausiert am Dock, hält in der Nähe des Besucherfahrzeugs und besitzt einen kinematischen Collider. Das ist eine regelbasierte Animation, keine autonome ROS-Navigation. Eingangs-, Boxen- und Pavillonbeleuchtung werden gemeinsam mit dem Nachtmodus geschaltet.
+
+## Referenzbereich: Sitzplätze und Ankunft
+
+Die früheren neun prozeduralen Einzelbänke wurden vollständig entfernt. Sechs Bänke verwenden nun das originale `static/benches/benches.glb` aus Bruno Simons folio-2025 (MIT, bestehender Lizenzhinweis unter `public/licenses/bruno-simon-MIT.txt`). Die eingebettete Palette bleibt erhalten; Original-Weltpositionen, Rotationen und Physikmarker werden nicht übernommen. Die visuelle Geometrie wird auf 2,15 m Breite, 1 m Höhe und 0,7 m Tiefe skaliert und mit dem tiefsten Punkt auf den Boden gesetzt.
+
+Zwei Sitzplätze schauen auf den Brunnen, zwei zum Kanal, einer zur Robotics-Werkstatt und einer zur Namensskulptur. Sitznischen bekommen eigene Pflaster- beziehungsweise Holzflächen. Der Hauptweg am Kanal bleibt frei. Eine ausgeschnittene Platzfläche um den Brunnen, niedrige Pflanzrahmen, eine steinerne Brunnenabdeckung und dezente Kontaktschatten verbinden den Bereich. Die neue warme Sitzplatzbeleuchtung folgt dem Nachtmodus. Die Aufstellung und Prüfungen liegen in `src/seating-plan.js` und `tests/seating.test.js`.

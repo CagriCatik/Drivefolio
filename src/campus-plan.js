@@ -1,3 +1,4 @@
+import {seatingCourts} from './seating-plan.js';
 import {roadRects} from './road-network.js';
 export const campusTrees=[[-8,11],[8,21],[-25,14],[25,20],[-25,-5],[26,-6],[-25,-29],[26,-29],[-25.1,-52],[27,-52],[-8,-12],[8,-12],[-8,-33],[8,-33]];
 // Ground footprints: paths stop at forecourts instead of covering them.
@@ -15,5 +16,5 @@ export function subtractRects(includes,excludes){
 export function campusPaths(){
  const streets=roadRects.slice(0,4),expanded=streets.map(([l,r,t,b])=>[Math.max(-26,l-1.3),Math.min(26,r+1.3),Math.max(-55,t-1.3),Math.min(26,b+1.3)]);
  const promenade=[-28.4,-26.9,-55,25],links=[[-27,-23,9.2,10.5],[-27,-23,-14.5,-13.2],[-27,-23,-35.5,-34.2]];
- return subtractRects([...expanded,promenade,...links],[...roadRects,...campusFootprints,...gardenBeds.map(([x,z,w,d])=>[x-w/2-0.15,x+w/2+0.15,z-d/2-0.15,z+d/2+0.15])]);
+ return subtractRects([...expanded,promenade,...links],[...roadRects,...campusFootprints,...Object.values(seatingCourts).map(c=>c.rect),...gardenBeds.map(([x,z,w,d])=>[x-w/2-0.15,x+w/2+0.15,z-d/2-0.15,z+d/2+0.15])]);
 }

@@ -34,7 +34,7 @@ export async function createReferenceGarden(scene,vehicle){
   const [l,r,t,b]=benchFootprint(place);vehicle.addObstacle((l+r)/2,(t+b)/2,(r-l)/2,(b-t)/2);
  }
  // Layered planting frames the seating groups. Every planter has a supporting plinth.
- const planters=[[6.9,18.35,2.8,0.48],[-11.65,25.8,2.6,0.38],[-24.5,-2.85,1.4,0.38],[-25.8,-23.55,1.8,0.45],[-25.8,23.35,1.8,0.45]];
+ const planters=[[6.9,18.35,2.8,0.48],[-14.5,20.3,0.38,1.8],[-24.5,-2.85,1.4,0.38],[-25.8,-23.55,1.8,0.45],[-25.8,23.35,1.8,0.45]];
  for(const [x,z,w,d] of planters){
   block(group,w,0.22,d,x,0.11,z,trim);block(group,w-0.08,0.03,d-0.08,x,0.235,z,soil);
   const n=Math.max(3,Math.ceil(w/0.28));for(let i=0;i<n;i++){

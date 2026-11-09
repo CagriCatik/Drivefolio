@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import {campusTrees} from './campus-plan.js';
+import {createCampusGardens} from './campus-gardens.js';
 import {switchFixtures} from './fixture-lighting.js';
 import {ownerName} from './identity.js';
 import {FontLoader} from 'three/addons/loaders/FontLoader.js';
@@ -7,7 +9,8 @@ import {mat,block,label} from './scene-primitives.js';
 
 export function addLandscape(scene,vehicle){
   const concrete=mat('#d8e2e3'),metal=mat('#334a54'),timber=mat('#a88c6b');
-  const crowns=[],trees=[[-8,11],[8,21],[-25,14],[25,20],[-26,-5],[26,-6],[-26,-29],[26,-29],[-27,-52],[27,-52],[-8,-12],[8,-12],[-8,-33],[8,-33]];
+  const gardens=createCampusGardens(scene,vehicle);
+  const crowns=[],trees=campusTrees;
   const crownGeometry=new THREE.IcosahedronGeometry(1,2),leafMaterials=['#4a856d','#60967b','#75a181'].map(mat);
   for(const [i,[x,z]] of trees.entries()){
     block(scene,3.4,0.22,3.4,x,0.08,z,concrete);
@@ -21,10 +24,6 @@ export function addLandscape(scene,vehicle){
     for(const side of [-1,1]){
       const shrub=new THREE.Mesh(new THREE.IcosahedronGeometry(0.42,1),leafMaterials[i%3]);shrub.position.set(x+side*1.1,0.52,z+0.9);shrub.scale.y=0.7;scene.add(shrub);
     }
-  }
-  // Landscape beds are flush with the paving and leave every road and entrance open.
-  for(const [x,z,w,d] of [[-8,0,3,5],[8,0,3,5],[-8,-25,2,8],[8,-25,2,8],[-27,-18,4,13],[27,-18,4,13],[-27,-42,4,10],[27,-42,4,10]]){
-    block(scene,w+0.3,0.08,d+0.3,x,-0.01,z,concrete);block(scene,w,0.08,d,x,0.035,z,mat('#84a88c'));
   }
   for(const [x,z] of [[6,18],[-25,10.5],[25,10.5],[-25,-17],[25,-39]]){
     block(scene,2.5,0.14,0.7,x,0.55,z,timber);block(scene,2.5,0.5,0.1,x,0.85,z-0.3,timber);
@@ -47,7 +46,7 @@ export function addLandscape(scene,vehicle){
   for(let i=0;i<9;i++)block(pergola,4.5,0.12,0.16,0,2.85,-1.7+i*0.42,timber);
   const canal=new THREE.Mesh(new THREE.PlaneGeometry(6,88),new THREE.MeshStandardMaterial({color:'#5d9fa9',roughness:0.24,metalness:0.25}));canal.rotation.x=-Math.PI/2;canal.position.set(-32,-0.025,-16);scene.add(canal);
   for(const x of [-28.9,-35.1])block(scene,0.25,0.10,88,x,0,-16,concrete);
-  return {setNight(value){switchFixtures(nightLights,[lightMaterial],value,30);},update(time){crowns.forEach((c,i)=>c.rotation.z=Math.sin(time*0.8+i)*0.015);canal.material.color.setHSL(0.52,0.25,0.49+Math.sin(time*0.4)*0.01);}};
+  return {setNight(value){gardens.setNight(value);switchFixtures(nightLights,[lightMaterial],value,30);},update(time){crowns.forEach((c,i)=>c.rotation.z=Math.sin(time*0.8+i)*0.015);canal.material.color.setHSL(0.52,0.25,0.49+Math.sin(time*0.4)*0.01);}};
 }
 
 export async function addNameSculpture(scene){

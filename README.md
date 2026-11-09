@@ -142,3 +142,9 @@ JetRacer, RadarTrackBench und Frenet öffnen mit E direkt eine interaktive Proje
 - Frenet: Hindernisposition und Sicherheitsabstand verändern. 21 abgetastete Kandidaten werden gegen ein vergrößertes Hindernis geprüft, anschließend entscheidet eine einfache Kostenfunktion. Bei vollständig gesperrter Fahrbahn bleibt das Modell stehen. Kein Aufruf des originalen Python-Planers.
 
 Alle sieben Karten erläutern Problem, Einsatzgebiet und technischen Schwerpunkt. Fachlich verbundene Projekte werden am Kartenende empfohlen. Ein lokaler Entdeckungsfortschritt unterscheidet geöffnete Projekte, ausprobierte Experimente und abgeschlossene Aufgaben. Er überträgt keine Besuchsdaten. Fehlender oder blockierter Browser-Speicher verhindert keine Funktionen. „Station im Campus finden“ markiert den Eingang im Plan und in der 3D-Welt und zeigt die Luftlinienentfernung. Es handelt sich nicht um ein Straßennavigationssystem.
+
+## Engineering-Park und offene Werkstatt
+
+Warme Pflasterwege folgen dem Campus-Straßennetz. Die Flächen werden geometrisch vereinigt und an Fahrbahnen, Projektflächen, Bauminseln und Tankstellenzufahrt ausgeschnitten. Neue Pflanzbeete mit instanzierten Sträuchern und Blüten strukturieren die Ränder; der westliche Wasserkanal hat einen durchgehenden Promenadenstreifen, Sitzbänke und niedrige Nachtleuchten. Wegweiser führen zu Robotics, Autonomy und Planning.
+
+Die offene JetRacer-Werkstatt erhält niedrige Glasfelder, ein Eingangsportal, Teilelager, Werkzeugwand und eine Fertigungsbank mit animiertem Druckkopf. Der zentrale Roboter und seine LiDAR-Darstellung bleiben sichtbar. Arbeits- und Promenadenbeleuchtung schalten mit dem Nachtmodus; die zugehörigen Leuchtflächen sind tagsüber ausgeschaltet.

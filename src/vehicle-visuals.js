@@ -6,7 +6,7 @@ import {createWheelRig} from './wheel-rig.js';
 import {createVehicleLights} from './vehicle-lights.js';
 import { vehicles,getVehicle,getPaint } from './vehicle-catalog.js';
 
-function createSportVisual(model,vehicle,profile) {
+export function createSportVisual(model,vehicle,profile) {
   const holder=new THREE.Group();holder.add(model);vehicle.group.add(holder);
   const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
   const scale=(profile.visualWidth??1.8)/size.x;model.scale.setScalar(scale);model.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);

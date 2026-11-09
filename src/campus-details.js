@@ -1,6 +1,7 @@
+import {environmentMaterial as mat} from './environment-materials.js';
 import {serviceVan} from './service-layout.js';
 import * as THREE from 'three';
-import {mat,block,label} from './scene-primitives.js';
+import {block,label} from './scene-primitives.js';
 
 export function createCampusDetails(scene,vehicle){
   const concrete=mat('#cbdade'),steel=mat('#436374'),dark=mat('#274554'),wood=mat('#aa9376'),doors=[];

@@ -79,7 +79,7 @@ export async function createWorld(scene, vehicle) {
   await addNameSculpture(scene);
   const facilities=createFacilities(scene,vehicle);
   const showroom=await createShowroom(facilities.garage.group,vehicle);
-  const race=createRaceTrack(scene,vehicle);
+  const race=await createRaceTrack(scene,vehicle);
   const details=createCampusDetails(scene,vehicle);
   const referenceGarden=await createReferenceGarden(scene,vehicle);
   const attractions=createCampusAttractions(scene,vehicle);

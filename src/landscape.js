@@ -1,33 +1,18 @@
 import * as THREE from 'three';
 import {evChargers,pergolaSite} from './service-layout.js';
-import {campusTrees} from './campus-plan.js';
+import {createEnvironmentVegetation} from './environment-vegetation.js';
+import {environmentMaterial as mat} from './environment-materials.js';
 import {createCampusGardens} from './campus-gardens.js';
 import {switchFixtures} from './fixture-lighting.js';
 import {ownerName} from './identity.js';
 import {FontLoader} from 'three/addons/loaders/FontLoader.js';
 import {TextGeometry} from 'three/addons/geometries/TextGeometry.js';
-import {mat,block,label} from './scene-primitives.js';
+import {block,label} from './scene-primitives.js';
 
 export function addLandscape(scene,vehicle){
   const concrete=mat('#d8e2e3'),metal=mat('#334a54'),timber=mat('#a88c6b');
   const gardens=createCampusGardens(scene,vehicle);
-  const crowns=[],trees=campusTrees;
-  const leafMaterials=['#557e60','#6d8f65','#82966a','#476e58'].map(mat);
-  const leafGeometry=new THREE.IcosahedronGeometry(1,1);
-  for(const [i,[x,z]] of trees.entries()){
-    const slim=i%3===0,groundRadius=slim?1.0:1.35;
-    const bed=new THREE.Mesh(new THREE.CylinderGeometry(groundRadius,groundRadius+0.12,0.11,16),concrete);bed.position.set(x,0.04,z);bed.receiveShadow=true;scene.add(bed);
-    const soil=new THREE.Mesh(new THREE.CylinderGeometry(groundRadius-0.1,groundRadius-0.1,0.04,16),mat('#77876b'));soil.position.set(x,0.11,z);scene.add(soil);
-    const trunkHeight=slim?2.6:2.25;
-    const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.20,trunkHeight,7),timber);trunk.position.set(x,trunkHeight/2+0.1,z);trunk.castShadow=true;scene.add(trunk);
-    const canopy=new THREE.Group();canopy.position.set(x,trunkHeight+0.15,z);canopy.rotation.y=i*1.31;scene.add(canopy);crowns.push(canopy);
-    for(let n=0;n<(slim?4:7);n++){
-      const a=n*2.399+i*0.7,r=slim?0.25:(n===0?0:0.65),mesh=new THREE.Mesh(leafGeometry,leafMaterials[(i+n)%leafMaterials.length]);
-      mesh.position.set(Math.cos(a)*r,slim?n*0.42:(n%3)*0.33,Math.sin(a)*r);mesh.scale.set(slim?0.72:0.92,slim?0.83:0.70,slim?0.60:0.86);mesh.rotation.set(0.12*n,a,0.07*n);mesh.castShadow=true;canopy.add(mesh);
-    }
-    if(x===8&&z===21)canopy.scale.multiplyScalar(0.75);
-    vehicle.addObstacle(x,z,0.25,0.25);
-  }
+  const vegetation=createEnvironmentVegetation(scene,vehicle);
   const nightLights=[];
   const lightMaterial=new THREE.MeshStandardMaterial({color:'#e4fbff',emissive:'#b9eaff',emissiveIntensity:0});
   for(const [x,z] of [[-4.6,15],[4.6,8],[-4.6,-9],[4.6,-25],[-4.6,-35],[4.6,-42],[-24,9.8],[24,9.8]]){
@@ -45,7 +30,7 @@ export function addLandscape(scene,vehicle){
   for(let i=0;i<9;i++)block(pergola,4.5,0.12,0.16,0,2.85,-1.7+i*0.42,timber);
   const canal=new THREE.Mesh(new THREE.PlaneGeometry(6,88),new THREE.MeshStandardMaterial({color:'#5d9fa9',roughness:0.24,metalness:0.25}));canal.rotation.x=-Math.PI/2;canal.position.set(-32,-0.025,-16);scene.add(canal);
   for(const x of [-28.9,-35.1])block(scene,0.25,0.10,88,x,0,-16,concrete);
-  return {setNight(value){gardens.setNight(value);switchFixtures(nightLights,[lightMaterial],value,30);},update(time){crowns.forEach((c,i)=>c.rotation.z=Math.sin(time*0.8+i)*0.015);canal.material.color.setHSL(0.52,0.25,0.49+Math.sin(time*0.4)*0.01);}};
+  return {setNight(value){gardens.setNight(value);switchFixtures(nightLights,[lightMaterial],value,30);},update(time){vegetation.update(time);canal.material.color.setHSL(0.52,0.25,0.49+Math.sin(time*0.4)*0.01);}};
 }
 
 export async function addNameSculpture(scene){

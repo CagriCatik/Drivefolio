@@ -176,3 +176,13 @@ Alle vier vorhandenen Fahrzeugmodelle sind im teilweise verglasten Showroom ausg
 JetRacer, Radar und Frenet lassen sich in einem separaten 3D-Experiment steuern. Es werden dieselben getesteten Browsermodelle wie für die 2D-Experimente verwendet. Der ursprüngliche Stationsaufbau wird vorübergehend ausgeblendet und beim Verlassen wiederhergestellt; die temporären Geometrien und Materialien werden freigegeben. Im Experiment führen separate Schaltflächen zu Projektbeschreibung und Originalergebnissen.
 
 Die Radar-Vergleichsgrafik unter `public/results/radar-filter-scenarios.png` stammt unverändert aus CagriCatik/RadarTrackBench, `results/comparisons/filter_scenarios/filter_scenario_comparison.png`. Projektkarten verlinken außerdem die originale Frenet-Simulation und den JetRacer-Safety-Supervisor. Die synthetischen Browserdemos werden deutlich von diesen Repository-Artefakten unterschieden.
+
+## Umgebung: Materialien, Vegetation, Bildwirkung und Klang
+
+Version 0.19 konzentriert sich auf das Umfeld; Projektinhalte, Stationen und Experimente bleiben unverändert. Umweltmaterialien unter `environment-materials.js` verwenden lokal erzeugte Mineral- und Holztexturen sowie feine Reliefstruktur. Die Kontaktverschattung wird durch einen halb aufgelösten SSAO-Pass ergänzt; transparente Dächer und Schilder werden nicht zu künstlichen AO-Hindernissen. Bei anhaltend niedriger Bildrate schaltet sich dieser zusätzliche Pass ab. Dezente Farbabstimmung und Bloom reagieren auf Tag/Nacht. Tiefenunschärfe gilt ausschließlich für den Showroom; die Fahransicht bleibt scharf.
+
+Die bestehenden Baumstandorte tragen nun instanzierte Blattgeometrien mit gemeinsamem Windshader und passenden bewegten Sonnenschatten. Gräser und Stauden bleiben innerhalb der vorhandenen Beete. Straßen, Zufahrten und Projektgrundrisse werden nicht verändert.
+
+Das regelbasierte Rennstreckenfahrzeug verwendet den echten Kenney Sports Sedan aus der Garage, dieselbe Radaufhängung und geometrisch angepasste Lichtbindung. Es bleibt in seiner bisherigen Spur und bremst weiterhin vor dem Besucher. Seine Scheinwerfer folgen dem Nachtmodus; Bremslichter funktionieren auch am Tag.
+
+Die Klanglandschaft entsteht vollständig lokal mit Web Audio: Brunnen, Kanal, Blätterrauschen, Garagentor, Tankvorgang und vorbeifahrendes Rennstreckenfahrzeug besitzen räumliche Quellen. Die Hörposition liegt am Besucherfahrzeug; die Orientierung folgt der festen diagonalen Kamera. Keine Audioaufnahme, kein externer Sounddownload und kein Start vor Nutzerinteraktion. Der Soundschalter schaltet die gesamte Mischung stumm; versteckte Tabs suspendieren den Audiokontext. Die Klangquellen illustrieren die Umgebung, nicht die verlinkten Projekte.

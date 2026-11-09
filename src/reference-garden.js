@@ -1,7 +1,8 @@
+import {environmentMaterial as mat} from './environment-materials.js';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {seatingPlaces,seatingCourts,benchHeading,benchFootprint,benchSize} from './seating-plan.js';
-import {mat,block} from './scene-primitives.js';
+import {block} from './scene-primitives.js';
 import {worldUV} from './surface-materials.js';
 import {switchFixtures} from './fixture-lighting.js';
 

@@ -16,10 +16,7 @@ import { createVehicle } from './vehicle.js';
 import { createWorld } from './world.js';
 import { createDrivingEffects } from './effects.js';
 import { createAudio } from './audio.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import {createEnvironmentRendering} from './environment-rendering.js';
 import { createInteractions } from './interactions.js';
 import { createDemoSequence } from './demo-sequence.js';
 import { vehicles,paints,getVehicle } from './vehicle-catalog.js';
@@ -239,7 +236,7 @@ async function main() {
   const renderer = new THREE.WebGLRenderer({ canvas: $('world'), antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#d4e5eb');
   scene.fog = new THREE.Fog('#d4e5eb', 85, 155);
@@ -249,16 +246,13 @@ async function main() {
   const sun = new THREE.DirectionalLight('#fff8ed', 2.5); sun.position.set(-18, 32, 20);
   sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, { left: -65, right: 65, top: 65, bottom: -65, near: 1, far: 160 });
-  sun.shadow.normalBias = 0.025; sun.shadow.bias = -0.00015; scene.add(sun);
+  sun.shadow.normalBias = 0.035; sun.shadow.bias = -0.00015; scene.add(sun);
   view = createPortfolioCamera(window.innerWidth / window.innerHeight);
   vehicle = await createVehicle(scene);
   const world = await createWorld(scene, vehicle);
-  worldController=world;worldLab=createWorldExperiments(scene,id=>{discovery.mark(id,'tried');syncDiscovery();},id=>{discovery.mark(id,'completed');syncDiscovery();});createDisplayModes(renderer,scene,sun,sky,world);syncGarage();$('garage-button').disabled=false;
+  worldController=world;worldLab=createWorldExperiments(scene,id=>{discovery.mark(id,'tried');syncDiscovery();},id=>{discovery.mark(id,'completed');syncDiscovery();});const displayModes=createDisplayModes(renderer,scene,sun,sky,world);syncGarage();$('garage-button').disabled=false;
   drivingEffects=createDrivingEffects(scene,vehicle);
-  const composer=new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene,view.camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth,window.innerHeight),0.22,0.3,1.7));
-  composer.addPass(new OutputPass());
+  const composer=createEnvironmentRendering(renderer,scene,view.camera);
   ready = true;
   $('loading').hidden = true; $('explore-button').disabled = false;
 
@@ -268,7 +262,7 @@ async function main() {
     view.resize(window.innerWidth / window.innerHeight);
   }
   window.addEventListener('resize', resize);
-  document.addEventListener('visibilitychange', () => { resetClock = true; input.clear(); vehicle.stop(); });
+  document.addEventListener('visibilitychange', () => { resetClock = true; input.clear(); vehicle.stop(); sound.setHidden(document.hidden); });
 
   let last = 0, accumulator = 0, time = 0;
   let interactionState={location:null,activated:null};
@@ -316,13 +310,13 @@ async function main() {
     $('fuel-indicator').title=fuel.fraction<=0?'Tank leer · Notlauf zur Tankstelle':`${fuel.liters.toFixed(1)} von 50 Litern`;
     $('fuel-status').textContent=fuel.refueling?'TANKT …':fuel.fraction<=0?'NOTLAUF':fuel.fraction<0.15?'RESERVE':'TANK';
     drivingEffects.update(dt,time,!!activeDialog||sequence.running||showroomMode||!!worldLab?.active);
-    sound.update(vehicle.motion,!!activeDialog||sequence.running||showroomMode||!!worldLab?.active);
+    sound.update(vehicle.motion,!!activeDialog||sequence.running||showroomMode||!!worldLab?.active,{position:vehicle.group.position,heading:view.camera.rotation.y,traffic:world.race.trafficPose,fuel:vehicle.fuel,night:displayModes.night,time});
     $('speed-value').textContent=String(Math.round(vehicle.speed*3.6)).padStart(2,'0');
     $('boost-label').classList.toggle('boosting',!!vehicle.motion.input.boost&&vehicle.speed>2);
     campusMap.update(vehicle.group.position,vehicle.heading,world.race.trafficPose);
     if(destination){const distance=Math.hypot(vehicle.group.position.x-destination.entrance.x,vehicle.group.position.z-destination.entrance.z);$('destination-distance').textContent=distance<3.5?`${destination.title} · anhalten und E drücken`:`Ziel: ${destination.title} · ${Math.round(distance)} m Luftlinie`;}
 
-    composer.render();
+    composer.render({night:displayModes.night,showroom:showroomMode,overview,dt});
   });
 }
 

@@ -1,3 +1,4 @@
+import {environmentMaterial,contactShadow} from './environment-materials.js';
 import * as THREE from 'three';
 
 import {garageSite} from './service-layout.js';
@@ -10,7 +11,8 @@ import {createPlanningAreas} from './planning-areas.js';
 
 function createGarage(scene,vehicle){
   const group=new THREE.Group();group.position.set(garageSite.x,0,garageSite.z);group.rotation.y=garageSite.rotation;scene.add(group);
-  const wall=mat('#d5e3e6'),frame=mat('#354c5c'),floor=mat('#bdcdd0');
+  const wall=environmentMaterial('#d5e3e6'),frame=environmentMaterial('#354c5c'),floor=environmentMaterial('#bdcdd0');
+  contactShadow(scene,11.4,10.1,garageSite.x,garageSite.z,0.06,0.28);
   block(group,10,0.08,9,0,0.03,0,floor);
   const covers=[block(group,0.4,3.5,9,-5,1.75,0,wall),block(group,0.4,3.5,9,5,1.75,0,wall),block(group,10,3.5,0.4,0,1.75,-4.5,wall)];
   const roofGlass=new THREE.MeshStandardMaterial({color:'#b4d1cb',transparent:true,opacity:0.13,depthWrite:false,roughness:0.3});
@@ -20,13 +22,13 @@ function createGarage(scene,vehicle){
   block(group,10,0.65,0.4,0,3.35,4.5,wall);
   // Solar roof, facade fins and a glazed service window.
   for(let i=0;i<5;i++){
-    const panel=block(group,1.65,0.08,2.4,-3.7+i*1.85,3.84,-3.2,mat('#274e6a'));
+    const panel=block(group,1.65,0.08,2.4,-3.7+i*1.85,3.84,-3.2,environmentMaterial('#274e6a'));
     covers.push(panel);
-    for(let j=0;j<5;j++)block(panel,1.55,0.012,0.025,0,0.05,-1+j*0.5,mat('#7597ac'));
+    for(let j=0;j<5;j++)block(panel,1.55,0.012,0.025,0,0.05,-1+j*0.5,environmentMaterial('#7597ac'));
   }
   for(let i=0;i<7;i++)block(group,0.08,2.6,0.08,5.25,1.6,-3.5+i,frame);
   block(group,0.04,1.3,2.8,5.23,1.8,-0.4,new THREE.MeshStandardMaterial({color:'#80b4c5',metalness:0.3,roughness:0.2}));
-  const door=block(group,9.3,2.9,0.14,0,1.5,4.5,mat('#a9c2c8'));
+  const door=block(group,9.3,2.9,0.14,0,1.5,4.5,environmentMaterial('#a9c2c8'));
   for(let i=0;i<6;i++)block(door,9.3,0.035,0.02,0,-1.25+i*0.45,0.08,frame);
   covers.push(door);
   label(group,'GARAGE',0,3.4,4.73,5.1);

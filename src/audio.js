@@ -1,9 +1,11 @@
+import {createSoundscape} from './soundscape.js';
 // Synthesized locally: no downloaded recordings, autoplay or external requests.
 export function createAudio() {
-  let context,master,engine,engineGain,filter,noiseGain,enabled=false,lastHorn=false;
+  let soundscape,context,master,engine,engineGain,filter,noiseGain,enabled=false,lastHorn=false;
   function start(){
     if(!context){
       context=new AudioContext();master=context.createGain();master.gain.value=0.1;master.connect(context.destination);
+      soundscape=createSoundscape(context,master);
       engine=context.createOscillator();engine.type='sawtooth';engine.frequency.value=45;
       engineGain=context.createGain();engineGain.gain.value=0;
       filter=context.createBiquadFilter();filter.type='lowpass';filter.frequency.value=180;
@@ -14,7 +16,7 @@ export function createAudio() {
       const lowpass=context.createBiquadFilter();lowpass.type='lowpass';lowpass.frequency.value=1100;
       noiseGain=context.createGain();noiseGain.gain.value=0;noise.connect(lowpass);lowpass.connect(noiseGain);noiseGain.connect(master);noise.start();
     }
-    context.resume().catch(()=>{});enabled=true;return enabled;
+    master.gain.setTargetAtTime(0.1,context.currentTime,0.04);context.resume().catch(()=>{});enabled=true;return enabled;
   }
   function tone(freq,duration,level){
     if(!context||!enabled)return;
@@ -24,8 +26,10 @@ export function createAudio() {
   return {
     start,
     toggle(){if(!context)return start();enabled=!enabled;master.gain.setTargetAtTime(enabled?0.1:0,context.currentTime,0.04);return enabled;},
-    update(motion,paused){
+    setHidden(value){if(!context)return;if(value)context.suspend().catch(()=>{});else if(enabled)context.resume().catch(()=>{});},
+    update(motion,paused,state={}){
       if(!context)return;
+      soundscape.update(state,paused);
       const t=context.currentTime,moving=!paused&&motion.speed>0.1;
       engine.frequency.setTargetAtTime(37+motion.speed*7+(motion.input.boost?55:0),t,0.12);
       filter.frequency.setTargetAtTime(140+motion.speed*50,t,0.1);

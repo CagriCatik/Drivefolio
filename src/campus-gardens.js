@@ -1,6 +1,7 @@
+import {environmentMaterial as mat} from './environment-materials.js';
 import * as THREE from 'three';
 import {campusPaths,gardenBeds} from './campus-plan.js';
-import {mat,block,label} from './scene-primitives.js';
+import {block,label} from './scene-primitives.js';
 import {worldUV} from './surface-materials.js';
 import {switchFixtures} from './fixture-lighting.js';
 

@@ -19,7 +19,7 @@ function meshFromData(scene,data,materials){
   if(materials===asphaltMaterial())worldUV(geometry);
   const mesh=new THREE.Mesh(geometry,materials);mesh.receiveShadow=true;scene.add(mesh);return mesh;
 }
-export function createRaceTrack(scene,vehicle){
+export async function createRaceTrack(scene,vehicle){
   const points=trackPoints(),n=points.length;
   meshFromData(scene,joinedStrip(points,-3.8,3.8,ROAD_Y),asphaltMaterial());
   const curbMaterials=['#d95c62','#e9f2f3'].map(color=>new THREE.MeshStandardMaterial({color,roughness:0.9,side:THREE.DoubleSide}));
@@ -77,9 +77,9 @@ export function createRaceTrack(scene,vehicle){
     const lens=block(scene,1.0,0.12,0.6,foot.x+nx*4.25,5.88,foot.z+nz*4.25,fixtureMaterial);lens.rotation.y=arm.rotation.y;
     const light=new THREE.PointLight('#fff0d8',0,34,1.6);light.position.set(foot.x+nx*4.2,5.7,foot.z+nz*4.2);scene.add(light);nightLights.push(light);
   }
-  const pace=createPaceCar(scene,vehicle,points);
+  const pace=await createPaceCar(scene,vehicle,points);
   const timer=createLapTimer(),hud=document.getElementById('race-hud'),format=t=>`${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toFixed(1).padStart(4,'0')}`;
-  return {get trafficPose(){return pace.pose;},setNight(value){switchFixtures(nightLights,[fixtureMaterial],value,72);},reset:timer.reset,update(dt,paused){
+  return {get trafficPose(){return pace.pose;},setNight(value){pace.setNight(value);switchFixtures(nightLights,[fixtureMaterial],value,72);},reset:timer.reset,update(dt,paused){
     pace.update(dt,paused);
     const state=timer.update(paused?0:dt,vehicle.group.position,paused?0:vehicle.speed);
     hud.hidden=distanceToCircuit(vehicle.group.position,points)>13&&!state.running;

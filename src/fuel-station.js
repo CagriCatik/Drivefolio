@@ -1,5 +1,6 @@
+import {environmentMaterial as mat} from './environment-materials.js';
 import * as THREE from 'three';
-import {mat,block,label} from './scene-primitives.js';
+import {block,label} from './scene-primitives.js';
 import {asphaltMaterial,worldUV} from './surface-materials.js';
 import {switchFixtures} from './fixture-lighting.js';
 import {atFuelPump,fuelBays} from './fuel.js';

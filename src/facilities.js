@@ -21,12 +21,14 @@ function createGarage(scene,vehicle){
   // Solar roof, facade fins and a glazed service window.
   for(let i=0;i<5;i++){
     const panel=block(group,1.65,0.08,2.4,-3.7+i*1.85,3.84,-3.2,mat('#274e6a'));
+    covers.push(panel);
     for(let j=0;j<5;j++)block(panel,1.55,0.012,0.025,0,0.05,-1+j*0.5,mat('#7597ac'));
   }
   for(let i=0;i<7;i++)block(group,0.08,2.6,0.08,5.25,1.6,-3.5+i,frame);
   block(group,0.04,1.3,2.8,5.23,1.8,-0.4,new THREE.MeshStandardMaterial({color:'#80b4c5',metalness:0.3,roughness:0.2}));
   const door=block(group,9.3,2.9,0.14,0,1.5,4.5,mat('#a9c2c8'));
   for(let i=0;i<6;i++)block(door,9.3,0.035,0.02,0,-1.25+i*0.45,0.08,frame);
+  covers.push(door);
   label(group,'GARAGE',0,3.4,4.73,5.1);
   const welcome=label(group,'E  /  FAHRZEUG WÄHLEN',0,0.18,6.2,6.3);welcome.rotation.x=-Math.PI/2;
   const glow=new THREE.MeshStandardMaterial({color:'#b9e0cb',emissive:'#85d7b2',emissiveIntensity:0});
@@ -95,6 +97,8 @@ function createRoboticsLab(scene,vehicle){
   const dots=new THREE.Points(dotsGeometry,new THREE.PointsMaterial({color:'#c6fff0',size:0.09}));dots.frustumCulled=false;scene.add(dots);
   const raycaster=new THREE.Raycaster(),origin=new THREE.Vector3(),direction=new THREE.Vector3();let lastScan=-1;
   return {setNight(value){workshop.setNight(value);},update(time){
+    rays.visible=dots.visible=group.visible;
+    if(!group.visible)return;
     workshop.update(time);
     robot.position.set(Math.cos(time*0.32)*1.8,0,Math.sin(time*0.32)*1.8);robot.rotation.y=-time*0.32;
     scanner.rotation.y=time*4;

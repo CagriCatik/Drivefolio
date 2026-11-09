@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {duckPose,parkSites,parkFootprintClear,spectatorTarget} from '../src/park-plan.js';
+import {duckPose,parkSites,parkFootprintClear,spectatorTarget,deckRailSegments} from '../src/park-plan.js';
 import {createExteriorPlan,exteriorDistance} from '../src/exterior-plan.js';
 import {benchFootprint} from '../src/seating-plan.js';
 test('park destinations leave the circuit and outer path clear and vegetation leaves the new footprints free',()=>{
@@ -12,6 +12,7 @@ test('park destinations leave the circuit and outer path clear and vegetation le
  for(const rock of plan.rocks)assert.ok(parkFootprintClear(rock.x,rock.z,rock.size));
  const deck=parkSites.deck;
  for(const x of [-72.6,-70.2]){const [l,r,t,b]=benchFootprint({x,z:-24.45,lookAt:{x,z:-20}});assert.ok(l>deck[0]&&r<deck[1]&&t>deck[2]&&b<deck[3]);}
+ for(const [from,to] of deckRailSegments)assert.ok(to<=parkSites.pondLink[2]||from>=parkSites.pondLink[3]);
  assert.equal(parkSites.pondLink[0],deck[1]);assert.equal(parkSites.pondLink[1],-61.6);
 });
 test('ducks remain inside the pond, clear of the deck, and headings are finite for long simulations',()=>{

@@ -12,3 +12,5 @@ export function duckPose(time,index,pond){
  return {x,z,heading:Math.atan2(dx,dz),bob:Math.sin(time*2+index)*0.015};
 }
 export function spectatorTarget(x,z,visitor){const distance=Math.hypot(visitor.x-x,visitor.z-z);return {heading:distance<24?Math.atan2(visitor.x-x,visitor.z-z):-Math.PI/2,photograph:distance<22};}
+
+export const deckRailSegments=[[parkSites.deck[2]+0.25,parkSites.deck[2]+0.9],[parkSites.deck[3]-0.9,parkSites.deck[3]-0.25]];

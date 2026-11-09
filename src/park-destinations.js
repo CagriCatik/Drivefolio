@@ -3,7 +3,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {block,label} from './scene-primitives.js';
 import {environmentMaterial as mat,contactShadow} from './environment-materials.js';
 import {switchFixtures} from './fixture-lighting.js';
-import {parkSites,duckPose,spectatorTarget} from './park-plan.js';
+import {parkSites,duckPose,spectatorTarget,deckRailSegments} from './park-plan.js';
 export async function createParkDestinations(scene,plan){
  const group=new THREE.Group();group.name='Park / pond deck and spectator terrace';scene.add(group);
  const wood=mat('#a88c68','timber'),steel=mat('#3b5050'),gravel=mat('#c6bca4'),stone=mat('#c1c3ad'),white=mat('#e7dcc4'),teal=mat('#52827a');
@@ -13,8 +13,8 @@ export async function createParkDestinations(scene,plan){
  block(group,r-l,0.18,b-t,cx,0.16,cz,steel);
  const slats=new THREE.InstancedMesh(new THREE.BoxGeometry(0.22,0.07,b-t),wood,28),dummy=new THREE.Object3D();for(let i=0;i<28;i++){dummy.position.set(l+0.12+i*(r-l-0.24)/27,0.28,cz);dummy.updateMatrix();slats.setMatrixAt(i,dummy.matrix);}slats.receiveShadow=true;group.add(slats);
  for(const x of [l+0.35,r-0.4])for(const z of [t+0.25,b-0.25]){block(group,0.15,0.55,0.15,x,0.05,z,wood);block(group,0.09,0.7,0.09,x,0.66,z,steel);}
- // Rail along the back only: the water-facing tip stays visually open.
- block(group,0.07,0.07,b-t-0.5,r-0.4,0.93,cz,steel);
+ // Short rear rails leave the central entrance and water-facing tip open.
+ for(const [from,to] of deckRailSegments){block(group,0.07,0.07,to-from,r-0.4,0.93,(from+to)/2,steel);const end=from<cz?to:from;block(group,0.09,0.7,0.09,r-0.4,0.66,end,steel);}
  block(group,0.7,0.11,2,r+0.25,0.14,cz,wood);
  // Reuse the same original Bruno bench geometry as the campus seating.
  const source=await new GLTFLoader().loadAsync(`${import.meta.env.BASE_URL}models/bruno/benches.glb`);let template;source.scene.traverse(n=>{if(n.isMesh&&!template)template=n;});if(!template)throw new Error('Missing park bench mesh');
@@ -46,5 +46,5 @@ export async function createParkDestinations(scene,plan){
  for(let i=0;i<2;i++){const g=new THREE.Group();group.add(g);const body=new THREE.Mesh(new THREE.SphereGeometry(1,10,7),mat(i?'#ac9675':'#d6c6a1'));body.scale.set(0.19,0.14,0.32);body.position.y=0.16;g.add(body);const head=new THREE.Mesh(new THREE.SphereGeometry(0.12,9,7),mat(i?'#9e8b6b':'#426f5e'));head.position.set(0,0.31,0.22);g.add(head);block(g,0.1,0.04,0.15,0,0.28,0.35,mat('#d4a34f'));ducks.push(g);}
  const ripples=[];for(let i=0;i<6;i++){const ripple=new THREE.Mesh(new THREE.RingGeometry(0.9,1,32),new THREE.MeshBasicMaterial({color:'#b5d5c0',transparent:true,opacity:0.18,depthWrite:false,side:THREE.DoubleSide}));ripple.rotation.x=-Math.PI/2;ripple.position.y=0.035;group.add(ripple);ripples.push(ripple);}
  let clock=0;
- return {setNight(night){switchFixtures(lights,[glow],night,11);pools.visible=night;},update(time,dt,paused,visitor){if(!paused)clock+=dt;ducks.forEach((duck,i)=>{const p=duckPose(clock,i,plan.pond);duck.position.set(p.x,0.04+p.bob,p.z);duck.rotation.y=p.heading;});ripples.forEach((ring,i)=>{const p=duckPose(clock,i%2,plan.pond),phase=(clock*0.3+i/6)%1;ring.position.set(p.x-Math.sin(p.heading)*phase*0.5,0.035,p.z-Math.cos(p.heading)*phase*0.5);ring.scale.setScalar(0.2+phase*0.7);ring.material.opacity=(1-phase)*0.15;});if(!visitor||paused)return;people.forEach(p=>{const target=spectatorTarget(p.x,p.z,visitor),delta=Math.atan2(Math.sin(target.heading-p.group.rotation.y),Math.cos(target.heading-p.group.rotation.y));p.group.rotation.y+=delta*(1-Math.exp(-dt*2));p.arms.rotation.x=THREE.MathUtils.lerp(p.arms.rotation.x,p.photographer&&target.photograph?-1.6:0,1-Math.exp(-dt*3));});}};
+ return {setNight(night){switchFixtures(lights,[glow],night,11);pools.visible=night;},update(time,dt,paused,visitor){if(!paused)clock+=dt;ducks.forEach((duck,i)=>{const p=duckPose(clock,i,plan.pond);duck.position.set(p.x,p.bob,p.z);duck.rotation.y=p.heading;});ripples.forEach((ring,i)=>{const p=duckPose(clock,i%2,plan.pond),phase=(clock*0.3+i/6)%1;ring.position.set(p.x-Math.sin(p.heading)*phase*0.5,0.035,p.z-Math.cos(p.heading)*phase*0.5);ring.scale.setScalar(0.2+phase*0.7);ring.material.opacity=(1-phase)*0.15;});if(!visitor||paused)return;people.forEach(p=>{const target=spectatorTarget(p.x,p.z,visitor),delta=Math.atan2(Math.sin(target.heading-p.group.rotation.y),Math.cos(target.heading-p.group.rotation.y));p.group.rotation.y+=delta*(1-Math.exp(-dt*2));p.arms.rotation.x=THREE.MathUtils.lerp(p.arms.rotation.x,p.photographer&&target.photograph?-1.6:0,1-Math.exp(-dt*3));});}};
 }

@@ -1,3 +1,4 @@
+import {neonCycleColor} from './neon-cycle.js';
 import {pointerToCanvas,pickBoard} from './neon-hit-test.js';
 import * as THREE from 'three';
 export const neonBoardTheme={background:'#142f35',title:'#e0f7ed',text:'#acd4c8',edge:'#6dffe8',hover:'#ff57df',radius:0.12};
@@ -17,9 +18,10 @@ export function createNeonBoard(parent,{title='',subtitle='',rows=[],texture=nul
 export function isNeonBoardVisible(node){for(let n=node;n;n=n.parent)if(!n.visible)return false;return true;}
 export function createNeonBoardsController(scene){
  const boards=[];scene.traverse(n=>{if(n.userData.neonBoard)boards.push(n);});
- const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),canvas=document.getElementById('world'),hoverColor=new THREE.Color(neonBoardTheme.hover);const textHover=new THREE.Color('#ffd7ff'),fillHover=new THREE.Color('#81227e');let pointing=false,night=false,time=0;
+ const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),canvas=document.getElementById('world'),cycleColor=new THREE.Color();let pointing=false,night=false,time=0;
  canvas.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;pointing=true;pointer.copy(pointerToCanvas(e.clientX,e.clientY,canvas.getBoundingClientRect()));},{passive:true});canvas.addEventListener('pointerleave',()=>pointing=false);
- function paint(board){const b=board.userData.neonBoard;b.edgeMaterial.color.set(neonBoardTheme.edge).lerp(hoverColor,b.hover).multiplyScalar((night?3.1:1.8)+b.hover*1.4);b.faceMaterial.color.set('#ffffff').lerp(textHover,b.hover).multiplyScalar((night?1.25:1)+b.hover*0.45);b.backing.material.color.set(neonBoardTheme.background).lerp(fillHover,b.hover);b.backing.material.emissive.set('#a637e3');b.backing.material.emissiveIntensity=b.hover*1.35;b.haloMaterial.uniforms.uOpacity.value=(night?0.42:0.25)+b.hover*0.65;b.haloMaterial.uniforms.uHover.value=b.hover;b.haloMaterial.uniforms.uTime.value=reduced.matches?0:time;}
+ function paint(board){const b=board.userData.neonBoard;neonCycleColor(reduced.matches?0:time,cycleColor);b.edgeMaterial.color.copy(cycleColor).multiplyScalar(night?3.8:2.5);b.faceMaterial.color.set('#ffffff').lerp(cycleColor,0.16).multiplyScalar(night?1.35:1.1);b.backing.material.color.set(neonBoardTheme.background).lerp(cycleColor,0.18);b.backing.material.emissive.copy(cycleColor);b.backing.material.emissiveIntensity=night?0.38:0.25;b.haloMaterial.uniforms.uOpacity.value=night?0.7:0.5;b.haloMaterial.uniforms.uHover.value=0.55;b.haloMaterial.uniforms.uTime.value=reduced.matches?0:time;}
+
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
  return {setNight(value){night=!!value;boards.forEach(paint);},update(camera,blocked,dt){time+=dt;let target=null;if(pointing&&!blocked){target=pickBoard(camera,pointer,boards.filter(isNeonBoardVisible),ray,canvas.getBoundingClientRect());}
  boards.forEach(board=>{const b=board.userData.neonBoard;b.hover=reduced.matches?Number(board===target):THREE.MathUtils.lerp(b.hover,Number(board===target),1-Math.exp(-18*dt));board.scale.setScalar(reduced.matches?1:1+b.hover*0.10);paint(board);});

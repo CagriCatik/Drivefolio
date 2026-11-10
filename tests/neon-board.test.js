@@ -1,4 +1,5 @@
 import {test} from 'node:test';
+const colorDistance=(a,b)=>Math.hypot(a.r-b.r,a.g-b.g,a.b-b.b);
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {createNeonBoard,isNeonBoardVisible,neonBoardTheme} from '../src/neon-board.js';
@@ -9,7 +10,7 @@ test('boards hidden with their project station cannot remain hover targets',()=>
  const root=new THREE.Group(),station=new THREE.Group();root.add(station);const board=createNeonBoard(station,{title:'RADAR',texture:new THREE.Texture()});assert.equal(isNeonBoardVisible(board),true);station.visible=false;assert.equal(isNeonBoardVisible(board),false);station.visible=true;board.visible=false;assert.equal(isNeonBoardVisible(board),false);board.visible=true;root.visible=false;assert.equal(isNeonBoardVisible(board),false);
 });
 
-test('pointer hits the actual 3D board and hover changes its color, including an offset canvas',async()=>{
+test('pointer feedback works while neon color depends only on elapsed time',async()=>{
  const {createNeonBoardsController}=await import('../src/neon-board.js'),{pointerToCanvas}=await import('../src/neon-hit-test.js');
  const scene=new THREE.Scene(),station=new THREE.Group();scene.add(station);station.position.set(15,0,-5);const board=createNeonBoard(station,{title:'DYNAMICS',texture:new THREE.Texture(),y:1.45,z:-6.78});
  const {createPortfolioCamera}=await import('../src/camera.js');const view=createPortfolioCamera(1.8);view.setOverview(true);for(let i=0;i<300;i++)view.update(1/60,new THREE.Vector3(),0,false);view.camera.updateMatrixWorld();scene.updateMatrixWorld(true);
@@ -17,7 +18,7 @@ test('pointer hits the actual 3D board and hover changes its color, including an
  assert.ok(pointerToCanvas(x,y,rect).distanceTo(new THREE.Vector2(ndc.x,ndc.y))<1e-8);
  const events=new Map(),canvas={addEventListener:(type,fn)=>events.set(type,fn),getBoundingClientRect:()=>rect},oldDoc=globalThis.document,oldWindow=globalThis.window;
  globalThis.document={getElementById:()=>canvas};globalThis.window={matchMedia:()=>({matches:false})};
- try{const controller=createNeonBoardsController(scene);controller.setNight(true);const before=board.userData.neonBoard.edgeMaterial.color.clone();events.get('pointermove')({pointerType:'mouse',clientX:x,clientY:y});for(let i=0;i<60;i++)controller.update(view.camera,false,1/60);assert.ok(board.userData.neonBoard.hover>0.95);const after=board.userData.neonBoard.edgeMaterial.color;assert.ok(after.r>after.g*2,'hover must be clearly pink, not cyan');assert.ok(before.g>before.r);assert.ok(board.scale.x>1.035);events.get('pointerleave')();for(let i=0;i<60;i++)controller.update(view.camera,false,1/60);assert.ok(board.userData.neonBoard.hover<0.001);}
+ try{const controller=createNeonBoardsController(scene);controller.setNight(true);const before=board.userData.neonBoard.edgeMaterial.color.clone();events.get('pointermove')({pointerType:'mouse',clientX:x,clientY:y});for(let i=0;i<60;i++)controller.update(view.camera,false,1/60);assert.ok(board.userData.neonBoard.hover>0.95);const after=board.userData.neonBoard.edgeMaterial.color;assert.ok(colorDistance(after,before)>0.001,'color advances with time');const hovered=after.clone();events.get('pointerleave')();controller.update(view.camera,false,0);assert.ok(colorDistance(after,hovered)<1e-10,'leaving the sign cannot change its color');assert.ok(board.scale.x>1.035);events.get('pointerleave')();for(let i=0;i<60;i++)controller.update(view.camera,false,1/60);assert.ok(board.userData.neonBoard.hover<0.001);}
  finally{if(oldDoc===undefined)delete globalThis.document;else globalThis.document=oldDoc;if(oldWindow===undefined)delete globalThis.window;else globalThis.window=oldWindow;}
 });
 
@@ -30,3 +31,5 @@ test('thin signs allow a 14 CSS pixel margin, but do not capture distant pointer
  assert.equal(pickBoard(camera,pointerToCanvas(600,y+10,rect),[board],new THREE.Raycaster(),rect),board);
  assert.equal(pickBoard(camera,pointerToCanvas(600,y+35,rect),[board],new THREE.Raycaster(),rect),null);
 });
+
+test('neon palette advances smoothly, loops and is independent of mouse input',async()=>{const {neonCycleColor}=await import('../src/neon-cycle.js');assert.ok(colorDistance(neonCycleColor(0),neonCycleColor(6))>0.3);assert.ok(colorDistance(neonCycleColor(0),neonCycleColor(24))<1e-10);assert.ok(colorDistance(neonCycleColor(5.999),neonCycleColor(6.001))<0.001);});

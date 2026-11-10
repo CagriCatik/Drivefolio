@@ -224,3 +224,7 @@ Version 0.25 konzentriert sich auf die Tafeln in der 3D-Welt. Die Menü- und Pro
 ## Prominentes Hoverfeedback (0.26)
 
 Die 3D-Tafeln erlauben 14 CSS-Pixel Spielraum an ihren projizierten Kanten. Beim Hover folgen ein kontrastreiches Neonlabel mit dem Tafelnamen am Mauszeiger, ein kräftiger pinker Flächenakzent, ein umlaufender Lichtakzent und zehn Prozent Vergrößerung. Das Namensschild verwendet dasselbe Label und stärkere Licht-/Farbreaktionen. Reduzierte Bewegung unterbindet Größenanimation und umlaufende Lichtbewegung. Das Label fängt keine Eingaben ab, verschwindet beim Verlassen des Canvas und bleibt am Viewportrand sichtbar. Projektinhalte und Fahrfunktionen bleiben unverändert.
+
+## Automatischer Neonfarbverlauf (0.27)
+
+Tafelrahmen, Flächenlicht und Namensschild durchlaufen automatisch einen gemeinsamen 24-Sekunden-Zyklus: Türkis → Blau → Violett → Pink → Türkis. Mausbewegungen beeinflussen weder Farbe noch Lichtintensität. Das Namenslabel und die Größenreaktion bleiben als Hoverfeedback erhalten. Der Lichtakzent läuft unabhängig vom Mauszeiger. Bei reduzierter Bewegung bleiben Farbe und Lichtbewegung statisch.

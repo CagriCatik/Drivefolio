@@ -32,4 +32,6 @@ test('thin signs allow a 14 CSS pixel margin, but do not capture distant pointer
  assert.equal(pickBoard(camera,pointerToCanvas(600,y+35,rect),[board],new THREE.Raycaster(),rect),null);
 });
 
-test('neon palette advances smoothly, loops and is independent of mouse input',async()=>{const {neonCycleColor}=await import('../src/neon-cycle.js');assert.ok(colorDistance(neonCycleColor(0),neonCycleColor(6))>0.3);assert.ok(colorDistance(neonCycleColor(0),neonCycleColor(24))<1e-10);assert.ok(colorDistance(neonCycleColor(5.999),neonCycleColor(6.001))<0.001);});
+test('neon palette advances smoothly, loops and is independent of mouse input',async()=>{const {neonCycleColor}=await import('../src/neon-cycle.js');assert.ok(colorDistance(neonCycleColor(0),neonCycleColor(12))>0.3);assert.ok(colorDistance(neonCycleColor(0),neonCycleColor(24))<1e-10);assert.ok(colorDistance(neonCycleColor(5.999),neonCycleColor(6.001))<0.001);});
+
+test('neon cycle uses yellow and navy endpoints',async()=>{const {neonCycleColor}=await import('../src/neon-cycle.js');assert.equal(neonCycleColor(0).getHexString(),'ffdf00');assert.equal(neonCycleColor(12).getHexString(),'102b60');});

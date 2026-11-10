@@ -37,7 +37,7 @@ function createGarage(scene,vehicle){
   const glow=new THREE.MeshStandardMaterial({color:'#b9e0cb',emissive:'#85d7b2',emissiveIntensity:0});
   block(group,8.8,0.04,0.15,0,0.09,3.8,glow);
   vehicle.addObstacle(garageSite.x-5,garageSite.z,0.2,4.5);vehicle.addObstacle(garageSite.x+5,garageSite.z,0.2,4.5);vehicle.addObstacle(garageSite.x,garageSite.z+4.5,5,0.2);
-  return {group,setShowroom(value){covers.forEach(n=>n.visible=!value);},setNight(value){glow.emissiveIntensity=value?1.8:0;},update(dt){const p=vehicle.group.position,near=Math.hypot(p.x-garageSite.entrance.x,p.z-garageSite.entrance.z)<7;
+  return {group,setShowroom(value){covers.forEach(n=>n.visible=!value);},setNight(value){glow.emissiveIntensity=value?0.9:0;},update(dt){const p=vehicle.group.position,near=Math.hypot(p.x-garageSite.entrance.x,p.z-garageSite.entrance.z)<7;
     door.position.y=THREE.MathUtils.lerp(door.position.y,near?3.1:1.5,1-Math.exp(-3*dt));
     door.scale.y=THREE.MathUtils.lerp(door.scale.y,near?0.06:1,1-Math.exp(-3*dt));}};
 }

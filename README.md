@@ -228,3 +228,7 @@ Die 3D-Tafeln erlauben 14 CSS-Pixel Spielraum an ihren projizierten Kanten. Beim
 ## Automatischer Neonfarbverlauf (0.27)
 
 Tafelrahmen, Flächenlicht und Namensschild durchlaufen automatisch einen gemeinsamen 24-Sekunden-Zyklus: Türkis → Blau → Violett → Pink → Türkis. Mausbewegungen beeinflussen weder Farbe noch Lichtintensität. Das Namenslabel und die Größenreaktion bleiben als Hoverfeedback erhalten. Der Lichtakzent läuft unabhängig vom Mauszeiger. Bei reduzierter Bewegung bleiben Farbe und Lichtbewegung statisch.
+
+## Gelb und Dunkelblau, gedimmtes Neon (0.28)
+
+Der automatische 24-Sekunden-Farbverlauf verwendet jetzt Gelb (#ffdf00) und Dunkelblau (#102b60), angelehnt an Fenerbahçe. Neonrahmen und Namensschrift leuchten etwa halb so stark, Halos und Flächenlicht sind zurückgenommen. Auch der Bloom-Effekt, die Lichtleiste unter dem Namensschild und die Garagen-Lichtstreifen sind gedimmt. Das Mauslabel passt mit dunkelblauer Fläche und gelber Kontur dazu. Die Farben bleiben zeitgesteuert und unabhängig vom Mauszeiger.

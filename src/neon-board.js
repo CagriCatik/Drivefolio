@@ -1,7 +1,7 @@
 import {neonCycleColor} from './neon-cycle.js';
 import {pointerToCanvas,pickBoard} from './neon-hit-test.js';
 import * as THREE from 'three';
-export const neonBoardTheme={background:'#142f35',title:'#e0f7ed',text:'#acd4c8',edge:'#6dffe8',hover:'#ff57df',radius:0.12};
+export const neonBoardTheme={background:'#142f35',title:'#e0f7ed',text:'#acd4c8',edge:'#ffdf00',hover:'#ffdf00',radius:0.12};
 function outline(w,h,r){const shape=new THREE.Shape();shape.moveTo(-w/2+r,-h/2);shape.lineTo(w/2-r,-h/2);shape.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);shape.lineTo(w/2,h/2-r);shape.quadraticCurveTo(w/2,h/2,w/2-r,h/2);shape.lineTo(-w/2+r,h/2);shape.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);shape.lineTo(-w/2,-h/2+r);shape.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);return shape;}
 export function fitBoardFont(ctx,text,size,maxWidth){let font=size;ctx.font=`600 ${font}px Arial`;while(ctx.measureText(text).width>maxWidth&&font>10){font--;ctx.font=`600 ${font}px Arial`;}return font;}
 export function createNeonBoard(parent,{title='',subtitle='',rows=[],texture=null,x=0,y=0,z=0,width=11.4,height=1.9,rotation=0}){
@@ -20,7 +20,7 @@ export function createNeonBoardsController(scene){
  const boards=[];scene.traverse(n=>{if(n.userData.neonBoard)boards.push(n);});
  const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),canvas=document.getElementById('world'),cycleColor=new THREE.Color();let pointing=false,night=false,time=0;
  canvas.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;pointing=true;pointer.copy(pointerToCanvas(e.clientX,e.clientY,canvas.getBoundingClientRect()));},{passive:true});canvas.addEventListener('pointerleave',()=>pointing=false);
- function paint(board){const b=board.userData.neonBoard;neonCycleColor(reduced.matches?0:time,cycleColor);b.edgeMaterial.color.copy(cycleColor).multiplyScalar(night?3.8:2.5);b.faceMaterial.color.set('#ffffff').lerp(cycleColor,0.16).multiplyScalar(night?1.35:1.1);b.backing.material.color.set(neonBoardTheme.background).lerp(cycleColor,0.18);b.backing.material.emissive.copy(cycleColor);b.backing.material.emissiveIntensity=night?0.38:0.25;b.haloMaterial.uniforms.uOpacity.value=night?0.7:0.5;b.haloMaterial.uniforms.uHover.value=0.55;b.haloMaterial.uniforms.uTime.value=reduced.matches?0:time;}
+ function paint(board){const b=board.userData.neonBoard;neonCycleColor(reduced.matches?0:time,cycleColor);b.edgeMaterial.color.copy(cycleColor).multiplyScalar(night?1.65:1.2);b.faceMaterial.color.set('#ffffff').lerp(cycleColor,0.16).multiplyScalar(night?1.05:1);b.backing.material.color.set(neonBoardTheme.background).lerp(cycleColor,0.18);b.backing.material.emissive.copy(cycleColor);b.backing.material.emissiveIntensity=night?0.14:0.08;b.haloMaterial.uniforms.uOpacity.value=night?0.3:0.18;b.haloMaterial.uniforms.uHover.value=0.25;b.haloMaterial.uniforms.uTime.value=reduced.matches?0:time;}
 
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
  return {setNight(value){night=!!value;boards.forEach(paint);},update(camera,blocked,dt){time+=dt;let target=null;if(pointing&&!blocked){target=pickBoard(camera,pointer,boards.filter(isNeonBoardVisible),ray,canvas.getBoundingClientRect());}

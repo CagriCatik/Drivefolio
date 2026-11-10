@@ -21,9 +21,9 @@ export async function createNameLandmark(scene,vehicle){
  const panelGeo=new THREE.ExtrudeGeometry(roundedOutline(9,2.7,0.18),{depth:0.16,bevelEnabled:true,bevelThickness:0.035,bevelSize:0.035,bevelSegments:2,steps:1,curveSegments:6});panelGeo.translate(0,2.25,-0.13);const panel=new THREE.Mesh(panelGeo,dark);panel.castShadow=true;panel.receiveShadow=true;group.add(panel);
  const {body,neon}=createNeonNameGeometry(font),letters=new THREE.Group();letters.position.set(0,2.35,0.12);group.add(letters);
  const opal=new THREE.MeshStandardMaterial({color:'#7aada7',emissive:'#308f8b',emissiveIntensity:0.15,metalness:0.12,roughness:0.3});letters.add(new THREE.Mesh(body,opal));
- const neonMaterial=new THREE.MeshBasicMaterial({color:new THREE.Color('#9bffec').multiplyScalar(2.6)});letters.add(new THREE.Mesh(neon,neonMaterial));
+ const neonMaterial=new THREE.MeshBasicMaterial({color:new THREE.Color('#ffdf00').multiplyScalar(1.4)});letters.add(new THREE.Mesh(neon,neonMaterial));
  const frameCurve=new THREE.CatmullRomCurve3(roundedOutline(8.65,2.37,0.18).getPoints(9).slice(0,-1).map(p=>new THREE.Vector3(p.x,p.y+2.25,0.095)),true,'centripetal');
- const frameMat=new THREE.MeshBasicMaterial({color:new THREE.Color('#edc591').multiplyScalar(1.4)});group.add(new THREE.Mesh(new THREE.TubeGeometry(frameCurve,160,0.014,6,true),frameMat));
+ const frameMat=new THREE.MeshBasicMaterial({color:new THREE.Color('#ffdf00').multiplyScalar(1.1)});group.add(new THREE.Mesh(new THREE.TubeGeometry(frameCurve,160,0.014,6,true),frameMat));
  label(group,'ENGINEERING IN MOTION',0,3.15,0.10,4.0,'#c6d6c9');label(group,'ROBOTICS  /  AUTOMOTIVE  /  AI',0,1.42,0.10,6.3,'#a7c3be');
  const stripMat=new THREE.MeshStandardMaterial({color:'#a8ddd1',emissive:'#70e5cf',emissiveIntensity:0});block(group,8.4,0.025,0.025,0,0.29,0.42,stripMat);
  const spill=new THREE.PointLight('#74ffe0',0,6,2);spill.position.set(0,0.7,0.8);group.add(spill);
@@ -31,7 +31,7 @@ export async function createNameLandmark(scene,vehicle){
  const pointer=new THREE.Vector2(),raycaster=new THREE.Raycaster(),canvas=document.getElementById('world');let pointing=false,night=false,hover=0,time=0;
  canvas.addEventListener('pointermove',event=>{if(event.pointerType==='touch')return;pointing=true;pointer.copy(pointerToCanvas(event.clientX,event.clientY,canvas.getBoundingClientRect()));},{passive:true});canvas.addEventListener('pointerleave',()=>pointing=false);
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)'),cycleColor=new THREE.Color();
- function apply(){neonCycleColor(reduced.matches?0:time,cycleColor);neonMaterial.color.copy(cycleColor).multiplyScalar(night?2.8:1.7);frameMat.color.copy(cycleColor).multiplyScalar(night?1.8:1.1);opal.emissive.copy(cycleColor);opal.emissiveIntensity=night?0.3:0.18;letters.scale.setScalar(reduced.matches?1:1+hover*0.06);stripMat.emissive.copy(cycleColor);stripMat.emissiveIntensity=night?1.8:0.4;spill.color.copy(cycleColor);spill.intensity=night?4:0;}
+ function apply(){neonCycleColor(reduced.matches?0:time,cycleColor);neonMaterial.color.copy(cycleColor).multiplyScalar(night?1.4:1.05);frameMat.color.copy(cycleColor).multiplyScalar(night?1.1:0.8);opal.emissive.copy(cycleColor);opal.emissiveIntensity=night?0.12:0.07;letters.scale.setScalar(reduced.matches?1:1+hover*0.06);stripMat.emissive.copy(cycleColor);stripMat.emissiveIntensity=night?0.75:0.18;spill.color.copy(cycleColor);spill.intensity=night?1.5:0;}
 
  return {setNight(value){night=!!value;apply();},updateHover(camera,blocked,dt){time+=dt;let hit=false;if(pointing&&!blocked){camera.updateMatrixWorld();panel.updateWorldMatrix(true,false);raycaster.setFromCamera(pointer,camera);hit=raycaster.intersectObject(panel,false).length>0;}hover=reduced.matches?Number(hit):THREE.MathUtils.lerp(hover,Number(hit),1-Math.exp(-18*dt));apply();return hit?'Çağrı Çatık':null;}};
 }

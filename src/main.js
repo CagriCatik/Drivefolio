@@ -147,16 +147,15 @@ $('project-find').addEventListener('click',()=>{
  worldController?.setDestination(destination);$('destination-distance').hidden=false;
 });
 
-for (const project of projects) {
-  const button = document.createElement('button'); button.className = 'project-row';button.dataset.projectId=project.id;button.dataset.projectTitle=project.title;
-  button.style.setProperty('--project-color', project.color);
-  const number = document.createElement('span'); number.className = 'row-number'; number.textContent = project.number;
-  const main = document.createElement('span'); main.className = 'row-main';
-  const category = document.createElement('small'); category.textContent = project.category;
-  const name = document.createElement('strong'); name.textContent = project.title;
-  const arrow = document.createElement('span'); arrow.className = 'row-arrow'; arrow.textContent = '↗';
-  main.append(category, name); button.append(number, main, arrow);
-  button.addEventListener('click', () => openProject(project)); $('project-list').append(button);
+const projectTable=document.createElement('table');projectTable.className='neon-data-table';projectTable.setAttribute('aria-label','Projektübersicht');
+const tableHead=document.createElement('thead'),headRow=document.createElement('tr');for(const title of ['Nr.','Projekt / Schwerpunkt','Öffnen']){const th=document.createElement('th');th.scope='col';th.textContent=title;headRow.append(th);}tableHead.append(headRow);const tableBody=document.createElement('tbody');projectTable.append(tableHead,tableBody);$('project-list').append(projectTable);
+for(const project of projects){
+ const row=document.createElement('tr');row.className='project-row';row.dataset.projectId=project.id;row.dataset.projectTitle=project.title;row.style.setProperty('--project-color',project.color);
+ const numberCell=document.createElement('td'),number=document.createElement('span');number.className='row-number';number.textContent=project.number;numberCell.append(number);
+ const mainCell=document.createElement('td'),button=document.createElement('button');button.className='project-table-link';button.setAttribute('aria-label',project.title+' öffnen');
+ const main=document.createElement('span');main.className='row-main';const category=document.createElement('small');category.textContent=project.category;const name=document.createElement('strong');name.textContent=project.title;main.append(category,name);button.append(main);mainCell.append(button);
+ const actionCell=document.createElement('td'),arrow=document.createElement('span');arrow.className='row-arrow';arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');actionCell.append(arrow);row.append(numberCell,mainCell,actionCell);
+ row.addEventListener('click',()=>openProject(project));tableBody.append(row);
 }
 
 function cancelSequence(){

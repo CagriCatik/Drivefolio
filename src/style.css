@@ -104,3 +104,29 @@ dialog table{width:100%;border-collapse:separate;border-spacing:0;border:1px sol
 .neon-panel .project-row{border-bottom:1px solid var(--panel-rule);padding:16px 10px;border-radius:6px;gap:16px}.neon-panel .row-number{color:var(--neon-text)}
 .neon-panel table{border-color:var(--panel-rule);font-size:12px;line-height:1.5}.neon-panel thead{background:#87c3ad20}.neon-panel th,.neon-panel td{border-color:var(--panel-rule);padding:12px 14px}.neon-panel tbody tr:last-child td{border-bottom:0}.neon-panel tbody tr:nth-child(even){background:#7bb4a60a}
 @media(max-width:600px){.neon-panel .project-row{padding:13px 7px;gap:10px}.neon-panel th,.neon-panel td{padding:10px}}
+
+/* Strong, unmistakable cyan → violet feedback; placed after panel theme rules. */
+:root{--hover-edge:#9239d6;--hover-fill:#eee0ff;--hover-ink:#582276;--hover-glow:#a244eb55;--hover-panel:#f4edfc}
+[data-theme=dark]{--hover-edge:#ef8dff;--hover-fill:#362047;--hover-ink:#ffe4ff;--hover-glow:#d658ff66;--hover-panel:#1d2b3b}
+.neon-panel{border-color:var(--neon-edge);box-shadow:0 0 0 1px var(--neon-soft),0 0 17px var(--neon-soft),0 12px 35px #173c3820}
+[data-theme=dark] .neon-panel{border-color:#57bba9;box-shadow:0 0 0 1px #60e7cc30,0 0 20px #4bdec523,0 16px 38px #071e2940}
+#project-list{border:0}.neon-data-table{table-layout:fixed;border:1px solid var(--neon-edge)!important;box-shadow:0 0 20px var(--neon-soft);border-radius:10px!important}
+.neon-data-table th:first-child{width:64px}.neon-data-table th:last-child{width:72px;text-align:center}.neon-data-table th{color:var(--neon-text);background:#3987741c;border-bottom:2px solid var(--neon-edge)!important;font-size:9px!important;padding:14px!important}
+#project-list .neon-data-table .project-row{display:table-row;width:auto;padding:0;background:transparent;transform:none;border:0;cursor:pointer}
+#project-list .neon-data-table td{padding:14px 12px;vertical-align:middle;border-bottom:1px solid var(--panel-rule);transition:background-color .18s,box-shadow .18s,color .18s}
+#project-list .project-table-link{display:block;width:100%;border:0;background:none;padding:5px 0;text-align:left;color:inherit;box-shadow:none;text-shadow:none;transform:none}
+#project-list .row-main strong{font-size:16px;line-height:1.35;font-weight:600;display:block}#project-list .row-main small{font-size:8px;line-height:1.5;letter-spacing:1px;color:var(--muted)}
+#project-list .row-number{font-size:14px;width:auto;font-variant-numeric:tabular-nums}#project-list .row-arrow{display:block;text-align:center;font-size:24px;color:var(--neon-edge);transition:transform .18s,color .18s}
+#project-list .project-row:focus-within td{background:var(--hover-fill);color:var(--hover-ink);box-shadow:inset 0 1px var(--hover-edge),inset 0 -1px var(--hover-edge)}
+@media(hover:hover) and (pointer:fine){
+ .neon-panel:hover,[data-theme=dark] .neon-panel:hover{border-color:var(--hover-edge);background-color:var(--hover-panel);box-shadow:0 0 0 1px var(--hover-edge),0 0 30px var(--hover-glow),0 15px 42px #071e2940}
+ .neon-panel:hover::after{background:radial-gradient(190px circle at var(--neon-x,50%) var(--neon-y,40%),#c64eff24,transparent 75%)}
+ .nav-button:not(:disabled):hover,[data-theme=dark] .nav-button:not(:disabled):hover,.neon-panel .demo-button:hover,.neon-panel .primary-link:hover,.showroom-card button:hover,.world-lab button:hover,.vehicle-choice:hover,.paint-choice:hover{color:var(--hover-ink);background-color:var(--hover-fill);border-color:var(--hover-edge);box-shadow:inset 0 0 0 1px var(--hover-edge),0 0 22px var(--hover-glow)}
+ #project-list .neon-data-table .project-row:hover td{background:var(--hover-fill);color:var(--hover-ink);box-shadow:inset 0 1px var(--hover-edge),inset 0 -1px var(--hover-edge)}
+ #project-list .project-row:hover td:first-child{box-shadow:inset 4px 0 var(--hover-edge),inset 0 1px var(--hover-edge),inset 0 -1px var(--hover-edge)}
+ #project-list .project-row:hover .row-main small,#project-list .project-row:hover .row-number,#project-list .project-row:hover .row-arrow{color:var(--hover-edge)}#project-list .project-row:hover .row-arrow{transform:translateX(4px)}
+ #project-list .project-table-link:hover{background:none;box-shadow:none;color:var(--hover-ink);transform:none}
+ .neon-panel h2:hover,.neon-panel h3:hover,.neon-panel>strong:hover{color:var(--hover-ink);text-shadow:0 0 15px var(--hover-glow)}
+}
+@media(max-width:600px){.neon-data-table th:first-child{width:45px}.neon-data-table th:last-child{width:42px;font-size:0!important}.neon-data-table th:last-child::after{content:'↗';font-size:14px}#project-list .neon-data-table td{padding:11px 7px}#project-list .row-main strong{font-size:13px}#project-list .row-main small{font-size:7px;letter-spacing:.3px}}
+@media(prefers-reduced-motion:reduce){#project-list .row-arrow{transition:none!important;transform:none!important}}

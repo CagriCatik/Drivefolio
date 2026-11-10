@@ -1,3 +1,4 @@
+import {pointerToCanvas} from './neon-hit-test.js';
 import * as THREE from 'three';
 import {FontLoader} from 'three/addons/loaders/FontLoader.js';
 import {TextGeometry} from 'three/addons/geometries/TextGeometry.js';
@@ -27,8 +28,8 @@ export async function createNameLandmark(scene,vehicle){
  const spill=new THREE.PointLight('#74ffe0',0,6,2);spill.position.set(0,0.7,0.8);group.add(spill);
  vehicle.addBarrier(nameLandmarkSite.x,nameLandmarkSite.z,4.7,0.5,nameLandmarkSite.rotation);
  const pointer=new THREE.Vector2(),raycaster=new THREE.Raycaster(),canvas=document.getElementById('world');let pointing=false,night=false,hover=0;
- canvas.addEventListener('pointermove',event=>{if(event.pointerType==='touch')return;pointing=true;pointer.set(event.clientX/window.innerWidth*2-1,1-event.clientY/window.innerHeight*2);},{passive:true});canvas.addEventListener('pointerleave',()=>pointing=false);
+ canvas.addEventListener('pointermove',event=>{if(event.pointerType==='touch')return;pointing=true;pointer.copy(pointerToCanvas(event.clientX,event.clientY,canvas.getBoundingClientRect()));},{passive:true});canvas.addEventListener('pointerleave',()=>pointing=false);
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)'),hoverTint=new THREE.Color('#ff9fe9');
- function apply(){neonMaterial.color.set('#9bffec').lerp(hoverTint,hover).multiplyScalar((night?2.1:1.05)+hover*0.5);frameMat.color.set('#edc591').lerp(hoverTint,hover).multiplyScalar((night?1.35:0.65)+hover*0.3);opal.emissiveIntensity=(night?0.12:0.10)+hover*0.08;stripMat.emissiveIntensity=night?1.3+hover*0.3:0;spill.intensity=night?4+hover:0;}
- return {setNight(value){night=!!value;apply();},updateHover(camera,blocked,dt){let hit=false;if(pointing&&!blocked){camera.updateMatrixWorld();raycaster.setFromCamera(pointer,camera);hit=raycaster.intersectObject(panel,false).length>0;}hover=reduced.matches?Number(hit):THREE.MathUtils.lerp(hover,Number(hit),1-Math.exp(-8*dt));apply();}};
+ function apply(){neonMaterial.color.set('#9bffec').lerp(hoverTint,hover).multiplyScalar((night?2.1:1.05)+hover*1.5);frameMat.color.set('#edc591').lerp(hoverTint,hover).multiplyScalar((night?1.35:0.65)+hover*1.0);opal.emissive.set('#ed4cdb');opal.emissiveIntensity=(night?0.12:0.10)+hover*0.8;letters.scale.setScalar(reduced.matches?1:1+hover*0.06);stripMat.emissiveIntensity=(night?1.3:0)+hover*1.5;spill.intensity=night?4+hover:0;}
+ return {setNight(value){night=!!value;apply();},updateHover(camera,blocked,dt){let hit=false;if(pointing&&!blocked){camera.updateMatrixWorld();panel.updateWorldMatrix(true,false);raycaster.setFromCamera(pointer,camera);hit=raycaster.intersectObject(panel,false).length>0;}hover=reduced.matches?Number(hit):THREE.MathUtils.lerp(hover,Number(hit),1-Math.exp(-18*dt));apply();return hit?'Çağrı Çatık':null;}};
 }

@@ -1,3 +1,4 @@
+import {createWorldHoverFeedback} from './world-hover-feedback.js';
 import {setupNeonUI} from './neon-ui.js';
 import './style.css';
 import {garageSite} from './service-layout.js';
@@ -235,6 +236,7 @@ $('reset-button').addEventListener('click', () => {
 window.addEventListener('keydown', e => { if (e.code === 'Escape' && !activeDialog) input.clear(); });
 
 async function main() {
+  const hoverFeedback=createWorldHoverFeedback($('world')); 
   const renderer = new THREE.WebGLRenderer({ canvas: $('world'), antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -319,7 +321,7 @@ async function main() {
     campusMap.update(vehicle.group.position,vehicle.heading,world.race.trafficPose);
     if(destination){const distance=Math.hypot(vehicle.group.position.x-destination.entrance.x,vehicle.group.position.z-destination.entrance.z);$('destination-distance').textContent=distance<3.5?`${destination.title} · anhalten und E drücken`:`Ziel: ${destination.title} · ${Math.round(distance)} m Luftlinie`;}
 
-    world.updateHover(view.camera,!!activeDialog||showroomMode||!!worldLab?.active,dt);
+    hoverFeedback.update(world.updateHover(view.camera,!!activeDialog||showroomMode||!!worldLab?.active,dt));
     composer.render({night:displayModes.night,showroom:showroomMode,overview,dt});
   });
 }

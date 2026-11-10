@@ -104,3 +104,11 @@ dialog table{width:100%;border-collapse:separate;border-spacing:0;border:1px sol
 .neon-panel .project-row{border-bottom:1px solid var(--panel-rule);padding:16px 10px;border-radius:6px;gap:16px}.neon-panel .row-number{color:var(--neon-text)}
 .neon-panel table{border-color:var(--panel-rule);font-size:12px;line-height:1.5}.neon-panel thead{background:#87c3ad20}.neon-panel th,.neon-panel td{border-color:var(--panel-rule);padding:12px 14px}.neon-panel tbody tr:last-child td{border-bottom:0}.neon-panel tbody tr:nth-child(even){background:#7bb4a60a}
 @media(max-width:600px){.neon-panel .project-row{padding:13px 7px;gap:10px}.neon-panel th,.neon-panel td{padding:10px}}
+
+/* Strong feedback for thin world-space signs, readable even from the overview. */
+.world-hover-badge{position:fixed;z-index:90;pointer-events:none;display:flex;align-items:center;gap:10px;max-width:min(360px,calc(100vw - 24px));padding:13px 18px;background:#21112ff2;color:#fff;border:2px solid #ff6be5;border-radius:10px;box-shadow:0 0 0 4px #ff51d52b,0 0 28px #ee3ddf88;font-size:13px;letter-spacing:1px;line-height:1.4;transform-origin:top left;animation:world-hover-arrive .16s ease-out}
+.world-hover-badge[hidden]{display:none}.world-hover-dot{width:9px;height:9px;flex:none;border-radius:50%;background:#fff;box-shadow:0 0 10px #ff54de,0 0 20px #ff54de;animation:world-hover-pulse 1.2s ease-in-out infinite}
+#world.neon-target-hovered{cursor:crosshair}
+@keyframes world-hover-arrive{from{opacity:0;transform:translateY(7px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes world-hover-pulse{50%{background:#ff63df;box-shadow:0 0 17px #ff54de}}
+@media(prefers-reduced-motion:reduce){.world-hover-badge,.world-hover-dot{animation:none}}

@@ -20,3 +20,13 @@ test('pointer hits the actual 3D board and hover changes its color, including an
  try{const controller=createNeonBoardsController(scene);controller.setNight(true);const before=board.userData.neonBoard.edgeMaterial.color.clone();events.get('pointermove')({pointerType:'mouse',clientX:x,clientY:y});for(let i=0;i<60;i++)controller.update(view.camera,false,1/60);assert.ok(board.userData.neonBoard.hover>0.95);const after=board.userData.neonBoard.edgeMaterial.color;assert.ok(after.r>after.g*2,'hover must be clearly pink, not cyan');assert.ok(before.g>before.r);assert.ok(board.scale.x>1.035);events.get('pointerleave')();for(let i=0;i<60;i++)controller.update(view.camera,false,1/60);assert.ok(board.userData.neonBoard.hover<0.001);}
  finally{if(oldDoc===undefined)delete globalThis.document;else globalThis.document=oldDoc;if(oldWindow===undefined)delete globalThis.window;else globalThis.window=oldWindow;}
 });
+
+// Exercise a near miss at the lower projected edge rather than only dead center.
+test('thin signs allow a 14 CSS pixel margin, but do not capture distant pointers',async()=>{
+ const {pickBoard,pointerToCanvas}=await import('../src/neon-hit-test.js');
+ const scene=new THREE.Scene(),board=createNeonBoard(scene,{texture:new THREE.Texture(),width:10,height:1});
+ const camera=new THREE.PerspectiveCamera(40,2,0.1,200);camera.position.set(0,0,60);camera.lookAt(0,0,0);camera.updateMatrixWorld();scene.updateMatrixWorld(true);
+ const rect={left:0,top:0,width:1200,height:600},edge=new THREE.Vector3(0,-0.5,0).project(camera),y=(1-edge.y)*300;
+ assert.equal(pickBoard(camera,pointerToCanvas(600,y+10,rect),[board],new THREE.Raycaster(),rect),board);
+ assert.equal(pickBoard(camera,pointerToCanvas(600,y+35,rect),[board],new THREE.Raycaster(),rect),null);
+});

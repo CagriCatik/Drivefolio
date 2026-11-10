@@ -1,3 +1,4 @@
+import {createNameLandmark} from './name-landmark.js';
 import {createParkGround} from './park-ground.js';
 import {createExteriorPlan} from './exterior-plan.js';
 import {createParkDestinations} from './park-destinations.js';
@@ -7,7 +8,7 @@ import {createServiceForecourt} from './service-forecourt.js';
 import {createCampusAttractions} from './campus-attractions.js';
 import {createReferenceGarden} from './reference-garden.js';
 import * as THREE from 'three';
-import { addLandscape, addNameSculpture } from './landscape.js';
+import { addLandscape } from './landscape.js';
 import { createVehicleVisuals } from './vehicle-visuals.js';
 import { createFacilities } from './facilities.js';
 import {asphaltMaterial,worldUV} from './surface-materials.js';
@@ -83,7 +84,7 @@ export async function createWorld(scene, vehicle) {
   const landscape=addLandscape(scene,vehicle);
   const exterior=createExteriorLandscape(scene,exteriorPlan);
   const park=await createParkDestinations(scene,exteriorPlan);
-  await addNameSculpture(scene);
+  const nameLandmark=await createNameLandmark(scene,vehicle);
   const facilities=createFacilities(scene,vehicle);
   const showroom=await createShowroom(facilities.garage.group,vehicle);
   const race=await createRaceTrack(scene,vehicle);
@@ -98,7 +99,7 @@ export async function createWorld(scene, vehicle) {
     vehicles:vehicleVisuals,
     setOverview(value){scene.fog.near=value?350:85;scene.fog.far=value?500:155;},
     facilities,race,showroom,
-    setNight(value){park.setNight(value);referenceGarden.setNight(value);attractions.setNight(value);vehicleVisuals.setNight(value);facilities.station.setNight(value);facilities.setNight(value);landscape.setNight(value);race.setNight(value);},
+    setNight(value){nameLandmark.setNight(value);park.setNight(value);referenceGarden.setNight(value);attractions.setNight(value);vehicleVisuals.setNight(value);facilities.station.setNight(value);facilities.setNight(value);landscape.setNight(value);race.setNight(value);},
     update(time,dt,paused) {
       showroom.update(vehicle.profile);
       pin.position.y=3+Math.sin(time*2)*0.25;

@@ -200,3 +200,9 @@ Version 0.21 ergänzt einen Holzsteg am östlichen Teichufer mit zwei originalen
 Zwei Enten bewegen sich auf langsamen, geschwungenen Routen im freien Teichbereich. Ihre Routen halten Abstand zueinander und zum Steg; kleine Wasserringe laufen aus. Bodenvariationen, gemähte Randstreifen und dunklere Baumstandorte werden einmalig in eine lokale Bodentextur gebacken, ohne zusätzliche überlappende Bodenflächen. Die Pflanzplanung hält Terrasse, Steg und ihre Verbindungen frei.
 
 Warme Poller markieren Spazierweg und Aufenthaltsorte. Vier tatsächliche Lichtquellen beleuchten Steg und Zuschauerterrasse; dezente additive Lichtflächen unter den übrigen Pollern vermeiden viele weitere Lichtquellen. Leuchtflächen, Lichtquellen und Lichtflächen schalten gemeinsam mit dem Nachtmodus und sind am Tag aus. Die Projektstationen und ihre Inhalte werden nicht verändert.
+
+## Neon-Wahrzeichen am Start
+
+Version 0.22 ersetzt die niedrige Namensskulptur durch ein erhöhtes, zur festen Kamera ausgerichtetes Schild bei (-8.7, 16.8). Der Schriftzug „Çağrı Çatık“ besteht aus dreidimensionalen Opalbuchstaben mit echten Neon-Rohrkonturen, einschließlich der türkischen Glyphen und ihrer Innenkonturen. Eine dunkle, gerundete Rückwand, ein warmer feiner Lichtrahmen und ein integrierter Sockel bilden das Wahrzeichen. Nachtmodus erhöht die Leuchtwirkung und schaltet Sockellicht und dezentes türkisfarbenes Streulicht ein; tagsüber bleiben die Buchstaben lesbar.
+
+Die Startkamera rahmt Name und Besucherfahrzeug gemeinsam und gibt auf schmalen Bildschirmen mehr Abstand. Beim Losfahren kehrt sie weich zur normalen Fahransicht zurück. Der Gehweg bleibt frei; die Ankunftsbank und ihre Sitznische wurden passend versetzt und zum neuen Namen ausgerichtet. Ein Collider schützt das Schild vor Durchfahren. Projektbereiche, Inhalte und Experimente bleiben unverändert. Tests prüfen Geometrie, Schriftzeichen, Gehwegabstand und vollständige Bildabdeckung in Desktop- und Hochformatansichten.

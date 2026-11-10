@@ -294,6 +294,7 @@ async function main() {
 
       }
     } else accumulator = 0;
+    view.setIntro(!started&&!overview&&!showroomMode&&!worldLab?.active);
     view.update(dt,showroomMode?garageSite:worldLab?.active?worldLab.project.position:sequence.running?sequence.project.position:vehicle.group.position,vehicle.heading,!sequence.running&&!showroomMode&&!worldLab?.active&&vehicle.speed>0.5);
     if(sequence.running){
       const state=sequence.update(dt);world.facilities.setDemo(sequence.project.id,state.stage,state.progress);

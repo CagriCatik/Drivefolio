@@ -4,9 +4,6 @@ import {createEnvironmentVegetation} from './environment-vegetation.js';
 import {environmentMaterial as mat} from './environment-materials.js';
 import {createCampusGardens} from './campus-gardens.js';
 import {switchFixtures} from './fixture-lighting.js';
-import {ownerName} from './identity.js';
-import {FontLoader} from 'three/addons/loaders/FontLoader.js';
-import {TextGeometry} from 'three/addons/geometries/TextGeometry.js';
 import {block,label} from './scene-primitives.js';
 
 export function addLandscape(scene,vehicle){
@@ -33,10 +30,3 @@ export function addLandscape(scene,vehicle){
   return {setNight(value){gardens.setNight(value);switchFixtures(nightLights,[lightMaterial],value,30);},update(time){vegetation.update(time);canal.material.color.setHSL(0.52,0.25,0.49+Math.sin(time*0.4)*0.01);}};
 }
 
-export async function addNameSculpture(scene){
-  const font=await new FontLoader().loadAsync(`${import.meta.env.BASE_URL}fonts/name-bold.json`);
-  const geometry=new TextGeometry(ownerName,{font,size:0.95,depth:0.24,curveSegments:3,bevelEnabled:true,bevelThickness:0.035,bevelSize:0.02,bevelSegments:1});geometry.center();
-  const text=new THREE.Mesh(geometry,[mat('#f4f9fa'),mat('#237c87')]);text.position.set(-8,0.8,19.5);text.rotation.y=Math.PI/4;text.castShadow=true;scene.add(text);
-  const plinth=block(scene,9,0.32,1.45,-8,0.16,19.5,mat('#456373'));plinth.rotation.y=Math.PI/4;
-  const strip=block(scene,8.6,0.04,0.1,-8,0.34,19.7,new THREE.MeshStandardMaterial({color:'#b8f5e9',emissive:'#69c7ba',emissiveIntensity:0.6}));strip.rotation.y=Math.PI/4;
-}

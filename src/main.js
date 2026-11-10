@@ -1,3 +1,4 @@
+import {setupNeonUI} from './neon-ui.js';
 import './style.css';
 import {garageSite} from './service-layout.js';
 import {createWorldExperiments} from './world-experiments.js';
@@ -23,6 +24,7 @@ import { vehicles,paints,getVehicle } from './vehicle-catalog.js';
 
 const $ = id => document.getElementById(id);
 const input = createInput();
+setupNeonUI();
 const sequence=createDemoSequence();
 let selectedProject=null;
 const interactions=createInteractions();
@@ -317,6 +319,7 @@ async function main() {
     campusMap.update(vehicle.group.position,vehicle.heading,world.race.trafficPose);
     if(destination){const distance=Math.hypot(vehicle.group.position.x-destination.entrance.x,vehicle.group.position.z-destination.entrance.z);$('destination-distance').textContent=distance<3.5?`${destination.title} · anhalten und E drücken`:`Ziel: ${destination.title} · ${Math.round(distance)} m Luftlinie`;}
 
+    world.updateHover(view.camera,!!activeDialog||showroomMode||!!worldLab?.active,dt);
     composer.render({night:displayModes.night,showroom:showroomMode,overview,dt});
   });
 }

@@ -18,13 +18,17 @@ export async function createNameLandmark(scene,vehicle){
  for(const x of [-3.65,3.65])block(group,0.14,0.9,0.18,x,0.71,-0.02,dark);
  const panelGeo=new THREE.ExtrudeGeometry(roundedOutline(9,2.7,0.18),{depth:0.16,bevelEnabled:true,bevelThickness:0.035,bevelSize:0.035,bevelSegments:2,steps:1,curveSegments:6});panelGeo.translate(0,2.25,-0.13);const panel=new THREE.Mesh(panelGeo,dark);panel.castShadow=true;panel.receiveShadow=true;group.add(panel);
  const {body,neon}=createNeonNameGeometry(font),letters=new THREE.Group();letters.position.set(0,2.35,0.12);group.add(letters);
- const opal=new THREE.MeshStandardMaterial({color:'#d9f4e9',emissive:'#308f8b',emissiveIntensity:0.15,metalness:0.12,roughness:0.3});letters.add(new THREE.Mesh(body,opal));
+ const opal=new THREE.MeshStandardMaterial({color:'#7aada7',emissive:'#308f8b',emissiveIntensity:0.15,metalness:0.12,roughness:0.3});letters.add(new THREE.Mesh(body,opal));
  const neonMaterial=new THREE.MeshBasicMaterial({color:new THREE.Color('#9bffec').multiplyScalar(2.6)});letters.add(new THREE.Mesh(neon,neonMaterial));
  const frameCurve=new THREE.CatmullRomCurve3(roundedOutline(8.65,2.37,0.18).getPoints(9).slice(0,-1).map(p=>new THREE.Vector3(p.x,p.y+2.25,0.095)),true,'centripetal');
  const frameMat=new THREE.MeshBasicMaterial({color:new THREE.Color('#edc591').multiplyScalar(1.4)});group.add(new THREE.Mesh(new THREE.TubeGeometry(frameCurve,160,0.014,6,true),frameMat));
  label(group,'ENGINEERING IN MOTION',0,3.15,0.10,4.0,'#c6d6c9');label(group,'ROBOTICS  /  AUTOMOTIVE  /  AI',0,1.42,0.10,6.3,'#a7c3be');
  const stripMat=new THREE.MeshStandardMaterial({color:'#a8ddd1',emissive:'#70e5cf',emissiveIntensity:0});block(group,8.4,0.025,0.025,0,0.29,0.42,stripMat);
- const spill=new THREE.PointLight('#74ffe0',0,9,1.7);spill.position.set(0,0.7,0.8);group.add(spill);
+ const spill=new THREE.PointLight('#74ffe0',0,6,2);spill.position.set(0,0.7,0.8);group.add(spill);
  vehicle.addBarrier(nameLandmarkSite.x,nameLandmarkSite.z,4.7,0.5,nameLandmarkSite.rotation);
- return {setNight(night){neonMaterial.color.set('#9bffec').multiplyScalar(night?2.6:1.05);frameMat.color.set('#edc591').multiplyScalar(night?1.7:0.65);opal.emissiveIntensity=night?0.35:0.10;stripMat.emissiveIntensity=night?1.3:0;spill.intensity=night?18:0;}};
+ const pointer=new THREE.Vector2(),raycaster=new THREE.Raycaster(),canvas=document.getElementById('world');let pointing=false,night=false,hover=0;
+ canvas.addEventListener('pointermove',event=>{if(event.pointerType==='touch')return;pointing=true;pointer.set(event.clientX/window.innerWidth*2-1,1-event.clientY/window.innerHeight*2);},{passive:true});canvas.addEventListener('pointerleave',()=>pointing=false);
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)'),hoverTint=new THREE.Color('#a7ffe8');
+ function apply(){neonMaterial.color.set('#9bffec').multiplyScalar((night?2.1:1.05)+hover*0.35);frameMat.color.set('#edc591').lerp(hoverTint,hover).multiplyScalar((night?1.35:0.65)+hover*0.3);opal.emissiveIntensity=(night?0.12:0.10)+hover*0.08;stripMat.emissiveIntensity=night?1.3+hover*0.3:0;spill.intensity=night?4+hover:0;}
+ return {setNight(value){night=!!value;apply();},updateHover(camera,blocked,dt){let hit=false;if(pointing&&!blocked){camera.updateMatrixWorld();raycaster.setFromCamera(pointer,camera);hit=raycaster.intersectObject(panel,false).length>0;}hover=reduced.matches?Number(hit):THREE.MathUtils.lerp(hover,Number(hit),1-Math.exp(-8*dt));apply();}};
 }

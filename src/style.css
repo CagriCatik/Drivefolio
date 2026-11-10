@@ -68,3 +68,29 @@ dialog{background:#f6fafb;border-color:#d7e5e9;color:#264957}.project-short{colo
 .showroom-card,.world-lab{position:fixed;bottom:90px;right:25px;z-index:4;width:min(390px,90vw);padding:22px;background:#edf5efed;color:#2c514f;border:1px solid #b8cebe;border-radius:12px;box-shadow:0 10px 35px #122e3022;backdrop-filter:blur(12px)}.showroom-card>small,.world-lab>small{font-size:8px;letter-spacing:1px;line-height:1.7;display:block}.showroom-card>strong{display:block;margin:12px 0;font-size:20px}.showroom-card button,.world-lab button,.world-lab select{padding:11px 13px;border:1px solid #adc6bd;border-radius:6px;background:#dcece3;font-size:11px;color:#2b514d}.showroom-card>div,.world-lab #world-lab-controls{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0}.showroom-card [aria-pressed=true]{background:#376e62;color:#f0fbef}.showroom-card>button,.world-lab>button{width:100%;margin-top:14px}.world-lab label{font-size:10px;display:flex;flex-direction:column;gap:8px}.world-lab p{font-size:12px;line-height:1.6;min-height:36px}.project-evidence{margin:23px 0;padding:18px 0;border-top:1px solid #aac3b955}.project-evidence h3{font-size:11px;text-transform:uppercase;letter-spacing:1px}.project-evidence p{font-size:12px;line-height:1.7}.project-evidence img{display:block;width:100%;height:auto;border-radius:7px;background:white;margin:15px 0}.project-evidence a{font-size:11px;line-height:1.6;color:#28796c;text-underline-offset:3px}.project-dialog .project-short{color:#53706b}[data-theme=dark] .project-dialog .project-short{color:#a2c0bd}[data-theme=dark] .showroom-card,[data-theme=dark] .world-lab{background:#17333bed;border-color:#476c6c;color:#d8ebe3}[data-theme=dark] .showroom-card button,[data-theme=dark] .world-lab button,[data-theme=dark] .world-lab select{background:#2c5057;color:#def0e6;border-color:#598078}[data-theme=dark] .project-evidence a{color:#9ad4bd}@media(max-width:600px){.showroom-card,.world-lab{bottom:110px;right:15px;padding:15px;width:min(330px,90vw)}.world-lab button{padding:9px;font-size:10px}}
 
 .world-lab #world-lab-status{color:inherit}
+
+/* Keep the arrival landmark unobstructed, including before the first drive. */
+.welcome{left:50%;right:auto;top:auto;bottom:100px;width:330px;max-width:calc(100vw - 36px);padding:16px 20px;transform:translateX(-50%)}
+.welcome h1{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.welcome p{font-size:11px;line-height:1.5;margin:0 0 12px}.welcome .eyebrow{margin:0 0 10px;font-size:7px}.welcome .explore-button{width:100%;justify-content:space-between;padding:12px 16px}.welcome .text-button{margin-top:10px;font-size:10px}.welcome.dismissed{transform:translate(-50%,16px)}
+@media(max-width:600px){.welcome{left:50%;right:auto;top:auto;bottom:155px;width:295px;padding:14px 17px}.welcome p{font-size:10px}.welcome .eyebrow{font-size:6px}}
+
+/* Shared neon feedback: highlight surfaces without changing text sizes or layout. */
+:root{--neon-edge:#3b9f96;--neon-soft:#239b8b28;--neon-text:#266e68}
+[data-theme=dark]{--neon-edge:#77e8d2;--neon-soft:#6cf5d526;--neon-text:#b8ffee}
+.neon-panel{isolation:isolate;transition:border-color .22s,box-shadow .22s}
+.neon-panel::after{content:"";position:absolute;inset:0;z-index:5;border-radius:inherit;pointer-events:none;background:radial-gradient(160px circle at var(--neon-x,50%) var(--neon-y,40%),var(--neon-soft),transparent 75%);opacity:0;transition:opacity .22s}
+button,a,.vehicle-choice,.paint-choice{transition:color .18s,border-color .18s,background-color .18s,box-shadow .18s,transform .18s,text-shadow .18s}
+button:focus-visible,a:focus-visible,select:focus-visible,.vehicle-choice:focus-within,.paint-choice:focus-within{outline:2px solid var(--neon-edge);outline-offset:4px;box-shadow:0 0 0 4px var(--neon-soft),0 0 20px var(--neon-soft)}
+dialog table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}dialog th,dialog td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);transition:background-color .18s,color .18s}dialog th{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--neon-text)}
+@media(hover:hover) and (pointer:fine){
+ .neon-panel:hover{border-color:var(--neon-edge);box-shadow:0 0 0 1px var(--neon-soft),0 0 26px var(--neon-soft),0 16px 38px #071e2926}.neon-panel:hover::after{opacity:1}
+ button:not(:disabled):hover,a:hover{color:var(--neon-text);text-shadow:0 0 9px var(--neon-soft)}
+ .nav-button:not(:disabled):hover,.world-tools button:hover,.showroom-card button:hover,.world-lab button:hover,.demo-button:hover,.explore-button:hover{box-shadow:inset 0 0 0 1px var(--neon-edge),0 0 18px var(--neon-soft);transform:translateY(-2px)}
+ .explore-button:hover{color:#f0fffa}.brand:hover{box-shadow:0 0 20px var(--neon-soft)}
+ #project-list button:hover{transform:translateX(3px);border-color:var(--neon-edge);box-shadow:inset 3px 0 var(--neon-edge),0 0 18px var(--neon-soft)}
+ .vehicle-choice:hover,.paint-choice:hover{border-color:var(--neon-edge);box-shadow:0 0 16px var(--neon-soft);transform:translateY(-2px)}
+ .neon-panel h2:hover,.neon-panel h3:hover,.neon-panel>strong:hover{color:var(--neon-text);text-shadow:0 0 12px var(--neon-soft)}
+ dialog tbody tr:hover td{background:var(--neon-soft);color:var(--neon-text)}
+}
+@media(prefers-reduced-motion:reduce){.neon-panel,.neon-panel::after,button,a,.vehicle-choice,.paint-choice,dialog td{transition:none!important}.nav-button:hover,.world-tools button:hover,.showroom-card button:hover,.world-lab button:hover,.demo-button:hover,.explore-button:hover,#project-list button:hover,.vehicle-choice:hover,.paint-choice:hover{transform:none!important}}

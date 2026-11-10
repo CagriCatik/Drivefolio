@@ -12,7 +12,7 @@ export function addLandscape(scene,vehicle){
   const vegetation=createEnvironmentVegetation(scene,vehicle);
   const nightLights=[];
   const lightMaterial=new THREE.MeshStandardMaterial({color:'#e4fbff',emissive:'#b9eaff',emissiveIntensity:0});
-  for(const [x,z] of [[-4.6,15],[4.6,8],[-4.6,-9],[4.6,-25],[-4.6,-35],[4.6,-42],[-24,9.8],[24,9.8]]){
+  for(const [x,z] of [[-4.6,11],[4.6,8],[-4.6,-9],[4.6,-25],[-4.6,-35],[4.6,-42],[-24,9.8],[24,9.8]]){
     {const light=new THREE.PointLight('#bce4ff',0,18,1.5);light.position.set(x,3.4,z);scene.add(light);nightLights.push(light);}
     block(scene,0.12,3.7,0.12,x,1.85,z,metal);block(scene,1.5,0.10,0.5,x+0.5,3.7,z,metal);block(scene,1.25,0.04,0.35,x+0.5,3.63,z,lightMaterial);
   }

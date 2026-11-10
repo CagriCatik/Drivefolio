@@ -1,3 +1,4 @@
+import {pointerToCanvas,pickBoard} from './neon-hit-test.js';
 import * as THREE from 'three';
 export const neonBoardTheme={background:'#142f35',title:'#e0f7ed',text:'#acd4c8',edge:'#6dffe8',hover:'#ff57df',radius:0.12};
 function outline(w,h,r){const shape=new THREE.Shape();shape.moveTo(-w/2+r,-h/2);shape.lineTo(w/2-r,-h/2);shape.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);shape.lineTo(w/2,h/2-r);shape.quadraticCurveTo(w/2,h/2,w/2-r,h/2);shape.lineTo(-w/2+r,h/2);shape.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);shape.lineTo(-w/2,-h/2+r);shape.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);return shape;}
@@ -17,9 +18,10 @@ export function isNeonBoardVisible(node){for(let n=node;n;n=n.parent)if(!n.visib
 export function createNeonBoardsController(scene){
  const boards=[];scene.traverse(n=>{if(n.userData.neonBoard)boards.push(n);});
  const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),canvas=document.getElementById('world'),hoverColor=new THREE.Color(neonBoardTheme.hover);const textHover=new THREE.Color('#ffd7ff'),fillHover=new THREE.Color('#40214f');let pointing=false,night=false;
- canvas.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;pointing=true;pointer.set(e.clientX/window.innerWidth*2-1,1-e.clientY/window.innerHeight*2);},{passive:true});canvas.addEventListener('pointerleave',()=>pointing=false);
+ canvas.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;pointing=true;pointer.copy(pointerToCanvas(e.clientX,e.clientY,canvas.getBoundingClientRect()));},{passive:true});canvas.addEventListener('pointerleave',()=>pointing=false);
  function paint(board){const b=board.userData.neonBoard;b.edgeMaterial.color.set(neonBoardTheme.edge).lerp(hoverColor,b.hover).multiplyScalar((night?3.1:1.8)+b.hover*1.4);b.faceMaterial.color.set('#ffffff').lerp(textHover,b.hover).multiplyScalar((night?1.25:1)+b.hover*0.45);b.backing.material.color.set(neonBoardTheme.background).lerp(fillHover,b.hover);b.backing.material.emissive.set('#a637e3');b.backing.material.emissiveIntensity=b.hover*(night?0.38:0.5);b.haloMaterial.uniforms.uOpacity.value=(night?0.42:0.25)+b.hover*0.23;}
- const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
- return {setNight(value){night=!!value;boards.forEach(paint);},update(camera,blocked,dt){let target=null;if(pointing&&!blocked){camera.updateMatrixWorld();ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(boards.filter(isNeonBoardVisible).map(b=>b.userData.neonBoard.backing),false);if(hits.length)target=hits[0].object.parent;}
- boards.forEach(board=>{const b=board.userData.neonBoard;b.hover=reduced.matches?Number(board===target):THREE.MathUtils.lerp(b.hover,Number(board===target),1-Math.exp(-8*dt));paint(board);});}};
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)'),debug=typeof location!=='undefined'&&new URLSearchParams(location.search).has('hoverDebug');let debugClock=0,debugCount=0;
+ return {setNight(value){night=!!value;boards.forEach(paint);},update(camera,blocked,dt){let target=null;if(pointing&&!blocked){target=pickBoard(camera,pointer,boards.filter(isNeonBoardVisible),ray);}
+ boards.forEach(board=>{const b=board.userData.neonBoard;b.hover=reduced.matches?Number(board===target):THREE.MathUtils.lerp(b.hover,Number(board===target),1-Math.exp(-10*dt));board.scale.setScalar(reduced.matches?1:1+b.hover*0.04);paint(board);});
+ if(debug&&pointing&&debugCount<20&&(debugClock+=dt)>0.7){debugClock=0;debugCount++;console.debug('neon-hover',JSON.stringify({pointer:pointer.toArray(),target:target?.name??null,blocked,boards:boards.length,rect:{width:canvas.getBoundingClientRect().width,height:canvas.getBoundingClientRect().height},projected:boards.filter(isNeonBoardVisible).slice(0,8).map(b=>({name:b.name,ndc:b.getWorldPosition(new THREE.Vector3()).project(camera).toArray()}))}));}}};
 }

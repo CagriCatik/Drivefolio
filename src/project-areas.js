@@ -1,3 +1,4 @@
+import {createNeonBoard} from './neon-board.js';
 import * as THREE from 'three';
 import {mat,block,label} from './scene-primitives.js';
 
@@ -16,8 +17,7 @@ function createDynamicsArea(scene,vehicle){
   const asphalt=mat('#637782'),frame=mat('#344e60'),white=mat('#e6d3b7');
   block(group,14,0.08,14,0,0.03,0,asphalt);
   block(group,14,2.6,0.25,0,1.3,-7,frame);
-  label(group,'VEHICLE DYNAMICS',0,1.8,-6.84,10.4);
-  label(group,'2WS / 4WS  ·  MODELL-DEMO',0,0.8,-6.82,8.7,'#e0c1a4');
+  createNeonBoard(group,{title:'VEHICLE DYNAMICS',subtitle:'2WS / 4WS  ·  MODELL-DEMO',y:1.45,z:-6.78});
   const entry=label(group,'E  /  TESTGELÄNDE · DEMO STARTEN',0,0.11,8,8.5,'#684952');entry.rotation.x=-Math.PI/2;
   vehicle.addObstacle(15,-12,7,0.15);
   const models=[modelCar(group,'#dcaa79'),modelCar(group,'#85cfbe')];

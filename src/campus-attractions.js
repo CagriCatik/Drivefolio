@@ -1,3 +1,4 @@
+import {createNeonBoard} from './neon-board.js';
 import {serviceCabinet} from './service-layout.js';
 import * as THREE from 'three';
 import {mat,block,label} from './scene-primitives.js';
@@ -26,7 +27,7 @@ export function createCampusAttractions(scene,vehicle){
  ctx.fillStyle='#e5be75';ctx.beginPath();ctx.arc(mx(0),mz(12),10,0,Math.PI*2);ctx.fill();ctx.font='20px Arial';ctx.fillText('START',mx(0)+45,mz(12)+7);
  ctx.textAlign='left';ctx.fillStyle='#bdd8d8';ctx.font='19px Arial';for(const [i,p] of projects.entries())ctx.fillText(`${p.number}  ${p.title}`,28,606+i*22,456);
  const mapTexture=new THREE.CanvasTexture(map);mapTexture.colorSpace=THREE.SRGBColorSpace;
- block(group,2.1,2.9,0.20,-7.6,1.65,25.1,steel);const board=new THREE.Mesh(new THREE.PlaneGeometry(1.9,2.7),new THREE.MeshBasicMaterial({map:mapTexture}));board.position.set(-7.6,1.65,25.21);group.add(board);vehicle.addObstacle(-7.6,25.1,1.1,0.18);
+ block(group,2.1,2.9,0.20,-7.6,1.65,25.1,steel);createNeonBoard(group,{title:'CAMPUS MAP',texture:mapTexture,x:-7.6,y:1.65,z:25.24,width:1.9,height:2.7});vehicle.addObstacle(-7.6,25.1,1.1,0.18);
  // Pit cars, mechanics and equipment live inside the existing bays or service apron.
  for(const [i,z] of [-32,-25,-18].entries()){
   const car=displayCar(group,['#bd815f','#4f9893','#b5a2c2'][i]);car.position.set(29.8,0.05,z);car.rotation.y=Math.PI/2;vehicle.addObstacle(29.8,z,1.25,0.67);
@@ -37,7 +38,7 @@ export function createCampusAttractions(scene,vehicle){
  }
  // Timing tower is behind the garages, not inside the pit lane or the track.
  block(group,0.28,3.8,0.28,26.2,1.9,-37.8,steel);block(group,3.0,2.2,0.18,26.2,3.7,-37.8,steel);vehicle.addObstacle(26.2,-37.8,0.25,0.25);
- label(group,'PIT / TIMING',26.2,4.4,-37.69,2.7,'#c1e9de');for(let i=0;i<3;i++)label(group,`0${i+1}  READY`,26.2,3.9-i*0.45,-37.69,2.4,'#e8c894');
+ createNeonBoard(group,{title:'PIT / TIMING',rows:['01  READY','02  READY','03  READY'],x:26.2,y:3.7,z:-37.65,width:2.8,height:2});
  const flags=[];for(const [x,z] of [[32,-36.8],[32,-10]]){
   block(group,0.05,3.6,0.05,x,1.8,z,steel);const flag=block(group,0.9,0.5,0.025,x+0.45,3.25,z,iMaterial(z));flags.push(flag);vehicle.addObstacle(x,z,0.08,0.08);
  }

@@ -94,3 +94,13 @@ dialog table{width:100%;border-collapse:separate;border-spacing:0;border:1px sol
  dialog tbody tr:hover td{background:var(--neon-soft);color:var(--neon-text)}
 }
 @media(prefers-reduced-motion:reduce){.neon-panel,.neon-panel::after,button,a,.vehicle-choice,.paint-choice,dialog td{transition:none!important}.nav-button:hover,.world-tools button:hover,.showroom-card button:hover,.world-lab button:hover,.demo-button:hover,.explore-button:hover,#project-list button:hover,.vehicle-choice:hover,.paint-choice:hover{transform:none!important}}
+
+/* One visual family for all interface information panels and data tables. */
+.neon-panel{--panel-rule:#a9c4b8;background:#edf5f1f2;border:1px solid var(--panel-rule);border-radius:12px;box-shadow:0 12px 35px #173c3820}
+[data-theme=dark] .neon-panel{--panel-rule:#456960;background:#142f35f2;border-color:var(--panel-rule);color:#deeee6}
+.neon-panel .eyebrow,.neon-panel>small,.neon-panel legend,.neon-panel>section>small{letter-spacing:1.1px;font-size:9px;color:var(--neon-text)}
+.neon-panel .demo-button,.neon-panel .primary-link,.neon-panel .explore-button,.neon-panel select{border:1px solid var(--panel-rule);border-radius:7px;padding:12px 16px;line-height:1.4}
+.neon-panel .demo-button,.neon-panel select{background:#dcebe3;color:#28534c}[data-theme=dark] .neon-panel .demo-button,[data-theme=dark] .neon-panel select{background:#244a4d;color:#daf4e8}
+.neon-panel .project-row{border-bottom:1px solid var(--panel-rule);padding:16px 10px;border-radius:6px;gap:16px}.neon-panel .row-number{color:var(--neon-text)}
+.neon-panel table{border-color:var(--panel-rule);font-size:12px;line-height:1.5}.neon-panel thead{background:#87c3ad20}.neon-panel th,.neon-panel td{border-color:var(--panel-rule);padding:12px 14px}.neon-panel tbody tr:last-child td{border-bottom:0}.neon-panel tbody tr:nth-child(even){background:#7bb4a60a}
+@media(max-width:600px){.neon-panel .project-row{padding:13px 7px;gap:10px}.neon-panel th,.neon-panel td{padding:10px}}

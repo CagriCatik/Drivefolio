@@ -1,3 +1,4 @@
+import {createNeonBoard} from './neon-board.js';
 import {environmentMaterial as mat} from './environment-materials.js';
 import {serviceVan} from './service-layout.js';
 import * as THREE from 'three';
@@ -19,7 +20,7 @@ export function createCampusDetails(scene,vehicle){
     const shutter=block(group,0.06,2.0,3.6,1.55,1.05,0,mat('#7c9da9'));
     for(let i=0;i<6;i++)block(shutter,0.02,0.025,3.55,0.04,-0.8+i*0.3,0,dark);
     doors.push({mesh:shutter,x:31.3,z});
-    const text=label(group,`PIT 0${index+1}`,1.61,2.42,0,3.3,'#d9ffff');text.rotation.y=Math.PI/2;
+    createNeonBoard(group,{title:`PIT 0${index+1}`,x:1.63,y:2.42,z:0,width:3.2,height:0.46,rotation:Math.PI/2});
     for(let i=0;i<3;i++)block(group,0.65,0.06,3.7,-0.9+i*0.8,2.94,0,mat('#37657f'));
     vehicle.addObstacle(28.3,z,0.08,2.5);
     for(const side of [-2.5,2.5])vehicle.addObstacle(29.8,z+side,1.5,0.08);
@@ -46,7 +47,7 @@ export function createCampusDetails(scene,vehicle){
   for(const [x,z,text] of [[-51,-17,'ROBOTICS / CONTROL'],[51,-4,'ENGINEERING IN MOTION'],[-15,-71,'Çağrı Çatık']]){
     const sign=new THREE.Group();sign.position.set(x,0,z);sign.rotation.y=x<-45?Math.PI/2:x>45?-Math.PI/2:0;scene.add(sign);
     for(const dx of [-1.7,1.7])block(sign,0.12,2.7,0.12,dx,1.35,0,steel);
-    block(sign,4.4,1.5,0.16,0,2.2,0,dark);label(sign,text,0,2.2,0.1,4.0,'#e2ffff');
+    block(sign,4.4,1.5,0.16,0,2.2,0,dark);createNeonBoard(sign,{title:text,y:2.2,z:0.13,width:4.2,height:1.2});
   }
   // Arrival plaza: a fountain, bike racks and a parked service van.
   const fountain=new THREE.Mesh(new THREE.CylinderGeometry(1.3,1.45,0.35,48),mat('#bab6a5'));fountain.position.set(7,0.2,14);scene.add(fountain);vehicle.addObstacle(7,14,1.45,1.45);

@@ -1,3 +1,4 @@
+import {createNeonBoardsController} from './neon-board.js';
 import {createNameLandmark} from './name-landmark.js';
 import {createParkGround} from './park-ground.js';
 import {createExteriorPlan} from './exterior-plan.js';
@@ -91,16 +92,17 @@ export async function createWorld(scene, vehicle) {
   const details=createCampusDetails(scene,vehicle);
   const referenceGarden=await createReferenceGarden(scene,vehicle);
   const attractions=createCampusAttractions(scene,vehicle);
+  const neonBoards=createNeonBoardsController(scene);
   const beacon=new THREE.Group();scene.add(beacon);beacon.visible=false;
   const ring=new THREE.Mesh(new THREE.TorusGeometry(1.8,0.07,6,48),new THREE.MeshBasicMaterial({color:'#8df5cd',depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.position.y=0.2;beacon.add(ring);
   const pin=new THREE.Mesh(new THREE.ConeGeometry(0.35,0.8,5),new THREE.MeshBasicMaterial({color:'#8df5cd'}));pin.rotation.z=Math.PI;pin.position.y=3;beacon.add(pin);
   return {
-    updateHover(camera,blocked,dt){nameLandmark.updateHover(camera,blocked,dt);},
+    updateHover(camera,blocked,dt){nameLandmark.updateHover(camera,blocked,dt);neonBoards.update(camera,blocked,dt);},
     setDestination(project){beacon.visible=!!project;if(project)beacon.position.set(project.entrance.x,0,project.entrance.z);},
     vehicles:vehicleVisuals,
     setOverview(value){scene.fog.near=value?350:85;scene.fog.far=value?500:155;},
     facilities,race,showroom,
-    setNight(value){nameLandmark.setNight(value);park.setNight(value);referenceGarden.setNight(value);attractions.setNight(value);vehicleVisuals.setNight(value);facilities.station.setNight(value);facilities.setNight(value);landscape.setNight(value);race.setNight(value);},
+    setNight(value){neonBoards.setNight(value);nameLandmark.setNight(value);park.setNight(value);referenceGarden.setNight(value);attractions.setNight(value);vehicleVisuals.setNight(value);facilities.station.setNight(value);facilities.setNight(value);landscape.setNight(value);race.setNight(value);},
     update(time,dt,paused) {
       showroom.update(vehicle.profile);
       pin.position.y=3+Math.sin(time*2)*0.25;

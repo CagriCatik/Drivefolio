@@ -1,3 +1,4 @@
+import {createNeonBoard} from './neon-board.js';
 import {environmentMaterial,contactShadow} from './environment-materials.js';
 import * as THREE from 'three';
 
@@ -31,7 +32,7 @@ function createGarage(scene,vehicle){
   const door=block(group,9.3,2.9,0.14,0,1.5,4.5,environmentMaterial('#a9c2c8'));
   for(let i=0;i<6;i++)block(door,9.3,0.035,0.02,0,-1.25+i*0.45,0.08,frame);
   covers.push(door);
-  label(group,'GARAGE',0,3.4,4.73,5.1);
+  createNeonBoard(group,{title:'GARAGE',x:0,y:3.38,z:4.76,width:5.5,height:0.6});
   const welcome=label(group,'E  /  FAHRZEUG WÄHLEN',0,0.18,6.2,6.3);welcome.rotation.x=-Math.PI/2;
   const glow=new THREE.MeshStandardMaterial({color:'#b9e0cb',emissive:'#85d7b2',emissiveIntensity:0});
   block(group,8.8,0.04,0.15,0,0.09,3.8,glow);
@@ -47,8 +48,7 @@ function createRoboticsLab(scene,vehicle){
   block(group,12,0.08,11.6,0,0.02,-0.2,floor);
   block(group,12,2.5,0.25,0,1.25,-6,dark);
   block(group,0.25,1.3,10,-6,0.65,-1,walls);block(group,0.25,1.3,10,6,0.65,-1,walls);
-  label(group,'JETRACER LAB',0,1.65,-5.83,8.4);
-  label(group,'ROS 2  /  RC WORKSHOP',0,0.8,-5.8,6.3,'#9de4d0');
+  createNeonBoard(group,{title:'JETRACER LAB',subtitle:'ROS 2  /  RC WORKSHOP',y:1.45,z:-5.78,width:11.4,height:1.9});
   const entrance=label(group,'E  /  ROBOTER AUSPROBIEREN',0,0.1,6.5,7,'#345867');entrance.rotation.x=-Math.PI/2;
   vehicle.addObstacle(x,z-6,6,0.15);vehicle.addObstacle(x-6,z-1,0.15,5);vehicle.addObstacle(x+6,z-1,0.15,5);
   const labStrip=new THREE.MeshStandardMaterial({color:'#d8ffff',emissive:'#a9ece9',emissiveIntensity:0});

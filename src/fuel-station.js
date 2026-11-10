@@ -1,3 +1,4 @@
+import {createNeonBoard} from './neon-board.js';
 import {environmentMaterial as mat} from './environment-materials.js';
 import * as THREE from 'three';
 import {block,label} from './scene-primitives.js';
@@ -26,8 +27,8 @@ export function createFuelStation(scene,vehicle){
   block(group,0.16,0.15,9.2,15.5,3.76,14.5,white);
   for(const z of [10.5,18.5])block(group,9.4,0.06,0.6,15.5,3.93,z,dark);
   label(group,'FUEL',15.5,3.96,14.5,4,'#e7f7f1').rotation.x=-Math.PI/2;
-  label(group,'CAMPUS FUEL',15.5,3.65,19.19,7.5,'#edf9f7');
-  const frontSign=label(group,'CAMPUS FUEL',15.5,3.65,9.81,7.5,'#edf9f7');frontSign.rotation.y=Math.PI;
+  createNeonBoard(group,{title:'CAMPUS FUEL',x:15.5,y:3.65,z:19.22,width:7.5,height:0.7});
+  createNeonBoard(group,{title:'CAMPUS FUEL',x:15.5,y:3.65,z:9.78,width:7.5,height:0.7,rotation:Math.PI});
   const glow=new THREE.MeshStandardMaterial({color:'#e5fff4',emissive:'#bdebdc',emissiveIntensity:0});
   const nightLights=[];
   for(const x of [12.3,18.7]){
